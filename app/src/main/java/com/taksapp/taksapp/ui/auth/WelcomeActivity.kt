@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui
+package com.taksapp.taksapp.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

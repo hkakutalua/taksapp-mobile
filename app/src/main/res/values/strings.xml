@@ -5,4 +5,9 @@
     <string name="text_or">Ou</string>
     <string name="text_start">Começar</string>
     <string name="text_login_as_driver">Entrar Como Motorista</string>
+    <string name="text_login">Entrar</string>
+    <string name="text_do_sign_up">Efectuar Registo</string>
+    <string name="hint_email">Seu Email</string>
+    <string name="hint_password">Palavra-passe</string>
+    <string name="text_sign_in_as_rider">Entrar como passageiro</string>
 </resources>

@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.WelcomeActivity"
+    tools:context=".ui.auth.WelcomeActivity"
     android:padding="@dimen/padding_normal">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageview_logo"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/size_logo"
+        android:layout_height="@dimen/size_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,7 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_small"
         android:text="@string/text_welcome"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textAllCaps="true" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_start"
