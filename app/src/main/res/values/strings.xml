@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Taksapp</string>
+    <string name="text_welcome">Bem vindo ao Taksapp</string>
+    <string name="do_sign_up">Efectuar Registro</string>
+    <string name="text_or">Ou</string>
+    <string name="text_start">Começar</string>
+    <string name="text_login_as_driver">Entrar Como Motorista</string>
+</resources>
