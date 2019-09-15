@@ -10,4 +10,15 @@
     <string name="hint_email">Seu Email</string>
     <string name="hint_password">Palavra-passe</string>
     <string name="text_sign_in_as_rider">Entrar como passageiro</string>
+    <string name="text_server_error">Ocorreu um erro com os nossos servidores. Tente mais tarde.</string>
+    <string name="text_inexistent_account">Não existe uma conta associada à este email</string>
+    <string name="text_incorrect_password">Palavra-passe incorrecta</string>
+    <string name="error_type_your_email">Escreva seu endereço de email</string>
+    <string name="error_type_a_correct_email">Escreva correctamente seu endereço de email</string>
+    <string name="error_type_your_password">Escreva sua palavra-passe</string>
+    <string name="error_type_password_with_correct_amount_of_characters">Sua palavra-passe deve ter no mínimo 6
+        caracteres
+    </string>
+    <string name="text_internet_error">Conexão à internet indisponível</string>
+    <string name="text_session_expired">A sua sessão expirou</string>
 </resources>
