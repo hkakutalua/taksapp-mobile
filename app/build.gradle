@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -15,11 +14,27 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+    dataBinding {
+        enabled = true
+    }
     buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:5000/\""
+        }
+        staging {
+            buildConfigField "String", "BASE_URL", "http://..." // TODO: Configure for Staging
+        }
         release {
+            buildConfigField "String", "BASE_URL", "http://..." // TODO: Configure for Production
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    sourceSets {
+        main { java.srcDirs = ['src/main/java', 'src/main/kotlin'] }
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 }
 
@@ -30,7 +45,20 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.8.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'org.koin:koin-android-viewmodel:2.0.1'
+    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.8.0'
+
     testImplementation 'junit:junit:4.12'
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.2.0")
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
