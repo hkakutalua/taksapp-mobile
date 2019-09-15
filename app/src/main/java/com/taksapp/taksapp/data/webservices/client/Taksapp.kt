@@ -35,7 +35,7 @@ public class Taksapp (
             return this
         }
 
-        fun sessionExpiredCallbacl(callback: SessionExpiredCallback): Builder {
+        fun sessionExpiredCallback(callback: SessionExpiredCallback): Builder {
             this.sessionExpiredCallback = callback
             return this
         }

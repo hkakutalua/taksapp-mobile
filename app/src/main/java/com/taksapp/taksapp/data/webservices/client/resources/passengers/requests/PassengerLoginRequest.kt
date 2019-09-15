@@ -58,7 +58,7 @@ class PassengerLoginRequest(
         val loginBodyJson = jsonConverter
             .toJson(LoginRequestBody(email, password, pushNotificationToken))
 
-        val response = client.post("passengers/login", loginBodyJson)
+        val response = client.post("api/v1/passengers/login", loginBodyJson)
 
         return if (response.isSuccessful) {
             val responseBody = jsonConverter.fromJson(response.body!!.source!!, LoginResponseBody::class)
@@ -71,7 +71,7 @@ class PassengerLoginRequest(
         } else {
             if (response.code < 500 && response.body != null) {
                 val apiErrorBody = jsonConverter.fromJson(response.body.source!!, ApiErrorBody::class)
-                Response.failure(LoginRequestError.valueOf(apiErrorBody.errorCode))
+                Response.failure(LoginRequestError.of(apiErrorBody.errorCode))
             } else {
                 throw InternalServerErrorException(response.body!!.string()!!)
             }
