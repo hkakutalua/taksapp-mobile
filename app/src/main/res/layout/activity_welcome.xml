@@ -39,8 +39,7 @@
         app:layout_constraintBottom_toTopOf="@id/textview_or"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/text_start"
-        android:onClick="start" />
+        android:text="@string/text_start" />
 
     <TextView
         android:id="@+id/textview_or"

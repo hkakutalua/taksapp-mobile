@@ -8,18 +8,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
+import com.taksapp.taksapp.databinding.ActivityDriverLoginBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 
-class RiderLoginActivity : AppCompatActivity() {
-    private val loginViewModel: LoginViewModel by viewModel(qualifier = named("RiderLoginViewModel"))
+class DriverLoginActivity : AppCompatActivity() {
+    private val loginViewModel: LoginViewModel by viewModel(qualifier = named("DriverLoginViewModel"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding: ActivityRiderLoginBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_rider_login)
+        val binding : ActivityDriverLoginBinding = DataBindingUtil
+            .setContentView(this, R.layout.activity_driver_login)
         binding.viewModel = loginViewModel
         binding.lifecycleOwner = this
 

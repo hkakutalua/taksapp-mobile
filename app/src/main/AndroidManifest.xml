@@ -13,7 +13,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.auth.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBarActivity">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,22 @@
         </activity>
         <activity
             android:name=".ui.auth.RiderLoginActivity"
-            android:theme="@style/AppTheme.NoActionBarActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""
+            android:parentActivityName=".ui.auth.WelcomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.auth.WelcomeActivity" />
+        </activity>
+        <activity
+            android:name=".ui.auth.DriverLoginActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""
+            android:parentActivityName=".ui.auth.WelcomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.auth.WelcomeActivity" />
+        </activity>
     </application>
 
 </manifest>

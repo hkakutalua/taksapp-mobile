@@ -21,4 +21,5 @@
     </string>
     <string name="text_internet_error">Conexão à internet indisponível</string>
     <string name="text_session_expired">A sua sessão expirou</string>
+    <string name="text_sign_in_as_driver">Entrar Como Motorista</string>
 </resources>

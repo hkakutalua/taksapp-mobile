@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.auth.RiderLoginActivity">
+        tools:context=".ui.auth.DriverLoginActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -34,11 +34,11 @@
             app:srcCompat="@drawable/ic_logo" />
 
         <TextView
-            android:id="@+id/text_sign_in_as_rider"
+            android:id="@+id/text_sign_in_as_driver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/text_sign_in_as_rider"
+            android:text="@string/text_sign_in_as_driver"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,12 +49,12 @@
             android:id="@+id/textinputlayout_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
             app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginBottom="@dimen/margin_small"
             android:hint="@string/hint_email"
             android:enabled="@{!viewModel.loading}"
             app:error="@{viewModel.emailError}"
@@ -74,11 +74,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
             app:layout_constraintBottom_toTopOf="@id/button_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal"
             android:hint="@string/hint_password"
             android:enabled="@{!viewModel.loading}"
             app:error="@{viewModel.passwordError}"
@@ -90,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:text="@={viewModel.password}" />
+                android:text="@={viewModel.password}"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,51 +98,27 @@
             android:id="@+id/progressbar_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:indeterminate="true"
             app:layout_constraintBottom_toTopOf="@id/button_login"
-            app:layout_constraintStart_toStartOf="@id/button_login"
             app:layout_constraintEnd_toEndOf="@id/button_login"
+            app:layout_constraintStart_toStartOf="@id/button_login"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:indeterminate="true"
             android:visibility="@{viewModel.loading ? View.VISIBLE : View.INVISIBLE}"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_login"
-            android:enabled="@{!viewModel.loading}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/text_login"
-            app:layout_constraintBottom_toTopOf="@id/textview_or"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal"
-            android:onClick="@{_ -> viewModel.login()}"/>
-
-        <TextView
-            android:id="@+id/textview_or"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_or"
-            android:textAllCaps="true"
-            app:layout_constraintBottom_toTopOf="@id/button_do_sign_up"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_do_sign_up"
-            android:enabled="@{!viewModel.loading}"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_do_sign_up"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginBottom="@dimen/margin_normal"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            android:layout_marginBottom="@dimen/margin_xlarge"
+            android:onClick="@{_ -> viewModel.login()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
