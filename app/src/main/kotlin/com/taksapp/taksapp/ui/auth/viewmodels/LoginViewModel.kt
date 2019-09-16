@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.data.repositories.AuthenticationRepository
 import com.taksapp.taksapp.data.repositories.LoginError
-import com.taksapp.taksapp.data.repositories.RiderAuthenticationRepository
 
-class RiderLoginViewModel(
-    private val repository: RiderAuthenticationRepository,
+class LoginViewModel(
+    private val repository: AuthenticationRepository,
     private val context: Context) : ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>()

@@ -11,10 +11,10 @@ import com.taksapp.taksapp.data.webservices.client.resources.common.errors.Login
 import com.taksapp.taksapp.data.webservices.client.resources.common.requests.LoginRequest
 import java.io.IOException
 
-class RiderAuthenticationRepository(
+class DriverAuthenticationRepository(
     private val taksapp: Taksapp,
     pushNotificationTokenRetriever: PushNotificationTokenRetriever)
     : AuthenticationRepository(pushNotificationTokenRetriever) {
 
-    override fun getLoginRequestBuilder() = taksapp.passengers.loginRequestBuilder()
+    override fun getLoginRequestBuilder() = taksapp.drivers.loginRequestBuilder()
 }

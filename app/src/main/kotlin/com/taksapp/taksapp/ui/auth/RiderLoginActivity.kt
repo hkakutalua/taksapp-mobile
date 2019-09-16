@@ -9,11 +9,12 @@ import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
-import com.taksapp.taksapp.ui.auth.viewmodels.RiderLoginViewModel
+import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 class RiderLoginActivity : AppCompatActivity() {
-    private val loginViewModel: RiderLoginViewModel by viewModel()
+    private val loginViewModel: LoginViewModel by viewModel(qualifier = named("RiderLoginViewModel"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

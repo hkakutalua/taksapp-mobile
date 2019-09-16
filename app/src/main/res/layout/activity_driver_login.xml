@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,16 +52,20 @@
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:hint="@string/hint_email"
             app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:hint="@string/hint_email"
+            android:enabled="@{!viewModel.loading}"
+            app:error="@{viewModel.emailError}"
+            app:errorEnabled="@{viewModel.emailError != null}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edittext_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:text="@={viewModel.email}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -68,23 +76,26 @@
             android:layout_marginBottom="@dimen/margin_large"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:hint="@string/hint_password"
             app:layout_constraintBottom_toTopOf="@id/button_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:passwordToggleEnabled="true">
+            android:hint="@string/hint_password"
+            android:enabled="@{!viewModel.loading}"
+            app:error="@{viewModel.passwordError}"
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="@{viewModel.passwordError != null}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edittext_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:text="@={viewModel.password}"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <ProgressBar
             android:id="@+id/progressbar_login"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:indeterminate="true"
@@ -92,7 +103,9 @@
             app:layout_constraintEnd_toEndOf="@id/button_login"
             app:layout_constraintStart_toStartOf="@id/button_login"
             android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal" />
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:visibility="@{viewModel.loading ? View.VISIBLE : View.INVISIBLE}"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_login"
@@ -104,7 +117,8 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginBottom="@dimen/margin_xlarge"/>
+            android:layout_marginBottom="@dimen/margin_xlarge"
+            android:onClick="@{_ -> viewModel.login()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

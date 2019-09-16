@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.ui.auth.viewmodels.RiderLoginViewModel" />
+            type="com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,7 +47,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinputlayout_email"
-            android:enabled="@{!viewModel.loading}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
@@ -57,6 +56,7 @@
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_small"
             android:hint="@string/hint_email"
+            android:enabled="@{!viewModel.loading}"
             app:error="@{viewModel.emailError}"
             app:errorEnabled="@{viewModel.emailError != null}">
 
@@ -71,7 +71,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinputlayout_password"
-            android:enabled="@{!viewModel.loading}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_large"
@@ -81,6 +80,7 @@
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:hint="@string/hint_password"
+            android:enabled="@{!viewModel.loading}"
             app:error="@{viewModel.passwordError}"
             app:passwordToggleEnabled="true"
             app:errorEnabled="@{viewModel.passwordError != null}">
