@@ -1,5 +1,6 @@
 package com.taksapp.taksapp.ui.auth
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -20,6 +21,10 @@ class RiderLoginActivity : AppCompatActivity() {
             DataBindingUtil.setContentView(this, R.layout.activity_rider_login)
         binding.viewModel = loginViewModel
         binding.lifecycleOwner = this
+
+        binding.toolbar.setBackgroundColor(Color.TRANSPARENT)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         loginViewModel.snackBarError.observe(this, Observer { value ->
             Snackbar
