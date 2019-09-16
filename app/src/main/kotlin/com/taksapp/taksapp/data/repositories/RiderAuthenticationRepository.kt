@@ -7,7 +7,7 @@ import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.arch.utils.Result
 import com.taksapp.taksapp.data.infrastructure.PushNotificationTokenRetriever
 import com.taksapp.taksapp.data.webservices.client.exceptions.InternalServerErrorException
-import com.taksapp.taksapp.data.webservices.client.resources.passengers.errors.LoginRequestError
+import com.taksapp.taksapp.data.webservices.client.resources.common.errors.LoginRequestError
 import java.io.IOException
 
 enum class LoginError {

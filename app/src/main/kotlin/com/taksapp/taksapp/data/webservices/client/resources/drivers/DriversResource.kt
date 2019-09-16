@@ -1,16 +1,16 @@
-package com.taksapp.taksapp.data.webservices.client.resources.passengers
+package com.taksapp.taksapp.data.webservices.client.resources.drivers
 
-import com.taksapp.taksapp.data.webservices.client.SessionStore
 import com.taksapp.taksapp.data.webservices.client.ConfigurationProvider
+import com.taksapp.taksapp.data.webservices.client.SessionStore
 import com.taksapp.taksapp.data.webservices.client.resources.ApiResource
 import com.taksapp.taksapp.data.webservices.client.resources.common.requests.LoginRequest
-import com.taksapp.taksapp.data.webservices.client.resources.passengers.requests.PassengerLoginRequest
+import com.taksapp.taksapp.data.webservices.client.resources.drivers.requests.DriverLoginRequest
 
-class PassengersResource(
+class DriversResource(
     override val configurationProvider: ConfigurationProvider,
     private val store: SessionStore) : ApiResource() {
 
     fun loginRequestBuilder() : LoginRequest.BaseBuilder {
-        return PassengerLoginRequest.Builder(configurationProvider, store)
+        return DriverLoginRequest.Builder(configurationProvider, store)
     }
 }

@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.data.webservices.client.resources.passengers.errors
+package com.taksapp.taksapp.data.webservices.client.resources.common.errors
 
 enum class LoginRequestError(val errorCode: String) {
     ACCOUNT_DOES_NOT_EXISTS("account_does_not_exists"),

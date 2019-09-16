@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.data.webservices.client.resources.passengers.requests
+package com.taksapp.taksapp.data.webservices.client.resources.drivers.requests
 
 import com.taksapp.taksapp.data.webservices.client.*
 import com.taksapp.taksapp.data.webservices.client.httpclients.OkHttpClientAdapter
@@ -18,7 +18,7 @@ import kotlin.time.toDuration
 
 @ExperimentalTime
 @RunWith(MockitoJUnitRunner::class)
-class PassengerLoginRequestTests {
+class DriverLoginRequestTests {
     private val successfulLoginBodyPath = "json/passengers-drivers/login/successful_login_body.json"
     private val incorrectCredentialsBodyPath = "json/passengers-drivers/login/incorrect_credentials_body.json"
     private val accountDoesNotExistsBodyPath = "json/passengers-drivers/login/account_does_not_exists_body.json"
@@ -31,7 +31,7 @@ class PassengerLoginRequestTests {
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.drivers
             .loginRequestBuilder()
             .email("henrick@mail.com")
             .password("1234567")
@@ -43,7 +43,7 @@ class PassengerLoginRequestTests {
 
         // Assert
         val recordedRequest = server.takeRequest()
-        Assert.assertEquals("/api/v1/passengers/login", recordedRequest.path?.toLowerCase())
+        Assert.assertEquals("/api/v1/drivers/login", recordedRequest.path?.toLowerCase())
     }
 
     @Test
@@ -54,7 +54,7 @@ class PassengerLoginRequestTests {
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.drivers
             .loginRequestBuilder()
             .email("henrick@mail.com")
             .password("1234567")
@@ -79,7 +79,7 @@ class PassengerLoginRequestTests {
         val storeMock = Mockito.mock(SessionStore::class.java)
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString(), store = storeMock)
-        val request = taksapp.passengers
+        val request = taksapp.drivers
             .loginRequestBuilder()
             .email("henrick@mail.com")
             .password("1234567")
@@ -94,7 +94,7 @@ class PassengerLoginRequestTests {
         Mockito.verify(storeMock, Mockito.times(1))
             .saveAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         Mockito.verify(storeMock, Mockito.times(1))
-            .saveUserType(UserType.RIDER)
+            .saveUserType(UserType.DRIVER)
     }
 
     @Test
@@ -109,7 +109,7 @@ class PassengerLoginRequestTests {
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.drivers
             .loginRequestBuilder()
             .email("henrick@mail.com")
             .password("1234567")
@@ -136,7 +136,7 @@ class PassengerLoginRequestTests {
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.drivers
             .loginRequestBuilder()
             .email("henrick@mail.com")
             .password("1234567")
