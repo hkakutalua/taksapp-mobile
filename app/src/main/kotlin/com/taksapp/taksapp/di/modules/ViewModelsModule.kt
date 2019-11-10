@@ -6,6 +6,5 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val viewModelsModule = module {
-    viewModel(named("RiderLoginViewModel")) { LoginViewModel(get(named("RiderAuthenticationRepository")), get()) }
-    viewModel(named("DriverLoginViewModel")) { LoginViewModel(get(named("DriverAuthenticationRepository")), get()) }
+    viewModel { LoginViewModel(get(), get()) }
 }

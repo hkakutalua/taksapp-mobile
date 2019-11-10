@@ -1,9 +1,9 @@
-package com.taksapp.taksapp.data.webservices.client.resources.passengers.requests
+package com.taksapp.taksapp.data.webservices.client.resources.users.requests
 
 import com.taksapp.taksapp.data.webservices.client.*
 import com.taksapp.taksapp.data.webservices.client.httpclients.OkHttpClientAdapter
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.MoshiJsonConverterAdapter
-import com.taksapp.taksapp.data.webservices.client.resources.common.errors.LoginRequestError
+import com.taksapp.taksapp.data.webservices.client.resources.users.errors.LoginRequestError
 import com.taksapp.taksapp.utils.FileUtilities
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -18,47 +18,52 @@ import kotlin.time.toDuration
 
 @ExperimentalTime
 @RunWith(MockitoJUnitRunner::class)
-class PassengerLoginRequestTests {
-    private val successfulLoginBodyPath = "json/passengers-drivers/login/successful_login_body.json"
-    private val incorrectCredentialsBodyPath = "json/passengers-drivers/login/incorrect_credentials_body.json"
-    private val accountDoesNotExistsBodyPath = "json/passengers-drivers/login/account_does_not_exists_body.json"
+class UserLoginRequestTests {
+    private val successfulLoginBodyPath = "json/users/login/successful_login_body.json"
+    private val incorrectCredentialsBodyPath = "json/users/login/incorrect_credentials_body.json"
 
     @Test
     fun login_httpRequestMade_invokeCorrectEndpoint() {
         // Arrange
         val server = MockWebServer()
+        server.enqueue(MockResponse().setResponseCode(204))
         server.enqueue(MockResponse().setBody(FileUtilities.getFileContent(successfulLoginBodyPath)))
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.users
             .loginRequestBuilder()
-            .email("henrick@mail.com")
-            .password("1234567")
-            .pushNotificationToken("abcdxyz1234")
+            .phoneNumber("+244925571908")
+            .password("123456")
+            .role(UserType.Rider)
             .build()
 
         // Act
         request.login()
 
         // Assert
-        val recordedRequest = server.takeRequest()
-        Assert.assertEquals("/api/v1/passengers/login", recordedRequest.path?.toLowerCase())
+        val userExistenceRequest = server.takeRequest()
+        val authenticationRequest = server.takeRequest()
+
+        Assert.assertEquals("/api/v1/users/+244925571908/verify-existence?role=rider",
+            userExistenceRequest.path?.toLowerCase())
+        Assert.assertEquals("/connect/token", authenticationRequest.path?.toLowerCase())
     }
 
     @Test
     fun login_successfulLogin_returnsSuccessfulResponse() {
         // Arrange
         val server = MockWebServer()
+        server.enqueue(MockResponse().setResponseCode(204))
         server.enqueue(MockResponse().setBody(FileUtilities.getFileContent(successfulLoginBodyPath)))
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.users
             .loginRequestBuilder()
-            .email("henrick@mail.com")
-            .password("1234567")
-            .pushNotificationToken("abcdxyz1234")
+            .phoneNumber("+244925571908")
+            .password("123456")
+            .role(UserType.Rider)
             .build()
 
         // Act
@@ -73,17 +78,18 @@ class PassengerLoginRequestTests {
     fun login_successfulLogin_storeAuthenticationTokensAndUserType() {
         // Arrange
         val server = MockWebServer()
+        server.enqueue(MockResponse().setResponseCode(204))
         server.enqueue(MockResponse().setBody(FileUtilities.getFileContent(successfulLoginBodyPath)))
         server.start()
 
         val storeMock = Mockito.mock(SessionStore::class.java)
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString(), store = storeMock)
-        val request = taksapp.passengers
+        val request = taksapp.users
             .loginRequestBuilder()
-            .email("henrick@mail.com")
-            .password("1234567")
-            .pushNotificationToken("abcdxyz1234")
+            .phoneNumber("+244925571908")
+            .password("123456")
+            .role(UserType.Rider)
             .build()
 
         // Act
@@ -94,26 +100,27 @@ class PassengerLoginRequestTests {
         Mockito.verify(storeMock, Mockito.times(1))
             .saveAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         Mockito.verify(storeMock, Mockito.times(1))
-            .saveUserType(UserType.RIDER)
+            .saveUserType(UserType.Rider)
     }
 
     @Test
     fun login_incorrectCredentials_returnsIncorrectCredentialsError() {
         // Arrange
         val server = MockWebServer()
+        server.enqueue(MockResponse().setResponseCode(204))
         server.enqueue(
             MockResponse()
-                .setResponseCode(403)
+                .setResponseCode(400)
                 .setBody(FileUtilities.getFileContent(incorrectCredentialsBodyPath))
         )
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.users
             .loginRequestBuilder()
-            .email("henrick@mail.com")
-            .password("1234567")
-            .pushNotificationToken("abcdxyz1234")
+            .phoneNumber("+244925571908")
+            .password("123456")
+            .role(UserType.Rider)
             .build()
 
         // Act
@@ -128,19 +135,15 @@ class PassengerLoginRequestTests {
     fun login_nonExistentAccount_returnsAccountDoesNotExistsError() {
         // Arrange
         val server = MockWebServer()
-        server.enqueue(
-            MockResponse()
-                .setResponseCode(403)
-                .setBody(FileUtilities.getFileContent(accountDoesNotExistsBodyPath))
-        )
+        server.enqueue(MockResponse().setResponseCode(404))
         server.start()
 
         val taksapp = getTaksapp(baseUrl = server.url("").toString())
-        val request = taksapp.passengers
+        val request = taksapp.users
             .loginRequestBuilder()
-            .email("henrick@mail.com")
-            .password("1234567")
-            .pushNotificationToken("abcdxyz1234")
+            .phoneNumber("+244925571908")
+            .password("123456")
+            .role(UserType.Rider)
             .build()
 
         // Act

@@ -27,7 +27,7 @@
             android:id="@+id/imageview_logo"
             android:layout_width="@dimen/size_logo"
             android:layout_height="@dimen/size_logo"
-            app:layout_constraintBottom_toTopOf="@id/textinputlayout_email"
+            app:layout_constraintBottom_toTopOf="@id/textinputlayout_phone_number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toBottomOf="@id/imageview_logo" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textinputlayout_email"
+            android:id="@+id/textinputlayout_phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_small"
@@ -55,17 +55,18 @@
             app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:hint="@string/hint_email"
+            android:hint="@string/hint_phone_number"
             android:enabled="@{!viewModel.loading}"
-            app:error="@{viewModel.emailError}"
-            app:errorEnabled="@{viewModel.emailError != null}">
+            app:error="@{viewModel.phoneNumberError}"
+            app:errorEnabled="@{viewModel.phoneNumberError != null}">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext_email"
+                android:id="@+id/edittext_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:text="@={viewModel.email}" />
+                android:inputType="number"
+                android:maxLength="9"
+                android:text="@={viewModel.phoneNumber}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +90,8 @@
                 android:id="@+id/edittext_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
+                android:inputType="textPassword|number"
+                android:maxLength="6"
                 android:text="@={viewModel.password}"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -118,7 +120,7 @@
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_xlarge"
-            android:onClick="@{_ -> viewModel.login()}" />
+            android:onClick="@{_ -> viewModel.loginAsDriver()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

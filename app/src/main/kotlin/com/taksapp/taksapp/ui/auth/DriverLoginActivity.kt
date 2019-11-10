@@ -14,7 +14,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 
 class DriverLoginActivity : AppCompatActivity() {
-    private val loginViewModel: LoginViewModel by viewModel(qualifier = named("DriverLoginViewModel"))
+    private val loginViewModel: LoginViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

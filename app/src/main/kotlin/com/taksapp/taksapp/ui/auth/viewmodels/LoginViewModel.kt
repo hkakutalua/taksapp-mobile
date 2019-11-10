@@ -1,12 +1,13 @@
 package com.taksapp.taksapp.ui.auth.viewmodels
 
 import android.content.Context
-import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.arch.utils.Result
 import com.taksapp.taksapp.data.repositories.AuthenticationRepository
 import com.taksapp.taksapp.data.repositories.LoginError
 
@@ -15,29 +16,42 @@ class LoginViewModel(
     private val context: Context) : ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>()
-    private val _emailError = MutableLiveData<String>()
+    private val _phoneNumberError = MutableLiveData<String>()
     private val _passwordError = MutableLiveData<String>()
     private val _snackBarError = MutableLiveData<String>()
     private val _navigateToMain = MutableLiveData<Event<Nothing>>()
 
     val loading : LiveData<Boolean> = _loading
-    val email = MutableLiveData<String>()
+    val phoneNumber = MutableLiveData<String>()
     val password = MutableLiveData<String>()
-    val emailError : LiveData<String> = _emailError
+    val phoneNumberError : LiveData<String> = _phoneNumberError
     val passwordError : LiveData<String> = _passwordError
     val snackBarError : LiveData<String> = _snackBarError
     val navigateToMain : LiveData<Event<Nothing>> = _navigateToMain
 
     init {
-        email.observeForever { _emailError.value = null }
+        phoneNumber.observeForever { _phoneNumberError.value = null }
         password.observeForever { _passwordError.value = null }
     }
 
-    fun login() {
+    fun loginAsRider() {
         if (!validateFields())
             return
 
-        repository.login(email.value!!, password.value!!).observeForever { result ->
+        repository.loginAsRider("+244${phoneNumber.value!!}", password.value!!)
+            .observeForever(getLoginObserver())
+    }
+
+    fun loginAsDriver() {
+        if (!validateFields())
+            return
+
+        repository.loginAsDriver("+244${phoneNumber.value!!}", password.value!!)
+            .observeForever(getLoginObserver())
+    }
+
+    private fun getLoginObserver(): Observer<Result<Nothing, LoginError>> {
+        return Observer { result ->
             _loading.value = result.isLoading
 
             if (result.isSuccessful) {
@@ -47,11 +61,13 @@ class LoginViewModel(
                     LoginError.INCORRECT_CREDENTIALS ->
                         _passwordError.value = context.getString(R.string.text_incorrect_password)
                     LoginError.INEXISTENT_ACCOUNT ->
-                        _emailError.value = context.getString(R.string.text_inexistent_account)
+                        _phoneNumberError.value = context.getString(R.string.text_inexistent_account)
                     LoginError.SERVER_ERROR ->
                         _snackBarError.value = context.getString(R.string.text_server_error)
                     LoginError.INTERNET_ERROR ->
                         _snackBarError.value = context.getString(R.string.text_internet_error)
+                    LoginError.UNSUPPORTED_CLIENT ->
+                        _snackBarError.value = context.getString(R.string.text_unsupported_application)
                 }
             }
         }
@@ -60,13 +76,14 @@ class LoginViewModel(
     private fun validateFields(): Boolean {
         var successfulValidation = true
 
-        if (email.value.isNullOrBlank()) {
-            _emailError.value = context.getString(R.string.error_type_your_email)
+        if (phoneNumber.value.isNullOrBlank()) {
+            _phoneNumberError.value = context.getString(R.string.error_type_your_phone_number)
             successfulValidation = false
         }
 
-        if (email.value != null && !PatternsCompat.EMAIL_ADDRESS.matcher(email.value).matches()) {
-            _emailError.value = context.getString(R.string.error_type_a_correct_email)
+        if (!phoneNumber.value.isNullOrBlank() &&
+            phoneNumber.value!!.length < 9) {
+            _phoneNumberError.value = context.getString(R.string.error_type_a_correct_phone_number)
             successfulValidation = false
         }
 
