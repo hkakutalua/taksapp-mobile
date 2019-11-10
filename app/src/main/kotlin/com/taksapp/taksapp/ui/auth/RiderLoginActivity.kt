@@ -14,7 +14,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 
 class RiderLoginActivity : AppCompatActivity() {
-    private val loginViewModel: LoginViewModel by viewModel(qualifier = named("RiderLoginViewModel"))
+    private val loginViewModel: LoginViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

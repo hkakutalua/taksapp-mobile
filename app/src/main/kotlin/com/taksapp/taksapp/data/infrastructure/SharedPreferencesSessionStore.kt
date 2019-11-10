@@ -62,15 +62,15 @@ class SharedPreferencesSessionStore(private val context: Context) : SessionStore
 
     private fun userTypeToString(userType: UserType): String {
         return when (userType) {
-            UserType.DRIVER -> "driver"
-            UserType.RIDER -> "rider"
+            UserType.Driver -> "driver"
+            UserType.Rider -> "Rider"
         }
     }
 
     private fun userTypeFromString(userType: String): UserType {
         return when (userType) {
-            "driver" -> UserType.DRIVER
-            "rider" -> UserType.RIDER
+            "driver" -> UserType.Driver
+            "Rider" -> UserType.Rider
             else -> throw Exception("Uknown user type '$userType'")
         }
     }

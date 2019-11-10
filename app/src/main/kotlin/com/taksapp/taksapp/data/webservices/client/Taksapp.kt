@@ -2,8 +2,7 @@ package com.taksapp.taksapp.data.webservices.client
 
 import com.taksapp.taksapp.data.webservices.client.httpclients.HttpClient
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.JsonConverter
-import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource
-import com.taksapp.taksapp.data.webservices.client.resources.passengers.PassengersResource
+import com.taksapp.taksapp.data.webservices.client.resources.users.UsersResource
 
 enum class Environment {
     DEVELOPMENT,
@@ -68,6 +67,5 @@ public class Taksapp(
         }
     }
 
-    val passengers = PassengersResource(this, store = this.sessionStore)
-    val drivers = DriversResource(this, store = this.sessionStore)
+    val users = UsersResource(this, store = this.sessionStore)
 }
