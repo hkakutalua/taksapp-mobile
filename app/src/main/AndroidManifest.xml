@@ -22,22 +22,32 @@
         </activity>
         <activity
             android:name=".ui.auth.RiderLoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.WelcomeActivity">
+            android:parentActivityName=".ui.auth.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.auth.WelcomeActivity" />
         </activity>
         <activity
             android:name=".ui.auth.DriverLoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.WelcomeActivity">
+            android:parentActivityName=".ui.auth.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.auth.WelcomeActivity" />
         </activity>
+        <activity
+            android:name=".ui.auth.RiderSignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""
+            android:parentActivityName=".ui.auth.RiderLoginActivity" />
+        <activity
+            android:name=".ui.auth.RiderSignUpOtpConfirmationActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""
+            android:parentActivityName=".ui.auth.RiderLoginActivity" />
     </application>
 
 </manifest>

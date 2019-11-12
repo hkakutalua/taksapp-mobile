@@ -1,7 +1,9 @@
 package com.taksapp.taksapp.data.repositories
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.taksapp.taksapp.R
 import com.taksapp.taksapp.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.data.webservices.client.UserType
@@ -19,7 +21,18 @@ enum class LoginError {
     INTERNET_ERROR,
 }
 
-class AuthenticationRepository(private val taksapp: Taksapp) {
+enum class SignUpFields {
+    NO_FIELD,
+    PHONE_NUMBER,
+}
+
+enum class OtpConfirmationFields {
+    OTP,
+}
+
+class AuthenticationRepository(
+    private val taksapp: Taksapp,
+    private val context: Context) {
     fun loginAsRider(phoneNumber: String, password: String): LiveData<Result<Nothing, LoginError>> {
         return login(phoneNumber, password, UserType.Rider)
     }
@@ -62,5 +75,40 @@ class AuthenticationRepository(private val taksapp: Taksapp) {
         }
 
         return result
+    }
+
+    fun signUpAsRider(
+        firstName: String,
+        lastName: String,
+        phoneNumber: String,
+        password: String): LiveData<Result<Nothing, Map<SignUpFields, String>>> {
+
+        val result = MutableLiveData<Result<Nothing, Map<SignUpFields, String>>>()
+        result.value = Result.loading()
+
+        val signUpRequest = taksapp.users.signUpRequestBuilder()
+            .firstName(firstName)
+            .lastName(lastName)
+            .phoneNumber(phoneNumber)
+            .password(password)
+            .build()
+
+        GlobalScope.launch {
+            try {
+                val signUpResponse = signUpRequest.signUp()
+                if (signUpResponse.isSuccessful) {
+
+                } else {
+                    val errorsMap = mapErrorsList(signUpResponse.errors)
+                    result.postValue(Result.error(errorsMap))
+                }
+            } catch (e: InternalServerErrorException) {
+                val errorsMap = mapOf(
+                    SignUpFields.NO_FIELD to context.getString(R.string.text_server_error))
+                result.postValue(Result.error(errorsMap))
+            } catch (e: IOException) {
+
+            }
+        }
     }
 }
