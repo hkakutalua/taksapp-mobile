@@ -71,7 +71,7 @@ class UserLoginRequestTests {
 
         // Assert
         Assert.assertTrue(response.successful)
-        Assert.assertNull(response.errorCode)
+        Assert.assertNull(response.error)
     }
 
     @Test
@@ -128,7 +128,7 @@ class UserLoginRequestTests {
 
         // Assert
         Assert.assertFalse(response.successful)
-        Assert.assertEquals(LoginRequestError.INVALID_CREDENTIALS, response.errorCode)
+        Assert.assertEquals(LoginRequestError.INVALID_CREDENTIALS, response.error)
     }
 
     @Test
@@ -151,7 +151,7 @@ class UserLoginRequestTests {
 
         // Assert
         Assert.assertFalse(response.successful)
-        Assert.assertEquals(LoginRequestError.ACCOUNT_DOES_NOT_EXISTS, response.errorCode)
+        Assert.assertEquals(LoginRequestError.ACCOUNT_DOES_NOT_EXISTS, response.error)
     }
 
     private fun getTaksapp(

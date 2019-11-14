@@ -1,24 +1,24 @@
 package com.taksapp.taksapp.data.webservices.client
 
-public class Response<T, TErrorCode>(
+class Response<T, TError>(
     val successful: Boolean,
     val data: T?,
-    val errorCode: TErrorCode?) {
+    val error: TError?) {
 
     companion object {
         fun <T, TErrorCode> success(data: T?) : Response<T, TErrorCode> {
             return Response(
                 successful = true,
                 data = data,
-                errorCode = null
+                error = null
             )
         }
 
-        fun <T, TErrorCode> failure(errorCode: TErrorCode) : Response<T, TErrorCode> {
+        fun <T, TError> failure(error: TError) : Response<T, TError> {
             return Response(
                 successful = false,
                 data = null,
-                errorCode = errorCode
+                error = error
             )
         }
     }

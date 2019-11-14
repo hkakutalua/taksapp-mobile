@@ -9,6 +9,7 @@ import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.data.webservices.client.UserType
 import com.taksapp.taksapp.data.webservices.client.exceptions.InternalServerErrorException
 import com.taksapp.taksapp.data.webservices.client.resources.users.errors.LoginRequestError
+import com.taksapp.taksapp.data.webservices.client.resources.users.errors.SignUpError
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -61,7 +62,7 @@ class AuthenticationRepository(
                 if (response.successful) {
                     result.postValue(Result.success(null))
                 } else {
-                    when (response.errorCode) {
+                    when (response.error) {
                         LoginRequestError.ACCOUNT_DOES_NOT_EXISTS -> result.postValue(Result.error(LoginError.INEXISTENT_ACCOUNT))
                         LoginRequestError.INVALID_CREDENTIALS -> result.postValue(Result.error(LoginError.INCORRECT_CREDENTIALS))
                         LoginRequestError.UNSUPPORTED_CLIENT -> result.postValue(Result.error(LoginError.UNSUPPORTED_CLIENT))
@@ -77,13 +78,13 @@ class AuthenticationRepository(
         return result
     }
 
-    fun signUpAsRider(
+    fun startSignUpAsRider(
         firstName: String,
         lastName: String,
         phoneNumber: String,
-        password: String): LiveData<Result<Nothing, Map<SignUpFields, String>>> {
+        password: String): LiveData<Result<String, Map<SignUpFields, String>>> {
 
-        val result = MutableLiveData<Result<Nothing, Map<SignUpFields, String>>>()
+        val result = MutableLiveData<Result<String, Map<SignUpFields, String>>>()
         result.value = Result.loading()
 
         val signUpRequest = taksapp.users.signUpRequestBuilder()
@@ -96,19 +97,29 @@ class AuthenticationRepository(
         GlobalScope.launch {
             try {
                 val signUpResponse = signUpRequest.signUp()
-                if (signUpResponse.isSuccessful) {
-
+                if (signUpResponse.successful) {
+                    result.postValue(Result.success(signUpResponse.data))
                 } else {
-                    val errorsMap = mapErrorsList(signUpResponse.errors)
-                    result.postValue(Result.error(errorsMap))
+                    val errors = signUpResponse.error?.map { error: SignUpError ->
+                        when (error) {
+                            SignUpError.PHONE_NUMBER_ALREADY_REGISTERED ->
+                                SignUpFields.PHONE_NUMBER to context.getString(R.string.error_phone_number_already_registered)
+                        }
+                    }
+
+                    result.postValue(Result.error(errors?.toMap()))
                 }
             } catch (e: InternalServerErrorException) {
                 val errorsMap = mapOf(
                     SignUpFields.NO_FIELD to context.getString(R.string.text_server_error))
                 result.postValue(Result.error(errorsMap))
             } catch (e: IOException) {
-
+                val errorsMap = mapOf(
+                    SignUpFields.NO_FIELD to context.getString(R.string.text_internet_error))
+                result.postValue(Result.error(errorsMap))
             }
         }
+
+        return result
     }
 }

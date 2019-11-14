@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.arch.utils.Result
 import com.taksapp.taksapp.data.repositories.AuthenticationRepository
+import com.taksapp.taksapp.data.repositories.SignUpFields
 
 class RiderSignUpViewModel(
     private val repository: AuthenticationRepository,
@@ -16,6 +18,8 @@ class RiderSignUpViewModel(
     private val _firstAndLastNamesError = MutableLiveData<String>()
     private val _phoneNumberError = MutableLiveData<String>()
     private val _passwordError = MutableLiveData<String>()
+    private val _navigateToOtpConfirmation = MutableLiveData<Event<String>>()
+    private val _snackBarError = MutableLiveData<Event<String>>()
 
     val loading: LiveData<Boolean> = _loading
     val firstAndLastNamesError: LiveData<String> = _firstAndLastNamesError
@@ -24,6 +28,8 @@ class RiderSignUpViewModel(
     val firstAndLastNames = MutableLiveData<String>()
     val phoneNumber = MutableLiveData<String>()
     val password = MutableLiveData<String>()
+    val navigateToOtpConfirmation: LiveData<Event<String>> = _navigateToOtpConfirmation
+
 
     init {
         firstAndLastNames.observeForever { _firstAndLastNamesError.value = null }
@@ -35,7 +41,7 @@ class RiderSignUpViewModel(
         if (!validateFields())
             return
 
-        repository.signUpAsRider(
+        repository.startSignUpAsRider(
             firstName = extractFirstName(firstAndLastNames.value),
             lastName = extractLastName(firstAndLastNames.value),
             phoneNumber = "+244${phoneNumber.value}",
@@ -44,9 +50,20 @@ class RiderSignUpViewModel(
             _loading.value = result.isLoading
 
             if (result.isSuccessful) {
-                _navigateToMain.value = Event(null)
-            } else {
+                _navigateToOtpConfirmation.value = Event(result.data)
+            } else if (result.hasFailed) {
+                handleErrorsIfAvailable(result)
+            }
+        }
+    }
 
+    private fun handleErrorsIfAvailable(result: Result<String, Map<SignUpFields, String>>) {
+        val errorsMap = result.error
+        if (errorsMap != null) {
+            _phoneNumberError.value = errorsMap[SignUpFields.PHONE_NUMBER]
+
+            if (errorsMap[SignUpFields.NO_FIELD] != null) {
+                _snackBarError.value = Event(errorsMap[SignUpFields.NO_FIELD])
             }
         }
     }

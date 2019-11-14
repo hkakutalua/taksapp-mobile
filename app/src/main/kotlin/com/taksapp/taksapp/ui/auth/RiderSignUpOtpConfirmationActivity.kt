@@ -8,6 +8,9 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderSignUpOtpConfirmationBinding
 
 class RiderSignUpOtpConfirmationActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_OTP_ID = "OTP_ID"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

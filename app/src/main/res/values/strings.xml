@@ -31,4 +31,5 @@
     <string name="text_otp_confirmation">Verificação por SMS</string>
     <string name="error_type_your_first_and_last_names">Escreva seu primeiro e último nome</string>
     <string name="error_type_yout_first_and_last_names_only">Escreva somente seu primeiro e último nome</string>
+    <string name="error_phone_number_already_registered">Este número de telemóvel já foi registado</string>
 </resources>

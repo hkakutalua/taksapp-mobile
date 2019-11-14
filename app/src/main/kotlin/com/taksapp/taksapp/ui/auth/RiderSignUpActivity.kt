@@ -1,9 +1,11 @@
 package com.taksapp.taksapp.ui.auth
 
+import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderSignUpBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
@@ -23,5 +25,13 @@ class RiderSignUpActivity : AppCompatActivity() {
         binding.toolbar.setBackgroundColor(Color.TRANSPARENT)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        riderSignUpViewModel.navigateToOtpConfirmation.observe(this, Observer { event ->
+            if (!event.hasBeenHandled) {
+                val intent = Intent(this, RiderSignUpOtpConfirmationActivity::class.java)
+                intent.putExtra(RiderSignUpOtpConfirmationActivity.EXTRA_OTP_ID, event.getContentIfNotHandled())
+                startActivity(intent)
+            }
+        })
     }
 }

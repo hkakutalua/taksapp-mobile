@@ -6,5 +6,5 @@
     <dimen name="margin_normal">16dp</dimen>
     <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_xlarge">64dp</dimen>
-    <dimen name="margin_xxlarge">128</dimen>
+    <dimen name="margin_xxlarge">128dp</dimen>
 </resources>
