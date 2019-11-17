@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpOtpConfirmationViewModel" />
+    </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,6 +54,8 @@
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_normal"
+            app:errorEnabled="@{viewModel.otpError != null}"
+            app:error="@{viewModel.otpError}"
             app:counterEnabled="true"
             app:counterMaxLength="6">
             
@@ -56,9 +65,23 @@
                 android:hint="@string/hint_otp"
                 android:inputType="number"
                 android:gravity="center"
+                android:text="@={viewModel.otp}"
                 android:maxLength="6" />
         
         </com.google.android.material.textfield.TextInputLayout>
+        
+        <ProgressBar
+            android:id="@+id/progressbar_otp_confirmation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/button_confirm_otp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:visibility="@{viewModel.loading ? View.VISIBLE : View.INVISIBLE}"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
         
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_confirm_otp"
@@ -70,7 +93,9 @@
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_xxlarge"
-            android:text="@string/text_confirm_otp" />
+            android:enabled="@{!viewModel.loading}"
+            android:text="@string/text_confirm_otp"
+            android:onClick="confirmSignUpOtp"/>
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

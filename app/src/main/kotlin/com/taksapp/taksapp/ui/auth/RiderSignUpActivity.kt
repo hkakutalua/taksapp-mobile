@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderSignUpBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
@@ -31,6 +32,14 @@ class RiderSignUpActivity : AppCompatActivity() {
                 val intent = Intent(this, RiderSignUpOtpConfirmationActivity::class.java)
                 intent.putExtra(RiderSignUpOtpConfirmationActivity.EXTRA_OTP_ID, event.getContentIfNotHandled())
                 startActivity(intent)
+            }
+        })
+
+        riderSignUpViewModel.snackBarError.observe(this, Observer { event ->
+            if (!event.hasBeenHandled) {
+                Snackbar
+                    .make(findViewById(android.R.id.content), event.peekContent().orEmpty(), Snackbar.LENGTH_LONG)
+                    .show()
             }
         })
     }

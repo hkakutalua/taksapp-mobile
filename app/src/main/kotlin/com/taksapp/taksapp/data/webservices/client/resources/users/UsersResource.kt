@@ -3,6 +3,7 @@ package com.taksapp.taksapp.data.webservices.client.resources.users
 import com.taksapp.taksapp.data.webservices.client.ConfigurationProvider
 import com.taksapp.taksapp.data.webservices.client.SessionStore
 import com.taksapp.taksapp.data.webservices.client.resources.users.requests.LoginRequest
+import com.taksapp.taksapp.data.webservices.client.resources.users.requests.SignUpOtpConfirmationRequest
 import com.taksapp.taksapp.data.webservices.client.resources.users.requests.SignUpRequest
 
 class UsersResource(
@@ -15,5 +16,9 @@ class UsersResource(
 
     fun signUpRequestBuilder(): SignUpRequest.Builder {
         return SignUpRequest.Builder(configurationProvider)
+    }
+
+    fun signUpOtpConfirmationBuilder(): SignUpOtpConfirmationRequest.Builder {
+        return SignUpOtpConfirmationRequest.Builder(configurationProvider)
     }
 }

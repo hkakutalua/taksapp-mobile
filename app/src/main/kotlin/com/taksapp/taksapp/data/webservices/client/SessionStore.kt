@@ -1,8 +1,8 @@
 package com.taksapp.taksapp.data.webservices.client
 
 enum class UserType {
-    Rider,
-    Driver
+    RIDER,
+    DRIVER
 }
 
 interface SessionStore {

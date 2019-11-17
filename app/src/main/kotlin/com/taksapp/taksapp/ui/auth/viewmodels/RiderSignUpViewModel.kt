@@ -29,6 +29,7 @@ class RiderSignUpViewModel(
     val phoneNumber = MutableLiveData<String>()
     val password = MutableLiveData<String>()
     val navigateToOtpConfirmation: LiveData<Event<String>> = _navigateToOtpConfirmation
+    val snackBarError: LiveData<Event<String>> = _snackBarError
 
 
     init {

@@ -35,7 +35,7 @@ class UserLoginRequestTests {
             .loginRequestBuilder()
             .phoneNumber("+244925571908")
             .password("123456")
-            .role(UserType.Rider)
+            .role(UserType.RIDER)
             .build()
 
         // Act
@@ -63,7 +63,7 @@ class UserLoginRequestTests {
             .loginRequestBuilder()
             .phoneNumber("+244925571908")
             .password("123456")
-            .role(UserType.Rider)
+            .role(UserType.RIDER)
             .build()
 
         // Act
@@ -89,7 +89,7 @@ class UserLoginRequestTests {
             .loginRequestBuilder()
             .phoneNumber("+244925571908")
             .password("123456")
-            .role(UserType.Rider)
+            .role(UserType.RIDER)
             .build()
 
         // Act
@@ -100,7 +100,7 @@ class UserLoginRequestTests {
         Mockito.verify(storeMock, Mockito.times(1))
             .saveAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         Mockito.verify(storeMock, Mockito.times(1))
-            .saveUserType(UserType.Rider)
+            .saveUserType(UserType.RIDER)
     }
 
     @Test
@@ -120,7 +120,7 @@ class UserLoginRequestTests {
             .loginRequestBuilder()
             .phoneNumber("+244925571908")
             .password("123456")
-            .role(UserType.Rider)
+            .role(UserType.RIDER)
             .build()
 
         // Act
@@ -143,7 +143,7 @@ class UserLoginRequestTests {
             .loginRequestBuilder()
             .phoneNumber("+244925571908")
             .password("123456")
-            .role(UserType.Rider)
+            .role(UserType.RIDER)
             .build()
 
         // Act
