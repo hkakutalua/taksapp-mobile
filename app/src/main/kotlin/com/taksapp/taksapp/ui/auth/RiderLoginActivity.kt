@@ -1,8 +1,10 @@
 package com.taksapp.taksapp.ui.auth
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -11,7 +13,6 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.qualifier.named
 
 class RiderLoginActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModel()
@@ -36,5 +37,9 @@ class RiderLoginActivity : AppCompatActivity() {
         loginViewModel.navigateToMain.observe(this, Observer {
             Toast.makeText(this, "Successful login", Toast.LENGTH_LONG).show()
         })
+    }
+
+    fun navigateToSignUp(view: View) {
+        startActivity(Intent(this, RiderSignUpActivity::class.java))
     }
 }

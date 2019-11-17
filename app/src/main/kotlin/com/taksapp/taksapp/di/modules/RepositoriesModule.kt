@@ -5,5 +5,5 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val repositoriesModule = module {
-    single {AuthenticationRepository(get())}
+    single {AuthenticationRepository(get(), get())}
 }

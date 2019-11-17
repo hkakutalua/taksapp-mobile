@@ -23,4 +23,17 @@
     <string name="text_session_expired">A sua sessão expirou</string>
     <string name="text_sign_in_as_driver">Entrar Como Motorista</string>
     <string name="text_unsupported_application">A versão desta aplicação instalada já não é suportada.</string>
+    <string name="text_sign_up">Registar-me</string>
+    <string name="hint_name">Primeiro e último nome</string>
+    <string name="text_sign_up_as_rider">Registo como passageiro</string>
+    <string name="text_confirm_otp">Confirmar</string>
+    <string name="hint_otp">Código de Verificação</string>
+    <string name="text_otp_confirmation">Verificação por SMS</string>
+    <string name="error_type_your_first_and_last_names">Escreva seu primeiro e último nome</string>
+    <string name="error_type_yout_first_and_last_names_only">Escreva somente seu primeiro e último nome</string>
+    <string name="error_phone_number_already_registered">Este número de telemóvel já foi registado</string>
+    <string name="error_type_the_sign_up_otp">Escreva o código de confirmação por SMS</string>
+    <string name="error_type_a_correct_otp">O código de confirmação tem de ter 6 dígitos</string>
+    <string name="error_otp_expired">O código de verificação expirou</string>
+    <string name="error_incorrect_otp">Código de confirmação incorrecto</string>
 </resources>

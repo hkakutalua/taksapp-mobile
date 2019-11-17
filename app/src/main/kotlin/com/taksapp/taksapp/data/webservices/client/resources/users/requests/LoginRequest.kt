@@ -26,7 +26,7 @@ class LoginRequest(
     ) {
         private var phoneNumber = ""
         private var password = ""
-        private var role = UserType.Rider
+        private var role = UserType.RIDER
 
         fun phoneNumber(phoneNumber: String): Builder {
             this.phoneNumber = phoneNumber

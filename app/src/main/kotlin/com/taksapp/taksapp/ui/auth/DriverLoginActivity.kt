@@ -11,7 +11,6 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityDriverLoginBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.qualifier.named
 
 class DriverLoginActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModel()

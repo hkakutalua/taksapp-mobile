@@ -2,19 +2,19 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel" />
+            type="com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel" />
     </data>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.auth.DriverLoginActivity">
-
+        tools:context=".ui.auth.RiderSignUpActivity">
+        
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
@@ -22,105 +22,121 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
+        
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageview_logo"
             android:layout_width="@dimen/size_logo"
             android:layout_height="@dimen/size_logo"
-            app:layout_constraintBottom_toTopOf="@id/textinputlayout_phone_number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textinputlayout_first_and_last_names"
             app:srcCompat="@drawable/ic_logo" />
-
+        
         <TextView
-            android:id="@+id/text_sign_in_as_driver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/text_sign_in_as_driver"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageview_logo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageview_logo" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/text_sign_up_as_rider"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textinputlayout_first_and_last_names"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textinputlayout_phone_number"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_small"
+            app:error="@{viewModel.firstAndLastNamesError}"
+            app:errorEnabled="@{viewModel.firstAndLastNamesError != null}">
+            
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_name"
+                android:text="@={viewModel.firstAndLastNames}"/>
+        
+        </com.google.android.material.textfield.TextInputLayout>
+        
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinputlayout_phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_small"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            app:layout_constraintBottom_toTopOf="@id/textinputlayout_password"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:hint="@string/hint_phone_number"
-            android:enabled="@{!viewModel.loading}"
+            android:layout_marginBottom="@dimen/margin_small"
             app:error="@{viewModel.phoneNumberError}"
             app:errorEnabled="@{viewModel.phoneNumberError != null}">
-
+            
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/hint_phone_number"
                 android:inputType="number"
-                android:maxLength="9"
                 android:text="@={viewModel.phoneNumber}" />
-
+            
         </com.google.android.material.textfield.TextInputLayout>
-
+        
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinputlayout_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/button_sign_up"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
-            app:layout_constraintBottom_toTopOf="@id/button_login"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:hint="@string/hint_password"
-            android:enabled="@{!viewModel.loading}"
-            app:error="@{viewModel.passwordError}"
+            android:layout_marginBottom="@dimen/margin_normal"
             app:passwordToggleEnabled="true"
+            app:error="@{viewModel.passwordError}"
             app:errorEnabled="@{viewModel.passwordError != null}">
-
+            
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
                 android:inputType="numberPassword"
                 android:maxLength="6"
                 android:text="@={viewModel.password}"/>
-
+        
         </com.google.android.material.textfield.TextInputLayout>
-
+    
         <ProgressBar
             android:id="@+id/progressbar_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            app:layout_constraintBottom_toTopOf="@id/button_login"
-            app:layout_constraintEnd_toEndOf="@id/button_login"
-            app:layout_constraintStart_toStartOf="@id/button_login"
+            app:layout_constraintBottom_toTopOf="@id/button_sign_up"
+            app:layout_constraintEnd_toEndOf="@id/button_sign_up"
+            app:layout_constraintStart_toStartOf="@id/button_sign_up"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:visibility="@{viewModel.loading ? View.VISIBLE : View.INVISIBLE}"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
-
+        
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_login"
+            android:id="@+id/button_sign_up"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/text_login"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_xlarge"
-            android:onClick="@{_ -> viewModel.loginAsDriver()}" />
-
+            android:text="@string/text_sign_up"
+            android:enabled="@{!viewModel.loading}"
+            android:onClick="@{_ -> viewModel.signUp()}"/>
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
