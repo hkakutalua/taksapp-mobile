@@ -36,4 +36,12 @@
     <string name="error_type_a_correct_otp">O código de confirmação tem de ter 6 dígitos</string>
     <string name="error_otp_expired">O código de verificação expirou</string>
     <string name="error_incorrect_otp">Código de confirmação incorrecto</string>
+    
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_choose_start_location">Escolher a localização inicial</string>
+    <string name="text_confirm">Confirmar</string>
+    <string name="text_start_place_label">Escolha o local de partida</string>
+    <string name="text_destination_place_label">Escolha o local de chegada</string>
+    <string name="text_type_the_place_hint">Escreva o local</string>
 </resources>

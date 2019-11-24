@@ -7,4 +7,5 @@
     <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_xlarge">64dp</dimen>
     <dimen name="margin_xxlarge">128dp</dimen>
+    <dimen name="list_item_icon">40dp</dimen>
 </resources>

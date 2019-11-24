@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_graph.xml"
+    app:startDestination="@id/locationsSelectionFragment">
+    
+    <fragment
+        android:id="@+id/locationsSelectionFragment"
+        android:name="com.taksapp.taksapp.ui.taxi.LocationsSelectionFragment"
+        android:label="LocationsSelectionFragment" >
+        <action
+            android:id="@+id/action_locationsSelectionFragment_to_faresEstimatesFragment"
+            app:destination="@id/faresEstimatesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/faresEstimatesFragment"
+        android:name="com.taksapp.taksapp.ui.taxi.FaresEstimatesFragment"
+        android:label="FaresEstimatesFragment" />
+</navigation>

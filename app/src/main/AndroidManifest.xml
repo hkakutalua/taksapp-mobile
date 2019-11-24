@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taksapp.taksapp">
-
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:name=".TaksappApplication"
         android:allowBackup="true"
@@ -12,14 +14,26 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.auth.WelcomeActivity"
+            android:name=".ui.taxi.AutocompletePlaceChooserActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.taxi.MainActivity"/>
+        
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        
+        <activity
+            android:name=".ui.taxi.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.auth.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.auth.RiderLoginActivity"
             android:label=""
@@ -40,14 +54,14 @@
         </activity>
         <activity
             android:name=".ui.auth.RiderSignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.RiderLoginActivity" />
+            android:parentActivityName=".ui.auth.RiderLoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.auth.RiderSignUpOtpConfirmationActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.RiderLoginActivity" />
+            android:parentActivityName=".ui.auth.RiderLoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
