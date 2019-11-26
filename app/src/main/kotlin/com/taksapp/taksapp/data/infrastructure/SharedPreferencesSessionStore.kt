@@ -71,7 +71,7 @@ class SharedPreferencesSessionStore(private val context: Context) : SessionStore
         return when (userType) {
             "driver" -> UserType.DRIVER
             "RIDER" -> UserType.RIDER
-            else -> throw Exception("Uknown user type '$userType'")
+            else -> throw Exception("Unknown user type '$userType'")
         }
     }
 }

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.data.webservices.client.SessionExpiredCallback
-import com.taksapp.taksapp.ui.auth.WelcomeActivity
+import com.taksapp.taksapp.ui.launch.WelcomeActivity
 
 class SessionExpiryHandler(val context: Context) : SessionExpiredCallback {
     override fun onSessionExpired() {

@@ -8,10 +8,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.taksapp.taksapp.R
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class RiderMainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_rider_main)
         val mapFragment: SupportMapFragment? =
             supportFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)

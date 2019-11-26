@@ -3,11 +3,13 @@ package com.taksapp.taksapp.di.modules
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
+import com.taksapp.taksapp.ui.launch.viewmodels.LaunchViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val viewModelsModule = module {
+    viewModel { LaunchViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
     viewModel { RiderSignUpViewModel(get(), get()) }
     viewModel { RiderSignUpOtpConfirmationViewModel(get(), get()) }
