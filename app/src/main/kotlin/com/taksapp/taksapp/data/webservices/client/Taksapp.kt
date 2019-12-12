@@ -18,7 +18,6 @@ interface ConfigurationProvider {
 
 public class Taksapp(
     val environment: Environment,
-    val sessionExpiredCallback: SessionExpiredCallback,
     override val sessionStore: SessionStore,
     override val client: HttpClient,
     override val jsonConverter: JsonConverter)
@@ -26,7 +25,7 @@ public class Taksapp(
 
     class Builder {
         private lateinit var environment: Environment
-        private lateinit var sessionExpiredCallback: SessionExpiredCallback
+        private lateinit var sessionExpiryListener: SessionExpiryListener
         private lateinit var sessionStore: SessionStore
         private lateinit var client: HttpClient
         private lateinit var jsonConverter: JsonConverter
@@ -36,8 +35,8 @@ public class Taksapp(
             return this
         }
 
-        fun sessionExpiredCallback(callback: SessionExpiredCallback): Builder {
-            this.sessionExpiredCallback = callback
+        fun sessionExpiredCallback(callback: SessionExpiryListener): Builder {
+            this.sessionExpiryListener = callback
             return this
         }
 
@@ -59,7 +58,6 @@ public class Taksapp(
         fun build(): Taksapp {
             return Taksapp(
                 environment = this.environment,
-                sessionExpiredCallback = this.sessionExpiredCallback,
                 sessionStore = this.sessionStore,
                 client = this.client,
                 jsonConverter = this.jsonConverter

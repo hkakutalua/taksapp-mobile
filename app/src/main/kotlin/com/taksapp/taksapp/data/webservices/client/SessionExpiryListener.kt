@@ -1,5 +1,5 @@
 package com.taksapp.taksapp.data.webservices.client
 
-interface SessionExpiredCallback {
+interface SessionExpiryListener {
     fun onSessionExpired()
 }
