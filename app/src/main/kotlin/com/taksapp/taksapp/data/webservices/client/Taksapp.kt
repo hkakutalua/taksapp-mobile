@@ -2,6 +2,7 @@ package com.taksapp.taksapp.data.webservices.client
 
 import com.taksapp.taksapp.data.webservices.client.httpclients.HttpClient
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.JsonConverter
+import com.taksapp.taksapp.data.webservices.client.resources.places.PlacesResource
 import com.taksapp.taksapp.data.webservices.client.resources.users.UsersResource
 
 enum class Environment {
@@ -66,4 +67,5 @@ public class Taksapp(
     }
 
     val users = UsersResource(this, store = this.sessionStore)
+    val places = PlacesResource(this)
 }

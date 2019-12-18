@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <data>
+        <import type="android.view.View" />
+        <variable name="viewModel" type="com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel" />
+    </data>
+    
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,9 +41,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
-                android:text="@string/text_start_place_label"
+                android:text="@{viewModel.startLocation ?? @string/text_start_place_label}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/color_label_text"
+                android:textColor="@{viewModel.startLocation == null ? @color/color_label_text : @android:color/black}"
                 android:maxLines="1"
                 android:ellipsize="end" />
         
@@ -102,8 +107,8 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:maxLines="1"
-                android:textColor="@color/color_label_text"
-                android:text="@string/text_destination_place_label"
+                android:textColor="@{viewModel.destinationLocation == null ? @color/color_label_text : @android:color/black}"
+                android:text="@{viewModel.destinationLocation ?? @string/text_destination_place_label}"
                 android:ellipsize="end" />
         
             <androidx.appcompat.widget.AppCompatImageView
@@ -134,9 +139,10 @@
                 android:layout_height="wrap_content"
                 android:insetBottom="0dp"
                 android:insetTop="0dp"
-                app:cornerRadius="0dp"
-                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:cornerRadius="0dp"
+                android:enabled="@{viewModel.canFetchFareEstimation}"
+                android:textColor="@android:color/white"
                 android:text="@string/text_confirm" />
         
             <ProgressBar
@@ -147,7 +153,7 @@
                 app:layout_constraintTop_toTopOf="@id/button_next"
                 app:layout_constraintBottom_toBottomOf="@id/button_next"
                 android:layout_marginEnd="@dimen/margin_small"
-                android:visibility="gone"
+                android:visibility="@{viewModel.estimatingFare ? View.VISIBLE : View.GONE}"
                 tools:visibility="visible"/>
         
             <androidx.constraintlayout.widget.Guideline

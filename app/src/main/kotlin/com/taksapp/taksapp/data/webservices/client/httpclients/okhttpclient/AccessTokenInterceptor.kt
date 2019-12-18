@@ -11,9 +11,14 @@ class AccessTokenInterceptor(private val sessionStore: SessionStore) : Intercept
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        request.headers.newBuilder()
-            .add("Authentication", " Bearer ${sessionStore.getAccessToken()}")
+        val rebuiltHeaders = request.headers.newBuilder()
+            .add("Authorization", "Bearer ${sessionStore.getAccessToken()}")
+            .build()
 
-        return chain.proceed(request)
+        val rebuiltRequest = request.newBuilder()
+            .headers(rebuiltHeaders)
+            .build()
+
+        return chain.proceed(rebuiltRequest)
     }
 }

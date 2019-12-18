@@ -34,7 +34,8 @@
         
         <activity
             android:name=".ui.taxi.RiderMainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.launch.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>

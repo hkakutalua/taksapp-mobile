@@ -2,16 +2,16 @@ package com.taksapp.taksapp.ui.auth
 
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
+import com.taksapp.taksapp.ui.taxi.RiderMainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderLoginActivity : AppCompatActivity() {
@@ -35,7 +35,10 @@ class RiderLoginActivity : AppCompatActivity() {
         })
 
         loginViewModel.navigateToMain.observe(this, Observer {
-            Toast.makeText(this, "Successful login", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, RiderMainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
         })
     }
 

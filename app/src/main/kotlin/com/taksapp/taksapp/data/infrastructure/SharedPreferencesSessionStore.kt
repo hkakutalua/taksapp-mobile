@@ -60,6 +60,17 @@ class SharedPreferencesSessionStore(private val context: Context) : SessionStore
         return userTypeFromString(userType)
     }
 
+    override fun clearAll() {
+        val editor = PreferenceManager
+            .getDefaultSharedPreferences(context)
+            .edit()
+
+        editor.remove(accessTokenKey)
+        editor.remove(refreshTokenKey)
+        editor.remove(userTypeKey)
+        editor.apply()
+    }
+
     private fun userTypeToString(userType: UserType): String {
         return when (userType) {
             UserType.DRIVER -> "driver"

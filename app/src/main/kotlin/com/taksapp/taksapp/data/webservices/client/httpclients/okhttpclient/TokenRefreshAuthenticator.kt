@@ -1,5 +1,7 @@
 package com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient
 
+import android.os.Handler
+import android.os.Looper
 import com.taksapp.taksapp.BuildConfig
 import com.taksapp.taksapp.data.webservices.client.SessionExpiryListener
 import com.taksapp.taksapp.data.webservices.client.SessionStore
@@ -22,14 +24,17 @@ class TokenRefreshAuthenticator(
     private var challengeTries = 0
 
     override fun authenticate(route: Route?, response: Response): Request? {
+        val handler = Handler(Looper.getMainLooper())
+
         if (shouldGiveUpAuthentication()) {
-            sessionExpiryListener.onSessionExpired()
+            sessionStore.clearAll()
+            handler.post { sessionExpiryListener.onSessionExpired() }
             return null
         }
 
         val refreshToken = sessionStore.getRefreshToken()
         if (refreshToken.isBlank()) {
-            sessionExpiryListener.onSessionExpired()
+            handler.post { sessionExpiryListener.onSessionExpired() }
             return null
         }
 
@@ -59,7 +64,8 @@ class TokenRefreshAuthenticator(
                 .build()
         }
 
-        sessionExpiryListener.onSessionExpired()
+        sessionStore.clearAll()
+        handler.post { sessionExpiryListener.onSessionExpired() }
         return null
     }
 
