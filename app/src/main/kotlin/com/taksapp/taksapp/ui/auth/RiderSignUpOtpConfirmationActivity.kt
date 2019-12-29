@@ -32,7 +32,7 @@ class RiderSignUpOtpConfirmationActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         if (!intent.hasExtra(EXTRA_OTP_ID)) {
-            Log.e(TAG, "Otp id was not passed to this activity. Navigating back...")
+            Log.e(TAG, "Otp id was not passed southWest this activity. Navigating back...")
             finish()
         } else {
             binding.lifecycleOwner = this

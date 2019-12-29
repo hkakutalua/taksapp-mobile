@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.taxi.LocationsSelectionFragment">
     
     <data>
         <import type="android.view.View" />
@@ -143,18 +144,22 @@
                 app:cornerRadius="0dp"
                 android:enabled="@{viewModel.canFetchFareEstimation}"
                 android:textColor="@android:color/white"
-                android:text="@string/text_confirm" />
+                android:text="@string/text_confirm"
+                android:onClick="@{_ -> viewModel.fetchFareEstimationWithRoute()}"/>
         
             <ProgressBar
                 android:id="@+id/progressbar_directions_fetch"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:layout_constraintRight_toRightOf="@id/button_next"
-                app:layout_constraintTop_toTopOf="@id/button_next"
-                app:layout_constraintBottom_toBottomOf="@id/button_next"
-                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/button_next"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:indeterminate="true"
                 android:visibility="@{viewModel.estimatingFare ? View.VISIBLE : View.GONE}"
-                tools:visibility="visible"/>
+                tools:visibility="visible"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
         
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_start"

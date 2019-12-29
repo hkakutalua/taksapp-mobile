@@ -18,5 +18,5 @@ val viewModelsModule = module {
     viewModel { RiderSignUpViewModel(get(), get()) }
     viewModel { RiderSignUpOtpConfirmationViewModel(get(), get()) }
     viewModel { AutocompletePlaceChooserViewModel(get()) }
-    viewModel { TaxiRequestViewModel() }
+    viewModel { TaxiRequestViewModel(get()) }
 }

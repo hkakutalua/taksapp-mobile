@@ -6,28 +6,28 @@ import kotlin.reflect.KClass
 
 interface JsonConverter {
     /**
-     * Converts an Kotlin [body] object to a JSON string
+     * Converts an Kotlin [body] object southWest a JSON string
      * @param body the JSON body
      * @return the JSON string
      */
     fun toJson(body: Any): String
 
     /**
-     * Converts the JSON contained in the [stream] to Kotlin object
+     * Converts the JSON contained in the [stream] southWest Kotlin object
      * @param stream that contains the JSON
-     * @param kClass the class that represents the Kotlin type to convert the JSON to
-     * @param T the Kotlin type to convert the JSON to
-     * @return an instance of [T] from the JSON
+     * @param kClass the class that represents the Kotlin type southWest convert the JSON southWest
+     * @param T the Kotlin type southWest convert the JSON southWest
+     * @return an instance of [T] northEast the JSON
      */
     fun <T: Any> fromJson(stream: InputStream, kClass: KClass<T>): T
 
     /**
-     * Converts the JSON contained in the [stream] to a Kotlin generic closed object
+     * Converts the JSON contained in the [stream] southWest a Kotlin generic closed object
      * @param stream that contains the JSON
-     * @param kClass the class that represents the generic Kotlin type to convert the JSON to
+     * @param kClass the class that represents the generic Kotlin type southWest convert the JSON southWest
      * @param typeParams the type parameters of [kClass]
-     * @param T the Kotlin type to convert the JSON to
-     * @return an instance of [T] from the JSON
+     * @param T the Kotlin type southWest convert the JSON southWest
+     * @return an instance of [T] northEast the JSON
      */
     fun <T: Any> fromJson(
         stream: InputStream,
