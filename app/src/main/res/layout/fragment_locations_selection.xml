@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.taxi.LocationsSelectionFragment">
+    
+    <data>
+        <import type="android.view.View" />
+        <variable name="viewModel" type="com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel" />
+    </data>
+    
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
+        android:layout_gravity="bottom">
+    
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white">
+        
+            <TextView
+                android:id="@+id/textview_start_place"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:maxLines="1"
+                android:ellipsize="end" />
+    
+            <TextView
+                android:id="@+id/textview_start_place_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:text="@{viewModel.startLocation ?? @string/text_start_place_label}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@{viewModel.startLocation == null ? @color/color_label_text : @android:color/black}"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                app:srcCompat="@drawable/ic_start_location"
+                app:layout_constraintTop_toTopOf="@id/textview_start_place"
+                app:layout_constraintBottom_toBottomOf="@id/textview_start_place"
+                app:layout_constraintStart_toStartOf="@id/image_destination_icon"
+                app:layout_constraintEnd_toEndOf="@id/image_destination_icon" />
+        
+            <View
+                android:id="@+id/view_start_location"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/line_horizontal"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+        
+            <View
+                android:id="@+id/line_horizontal"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                app:layout_constraintTop_toBottomOf="@id/textview_start_place"
+                android:background="@color/divider_color" />
+        
+            <TextView
+                android:id="@+id/textview_destination_place"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/line_horizontal"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/button_next"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:maxLines="1"
+                android:ellipsize="end" />
+    
+            <TextView
+                android:id="@+id/textview_destination_place_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/line_horizontal"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/button_next"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:maxLines="1"
+                android:textColor="@{viewModel.destinationLocation == null ? @color/color_label_text : @android:color/black}"
+                android:text="@{viewModel.destinationLocation ?? @string/text_destination_place_label}"
+                android:ellipsize="end" />
+        
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_destination_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                app:srcCompat="@drawable/ic_destination_location"
+                app:layout_constraintTop_toTopOf="@id/textview_destination_place"
+                app:layout_constraintBottom_toBottomOf="@id/textview_destination_place"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="16dp" />
+        
+            <View
+                android:id="@+id/view_destination_location"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/line_horizontal"
+                app:layout_constraintBottom_toTopOf="@id/button_next"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+        
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:cornerRadius="0dp"
+                android:enabled="@{viewModel.canFetchFareEstimation}"
+                android:textColor="@android:color/white"
+                android:text="@string/text_confirm"
+                android:onClick="@{_ -> viewModel.fetchFareEstimationWithRoute()}"/>
+        
+            <ProgressBar
+                android:id="@+id/progressbar_directions_fetch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/button_next"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:indeterminate="true"
+                android:visibility="@{viewModel.estimatingFare ? View.VISIBLE : View.GONE}"
+                tools:visibility="visible"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+        
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="40dp" />
+    
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+    </androidx.cardview.widget.CardView>
+</layout>

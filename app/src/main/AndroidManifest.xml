@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taksapp.taksapp">
-
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:name=".TaksappApplication"
         android:allowBackup="true"
@@ -11,43 +13,60 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        
         <activity
-            android:name=".ui.auth.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".ui.launch.LaunchActivity"
+            android:theme="@style/AppTheme.Launch">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+        
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".ui.taxi.AutocompletePlaceChooserActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.taxi.RiderMainActivity"/>
+        
+        <activity
+            android:name=".ui.taxi.RiderMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.launch.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.auth.RiderLoginActivity"
             android:label=""
-            android:parentActivityName=".ui.auth.WelcomeActivity"
+            android:parentActivityName=".ui.launch.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.auth.WelcomeActivity" />
+                android:value=".ui.launch.WelcomeActivity" />
         </activity>
         <activity
             android:name=".ui.auth.DriverLoginActivity"
             android:label=""
-            android:parentActivityName=".ui.auth.WelcomeActivity"
+            android:parentActivityName=".ui.launch.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.auth.WelcomeActivity" />
+                android:value=".ui.launch.WelcomeActivity" />
         </activity>
         <activity
             android:name=".ui.auth.RiderSignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.RiderLoginActivity" />
+            android:parentActivityName=".ui.auth.RiderLoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.auth.RiderSignUpOtpConfirmationActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""
-            android:parentActivityName=".ui.auth.RiderLoginActivity" />
+            android:parentActivityName=".ui.auth.RiderLoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

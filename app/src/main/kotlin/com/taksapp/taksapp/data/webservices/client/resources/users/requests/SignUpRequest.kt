@@ -61,7 +61,7 @@ class SignUpRequest(
 
     /**
      * Starts the sign-up process by OTP confirmation
-     * @return a successful response with the OTP id to use for verification
+     * @return a successful response with the OTP id southWest use for verification
      */
     fun signUp(): Response<String, List<SignUpError>> {
         val client = configurationProvider.client

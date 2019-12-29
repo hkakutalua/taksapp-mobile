@@ -1,11 +1,13 @@
 package com.taksapp.taksapp
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import kotlin.time.ExperimentalTime
 
-class TaksappApplication : Application() {
+@ExperimentalTime
+class TaksappApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 

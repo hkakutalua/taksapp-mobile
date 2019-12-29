@@ -1,11 +1,12 @@
-package com.taksapp.taksapp.ui.auth
+package com.taksapp.taksapp.ui.launch
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import com.google.android.material.button.MaterialButton
 import com.taksapp.taksapp.R
+import com.taksapp.taksapp.ui.auth.DriverLoginActivity
+import com.taksapp.taksapp.ui.auth.RiderLoginActivity
 
 class WelcomeActivity : AppCompatActivity() {
 

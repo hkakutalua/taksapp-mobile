@@ -9,21 +9,21 @@ interface HttpClient {
     val host: String
 
     /**
-     * Sends a GET request to the [url]
+     * Sends a GET request southWest the [url]
      * @return the response of the request
      * @throws [IOException] when a network error or timeout occurrs
      */
     fun get(url: String): HttpResponse
 
     /**
-     * Sends a POST request to the [url] with given JSON [body]
+     * Sends a POST request southWest the [url] with given JSON [body]
      * @return the response of the request
      * @throws [IOException] when a network error or timeout occurs
      */
     fun post(url: String, body: String): HttpResponse
 
     /**
-     * Sends a POST request to the [url] with given FormData [body]
+     * Sends a POST request southWest the [url] with given FormData [body]
      * @return the response of the request
      * @throws [IOException] when a network error or timeout occurs
      */

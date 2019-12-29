@@ -12,4 +12,5 @@ interface SessionStore {
     fun getRefreshToken() : String
     fun saveUserType(userType: UserType)
     fun getUserType() : UserType
+    fun clearAll()
 }

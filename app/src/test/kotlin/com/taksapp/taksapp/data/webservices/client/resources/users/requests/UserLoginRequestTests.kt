@@ -1,7 +1,9 @@
 package com.taksapp.taksapp.data.webservices.client.resources.users.requests
 
 import com.taksapp.taksapp.data.webservices.client.*
-import com.taksapp.taksapp.data.webservices.client.httpclients.OkHttpClientAdapter
+import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.NullAuthenticator
+import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.NullInterceptor
+import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.OkHttpClientAdapter
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.MoshiJsonConverterAdapter
 import com.taksapp.taksapp.data.webservices.client.resources.users.errors.LoginRequestError
 import com.taksapp.taksapp.utils.FileUtilities
@@ -160,10 +162,17 @@ class UserLoginRequestTests {
     ): Taksapp {
         return Taksapp.Builder()
             .environment(Environment.PRODUCTION)
-            .client(OkHttpClientAdapter(baseUrl, timeout = 30.toDuration(TimeUnit.SECONDS)))
+            .client(
+                OkHttpClientAdapter(
+                    baseUrl,
+                    timeout = 30.toDuration(TimeUnit.SECONDS),
+                    tokenRefreshAuthenticator = NullAuthenticator(),
+                    accessTokenInterceptor = NullInterceptor()
+                )
+            )
             .jsonConverter(MoshiJsonConverterAdapter())
             .sessionStore(store)
-            .sessionExpiredCallback(Mockito.mock(SessionExpiredCallback::class.java))
+            .sessionExpiredCallback(Mockito.mock(SessionExpiryListener::class.java))
             .build()
     }
 }

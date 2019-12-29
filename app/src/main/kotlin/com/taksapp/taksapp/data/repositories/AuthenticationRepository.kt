@@ -35,6 +35,12 @@ enum class OtpConfirmationError {
     INTERNET_CONNECTION_ERROR
 }
 
+enum class LoginStatus {
+    LOGGED_IN_AS_RIDER,
+    LOGGED_IN_AS_DRIVER,
+    NOT_LOGGED_IN
+}
+
 class AuthenticationRepository(
     private val taksapp: Taksapp,
     private val context: Context) {
@@ -162,5 +168,21 @@ class AuthenticationRepository(
         }
 
         return result
+    }
+
+    fun getLoginStatus(): LiveData<LoginStatus> {
+        val sessionStore = taksapp.sessionStore
+        val loginStatus = MutableLiveData<LoginStatus>()
+
+        if (sessionStore.getAccessToken().isNotBlank()) {
+            when (sessionStore.getUserType()) {
+                UserType.RIDER -> loginStatus.value = LoginStatus.LOGGED_IN_AS_RIDER
+                UserType.DRIVER -> loginStatus.value = LoginStatus.LOGGED_IN_AS_DRIVER
+            }
+        } else {
+            loginStatus.value = LoginStatus.NOT_LOGGED_IN
+        }
+
+        return loginStatus
     }
 }
