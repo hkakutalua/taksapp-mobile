@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/taxi_request_graph"
+    app:startDestination="@id/taxiRequestAcceptanceWaitFragment">
+    
+    <fragment
+        android:id="@+id/taxiRequestAcceptanceWaitFragment"
+        android:name="com.taksapp.taksapp.ui.taxi.TaxiRequestAcceptanceWaitFragment"
+        android:label="TaxiRequestAcceptanceWaitFragment" >
+        <action
+            android:id="@+id/action_taxiRequestAcceptanceWaitFragment_to_driverArrivingFragment"
+            app:destination="@id/driverArrivingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/driverArrivingFragment"
+        android:name="com.taksapp.taksapp.ui.taxi.DriverArrivingFragment"
+        android:label="DriverArrivingFragment" />
+</navigation>

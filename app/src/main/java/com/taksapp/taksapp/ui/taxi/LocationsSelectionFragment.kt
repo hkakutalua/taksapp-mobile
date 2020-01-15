@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentLocationsSelectionBinding
 import com.taksapp.taksapp.ui.taxi.presentationmodels.PlacePresentationModel
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.time.ExperimentalTime
 
@@ -24,7 +24,7 @@ class LocationsSelectionFragment : Fragment() {
         private const val REQUEST_CODE_CHOOSE_DESTINATION_LOCATION = 200
     }
 
-    private val taxiRequestViewModel: TaxiRequestViewModel by sharedViewModel()
+    private val fareEstimationViewModel: FareEstimationViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,12 +34,12 @@ class LocationsSelectionFragment : Fragment() {
             inflater, R.layout.fragment_locations_selection, container, false
         )
 
-        binding.viewModel = taxiRequestViewModel
+        binding.viewModel = fareEstimationViewModel
         binding.lifecycleOwner = this
 
         binding.viewStartLocation.setOnClickListener {
-            if (taxiRequestViewModel.estimatingFare.value == null ||
-                taxiRequestViewModel.estimatingFare.value == false
+            if (fareEstimationViewModel.estimatingFare.value == null ||
+                fareEstimationViewModel.estimatingFare.value == false
             ) {
                 val intent = Intent(context, AutocompletePlaceChooserActivity::class.java)
                 startActivityForResult(intent, REQUEST_CODE_CHOOSE_START_LOCATION)
@@ -47,15 +47,15 @@ class LocationsSelectionFragment : Fragment() {
         }
 
         binding.viewDestinationLocation.setOnClickListener {
-            if (taxiRequestViewModel.estimatingFare.value == null ||
-                taxiRequestViewModel.estimatingFare.value == false
+            if (fareEstimationViewModel.estimatingFare.value == null ||
+                fareEstimationViewModel.estimatingFare.value == false
             ) {
                 val intent = Intent(context, AutocompletePlaceChooserActivity::class.java)
                 startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION_LOCATION)
             }
         }
 
-        taxiRequestViewModel.errorEvent.observeForever { event ->
+        fareEstimationViewModel.errorEvent.observeForever { event ->
             val parentActivity = context as AppCompatActivity
 
             if (!event.hasBeenHandled) {
@@ -80,10 +80,10 @@ class LocationsSelectionFragment : Fragment() {
                     data?.getSerializableExtra(AutocompletePlaceChooserActivity.EXTRA_SELECTED_PLACE) as PlacePresentationModel
 
                 when (requestCode) {
-                    REQUEST_CODE_CHOOSE_START_LOCATION -> taxiRequestViewModel.changeStartLocation(
+                    REQUEST_CODE_CHOOSE_START_LOCATION -> fareEstimationViewModel.changeStartLocation(
                         place
                     )
-                    REQUEST_CODE_CHOOSE_DESTINATION_LOCATION -> taxiRequestViewModel.changeDestinationLocation(
+                    REQUEST_CODE_CHOOSE_DESTINATION_LOCATION -> fareEstimationViewModel.changeDestinationLocation(
                         place
                     )
                 }

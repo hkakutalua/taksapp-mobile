@@ -14,11 +14,11 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.ui.taxi.presentationmodels.FareEstimationPresentationModel
 import com.taksapp.taksapp.ui.taxi.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderMainActivity : AppCompatActivity(), OnMapReadyCallback {
-    private val taxiRequestViewModel: TaxiRequestViewModel by viewModel()
+    private val fareEstimationViewModel: FareEstimationViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +31,13 @@ class RiderMainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(map: GoogleMap?) {
-        taxiRequestViewModel.fareEstimationWithRoute.observe(this, Observer { fareEstimation ->
+        fareEstimationViewModel.fareEstimationWithRoute.observe(this, Observer { fareEstimation ->
             drawDirections(map, fareEstimation)
             Navigation.findNavController(this, R.id.fragment_navigation_host)
                 .navigate(R.id.action_locationsSelectionFragment_to_faresEstimatesFragment)
         })
 
-        taxiRequestViewModel.clearDirectionsEvent.observe(this, Observer {
+        fareEstimationViewModel.clearDirectionsEvent.observe(this, Observer {
             map?.clear()
         })
     }

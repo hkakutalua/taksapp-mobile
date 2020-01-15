@@ -5,9 +5,8 @@ import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpOtpConfirmationViewMode
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
 import com.taksapp.taksapp.ui.launch.viewmodels.LaunchViewModel
 import com.taksapp.taksapp.ui.taxi.viewmodels.AutocompletePlaceChooserViewModel
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.time.ExperimentalTime
 
@@ -18,5 +17,5 @@ val viewModelsModule = module {
     viewModel { RiderSignUpViewModel(get(), get()) }
     viewModel { RiderSignUpOtpConfirmationViewModel(get(), get()) }
     viewModel { AutocompletePlaceChooserViewModel(get()) }
-    viewModel { TaxiRequestViewModel(get()) }
+    viewModel { FareEstimationViewModel(get()) }
 }

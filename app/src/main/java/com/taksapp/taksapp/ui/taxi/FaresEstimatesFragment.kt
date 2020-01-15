@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
@@ -19,11 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentFaresEstimatesBinding
 import com.taksapp.taksapp.ui.taxi.adapters.CompaniesAdapter
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class FaresEstimatesFragment : Fragment() {
-    private val taxiRequestViewModel: TaxiRequestViewModel by sharedViewModel()
+    private val fareEstimationViewModel: FareEstimationViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +30,7 @@ class FaresEstimatesFragment : Fragment() {
     ): View? {
         val binding: FragmentFaresEstimatesBinding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_fares_estimates, container, false)
-        binding.viewModel = taxiRequestViewModel
+        binding.viewModel = fareEstimationViewModel
 
         val companiesAdapter = CompaniesAdapter()
         binding.recyclerViewCompanies.adapter = companiesAdapter
@@ -41,12 +40,12 @@ class FaresEstimatesFragment : Fragment() {
         val companiesSelectionTracker = buildSelectionTracker(binding)
         companiesAdapter.setSelectionTracker(companiesSelectionTracker)
 
-        taxiRequestViewModel.fareEstimationWithRoute.observeForever { fareEstimation ->
+        fareEstimationViewModel.fareEstimationWithRoute.observeForever { fareEstimation ->
             companiesAdapter.updateCompanies(fareEstimation.fares)
         }
 
         requireActivity().onBackPressedDispatcher.addCallback {
-            taxiRequestViewModel.clearDirections()
+            fareEstimationViewModel.clearDirections()
             Navigation.findNavController(context as Activity, R.id.fragment_navigation_host)
                 .popBackStack()
         }

@@ -13,7 +13,7 @@ import com.taksapp.taksapp.ui.taxi.presentationmodels.FareEstimationPresentation
 import com.taksapp.taksapp.ui.taxi.presentationmodels.LocationPresentationModel
 import com.taksapp.taksapp.ui.taxi.presentationmodels.PlacePresentationModel
 
-class TaxiRequestViewModel(private val fareRepository: FareRepository) : ViewModel() {
+class FareEstimationViewModel(private val fareRepository: FareRepository) : ViewModel() {
     private val _startLocation = MutableLiveData<PlacePresentationModel>()
     private val _destinationLocation = MutableLiveData<PlacePresentationModel>()
     private val _canFetchFareEstimation = MutableLiveData<Boolean>()
