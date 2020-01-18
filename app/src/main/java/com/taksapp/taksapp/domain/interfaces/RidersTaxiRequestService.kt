@@ -12,7 +12,10 @@ enum class TaxiRequestError {
     SERVER_ERROR
 }
 
-enum class TaxiRequestRetrievalError {}
+enum class TaxiRequestRetrievalError {
+    NOT_FOUND,
+    SERVER_ERROR
+}
 
 enum class CancellationError {
     TAXI_REQUEST_NOT_FOUND,

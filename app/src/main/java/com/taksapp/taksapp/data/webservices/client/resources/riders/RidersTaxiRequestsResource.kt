@@ -17,6 +17,11 @@ enum class CancellationApiError {
     SERVER_ERROR
 }
 
+enum class TaxiRequestFetchApiError {
+    NOT_FOUND,
+    SERVER_ERROR
+}
+
 data class TaxiRequestRequestBody(val origin: Location, val destination: Location)
 
 class RidersTaxiRequestsResource(private val configurationProvider: ConfigurationProvider) {
@@ -52,7 +57,7 @@ class RidersTaxiRequestsResource(private val configurationProvider: Configuratio
         val httpClient = configurationProvider.client
         val jsonConverter = configurationProvider.jsonConverter
 
-        val response = httpClient.patch("api/v1/riders/me/taxi/requests/current/cancel")
+        val response = httpClient.patch("api/v1/riders/me/taxi-requests/current/cancel")
         return if (response.isSuccessful) {
             Response.success(null)
         } else {
@@ -66,6 +71,31 @@ class RidersTaxiRequestsResource(private val configurationProvider: Configuratio
                 }
             } else {
                 Response.failure(CancellationApiError.SERVER_ERROR)
+            }
+        }
+    }
+
+    fun getCurrent(): Response<TaxiRequestResponseBody, TaxiRequestFetchApiError> {
+        val httpClient = configurationProvider.client
+        val jsonConverter = configurationProvider.jsonConverter
+
+        val response = httpClient.get("api/v1/riders/me/taxi-requests/current")
+        return if (response.isSuccessful) {
+            val taxiRequestResponseBody = jsonConverter.fromJson(
+                response.body?.source!!, TaxiRequestResponseBody::class
+            )
+            Response.success(taxiRequestResponseBody)
+        } else {
+            if (response.code in 400..499) {
+                val errorBody = jsonConverter
+                    .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                    .errors[0]
+                when (errorBody.code) {
+                    "taxiRequestNotFound" -> Response.failure(TaxiRequestFetchApiError.NOT_FOUND)
+                    else -> Response.failure(TaxiRequestFetchApiError.SERVER_ERROR)
+                }
+            } else {
+                Response.failure(TaxiRequestFetchApiError.SERVER_ERROR)
             }
         }
     }

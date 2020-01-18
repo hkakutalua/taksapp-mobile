@@ -2,10 +2,7 @@ package com.taksapp.taksapp.data.webservices
 
 import com.taksapp.taksapp.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
-import com.taksapp.taksapp.data.webservices.client.resources.riders.CancellationApiError
-import com.taksapp.taksapp.data.webservices.client.resources.riders.TaxiRequestApiError
-import com.taksapp.taksapp.data.webservices.client.resources.riders.TaxiRequestRequestBody
-import com.taksapp.taksapp.data.webservices.client.resources.riders.TaxiRequestStatus
+import com.taksapp.taksapp.data.webservices.client.resources.riders.*
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
@@ -27,16 +24,7 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
 
         val response = taksapp.riders.taxiRequests.create(requestBody)
         return if (response.successful) {
-            val taxiRequest = TaxiRequest(
-                when (response.data?.status) {
-                    TaxiRequestStatus.waitingAcceptance -> Status.WAITING_ACCEPTANCE
-                    TaxiRequestStatus.accepted -> Status.ACCEPTED
-                    TaxiRequestStatus.driverArrived -> Status.DRIVER_ARRIVED
-                    TaxiRequestStatus.cancelled -> Status.CANCELLED
-                    else -> throw Exception("Unknown status: ${response.data?.status}")
-                }
-            )
-
+            val taxiRequest = mapToDomainTaxiRequest(response.data!!)
             Result.success(taxiRequest)
         } else {
             when (response.error) {
@@ -63,6 +51,27 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
     }
 
     override suspend fun getCurrentTaxiRequest(): Result<TaxiRequest, TaxiRequestRetrievalError> {
-        return Result.error(null)
+        val response = taksapp.riders.taxiRequests.getCurrent()
+        return if (response.successful) {
+            val taxiRequest = mapToDomainTaxiRequest(response.data!!)
+            Result.success(taxiRequest)
+        } else {
+            when (response.error) {
+                TaxiRequestFetchApiError.NOT_FOUND -> Result.error(TaxiRequestRetrievalError.NOT_FOUND)
+                TaxiRequestFetchApiError.SERVER_ERROR -> Result.error(TaxiRequestRetrievalError.SERVER_ERROR)
+                else -> Result.error(TaxiRequestRetrievalError.SERVER_ERROR)
+            }
+        }
+    }
+
+    private fun mapToDomainTaxiRequest(taxiRequestResponseBody: TaxiRequestResponseBody): TaxiRequest {
+        return TaxiRequest(
+            when (taxiRequestResponseBody.status) {
+                TaxiRequestStatus.waitingAcceptance -> Status.WAITING_ACCEPTANCE
+                TaxiRequestStatus.accepted -> Status.ACCEPTED
+                TaxiRequestStatus.driverArrived -> Status.DRIVER_ARRIVED
+                TaxiRequestStatus.cancelled -> Status.CANCELLED
+            }
+        )
     }
 }

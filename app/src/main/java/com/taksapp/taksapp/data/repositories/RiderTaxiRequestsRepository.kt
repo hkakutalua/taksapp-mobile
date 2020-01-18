@@ -7,6 +7,7 @@ import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
 import java.io.IOException
 
 enum class CreateTaxiRequestError {

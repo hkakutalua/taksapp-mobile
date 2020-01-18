@@ -11,6 +11,7 @@ import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.interfaces.CancellationError
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
+import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
 import com.taksapp.taksapp.utils.FileUtilities
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,8 +39,8 @@ class RidersTaxiRequestWebServiceTests {
         "json/riders/me/taxi-requests/error_no_available_drivers.json"
     private val errorNoRegisteredDeviceBodyPath =
         "json/riders/me/taxi-requests/error_no_registered_device.json"
-    private val taxiRequestNotFoundBodyPath =
-        "json/riders/me/taxi-requests/taxi_request_not_found.json"
+    private val errorTaxiRequestNotFoundBodyPath =
+        "json/riders/me/taxi-requests/error_taxi_request_not_found.json"
 
     @Test
     fun sendsTaxiRequest() {
@@ -160,7 +161,7 @@ class RidersTaxiRequestWebServiceTests {
             server.enqueue(
                 MockResponse()
                     .setResponseCode(404)
-                    .setBody(FileUtilities.getFileContent(taxiRequestNotFoundBodyPath))
+                    .setBody(FileUtilities.getFileContent(errorTaxiRequestNotFoundBodyPath))
             )
             val taxiRequestWebService =
                 RidersTaxiRequestWebService(getTaksapp(server.url("").toString()))
@@ -172,6 +173,52 @@ class RidersTaxiRequestWebServiceTests {
             Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))
             Assert.assertTrue(result.hasFailed)
             Assert.assertEquals(CancellationError.TAXI_REQUEST_NOT_FOUND, result.error)
+        }
+    }
+
+    @Test
+    fun getsCurrentTaxiRequest() {
+        coroutineScope.launch {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(FileUtilities.getFileContent(successfulTaxiRequestBodyPath))
+            )
+            val taxiRequestWebService =
+                RidersTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.getCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))
+            Assert.assertTrue(result.isSuccessful)
+            Assert.assertNotNull(result.data)
+        }
+    }
+
+    @Test
+    fun currentTaxiRequestDoesNotExists() {
+        coroutineScope.launch {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(
+                MockResponse()
+                    .setResponseCode(404)
+                    .setBody(FileUtilities.getFileContent(errorTaxiRequestNotFoundBodyPath))
+            )
+            val taxiRequestWebService =
+                RidersTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.getCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))
+            Assert.assertTrue(result.hasFailed)
+            Assert.assertEquals(TaxiRequestRetrievalError.NOT_FOUND, result.error)
         }
     }
 
