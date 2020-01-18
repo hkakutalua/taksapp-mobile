@@ -7,7 +7,6 @@ import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
-import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
 import java.io.IOException
 
 enum class CreateTaxiRequestError {
@@ -33,8 +32,15 @@ class RiderTaxiRequestsRepository(
         origin: Location,
         destination: Location
     ): Result<TaxiRequest, CreateTaxiRequestError> {
+        var triesCount = 0
+
         while (true) {
             val taxiRequestResult = ridersTaxiRequestService.sendTaxiRequest(origin, destination)
+            triesCount++
+
+            if (hasTaxiRequestReachedMaxTries(triesCount, taxiRequestResult)) {
+                return Result.error(CreateTaxiRequestError.SERVER_ERROR)
+            }
 
             if (taxiRequestResult.isSuccessful) {
                 return Result.success(taxiRequestResult.data)
@@ -46,10 +52,9 @@ class RiderTaxiRequestsRepository(
                 return Result.error(CreateTaxiRequestError.NO_AVAILABLE_DRIVERS)
             } else if (anActiveTaxiRequestExists(taxiRequestResult)) {
                 val currentTaxiRequestResult = ridersTaxiRequestService.getCurrentTaxiRequest()
-                if (currentTaxiRequestResult.hasFailed)
-                    continue
-
-                return Result.success(currentTaxiRequestResult.data)
+                if (currentTaxiRequestResult.isSuccessful) {
+                    return Result.success(currentTaxiRequestResult.data)
+                }
             } else {
                 return Result.error(CreateTaxiRequestError.SERVER_ERROR)
             }
@@ -64,6 +69,14 @@ class RiderTaxiRequestsRepository(
     suspend fun updateCurrentAsCancelled(): Result<Nothing, UpdateAsCancelledError> {
         ridersTaxiRequestService.cancelCurrentTaxiRequest()
         return Result.success(null)
+    }
+
+    private fun hasTaxiRequestReachedMaxTries(
+        tries: Int,
+        taxiRequestResult: Result<TaxiRequest, TaxiRequestError>
+    ): Boolean {
+        val maxTries = 2
+        return tries >= maxTries && taxiRequestResult.hasFailed
     }
 
     private fun anActiveTaxiRequestExists(taxiRequestResult: Result<TaxiRequest, TaxiRequestError>) =
