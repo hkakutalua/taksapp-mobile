@@ -47,4 +47,5 @@
     <string name="text_waiting_for_driver_acceptance">Esperando resposta de motorista</string>
     <string name="text_cancel">Cancelar</string>
     <string name="text_driver_on_its_way">Motorista a caminho</string>
+    <string name="error_no_available_drivers">Nao ha motoristas disponiveis</string>
 </resources>

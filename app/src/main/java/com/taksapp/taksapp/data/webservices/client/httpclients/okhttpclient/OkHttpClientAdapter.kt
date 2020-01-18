@@ -14,7 +14,8 @@ class OkHttpClientAdapter(
     override val host: String,
     timeout: Duration,
     tokenRefreshAuthenticator: Authenticator,
-    accessTokenInterceptor: Interceptor) : HttpClient {
+    accessTokenInterceptor: Interceptor
+) : HttpClient {
 
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(10, unit = TimeUnit.SECONDS)
@@ -76,9 +77,24 @@ class OkHttpClientAdapter(
 
         return HttpResponse(
             code = response.code,
-            body = HttpResponse.HttpResponseBody(
-                response.body?.byteStream()
-            )
+            body = HttpResponse.HttpResponseBody(response.body?.byteStream())
+        )
+    }
+
+    override fun patch(url: String, body: String?): HttpResponse {
+        val requestBuilder = Request.Builder().url("$host$url")
+
+        if (body != null) {
+            requestBuilder.patch(body.toRequestBody("application/json; charset=utf-8".toMediaType()))
+        } else {
+            requestBuilder.patch("".toRequestBody("application/json; charset=utf-8".toMediaType()))
+        }
+
+        val response = httpClient.newCall(requestBuilder.build()).execute()
+
+        return HttpResponse(
+            response.code,
+            body = HttpResponse.HttpResponseBody(response.body?.byteStream())
         )
     }
 }

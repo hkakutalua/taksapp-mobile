@@ -1,0 +1,13 @@
+{
+  "id": "2dce3025-ea69-4dee-b9d6-02398b9f94b8",
+  "origin": {
+    "latitude": 1.20394,
+    "longitude": 0.20394
+  },
+  "destination": {
+    "latitude": 0.34051,
+    "longitude": 1.20394
+  },
+  "expirationDate": "2020-01-14T07:22:29+0000",
+  "status": "waitingAcceptance"
+}

@@ -4,6 +4,7 @@ import com.taksapp.taksapp.data.webservices.client.httpclients.HttpClient
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.JsonConverter
 import com.taksapp.taksapp.data.webservices.client.resources.fares.FaresResource
 import com.taksapp.taksapp.data.webservices.client.resources.places.PlacesResource
+import com.taksapp.taksapp.data.webservices.client.resources.riders.RidersResource
 import com.taksapp.taksapp.data.webservices.client.resources.routes.RoutesResource
 import com.taksapp.taksapp.data.webservices.client.resources.users.UsersResource
 
@@ -19,7 +20,7 @@ interface ConfigurationProvider {
     val sessionStore: SessionStore
 }
 
-public class Taksapp(
+class Taksapp(
     val environment: Environment,
     override val sessionStore: SessionStore,
     override val client: HttpClient,
@@ -71,4 +72,5 @@ public class Taksapp(
     val places = PlacesResource(this)
     val routes = RoutesResource(this)
     val fares = FaresResource(this)
+    val riders = RidersResource(this)
 }

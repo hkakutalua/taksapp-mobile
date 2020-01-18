@@ -1,6 +1,6 @@
 package com.taksapp.taksapp.data.webservices.client.resources.places
 
-data class Location(val latitude: Double, val longitude: Double)
+import com.taksapp.taksapp.data.webservices.client.resources.common.Location
 
 data class PlaceResponseBody(
     val id: String,

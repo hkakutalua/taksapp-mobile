@@ -28,5 +28,12 @@ interface HttpClient {
      * @throws [IOException] when a network error or timeout occurs
      */
     fun post(url: String, formDataBody: Map<String, String>): HttpResponse
+
+    /**
+     * Sends a PATCH request to the [url] with an optional [body]
+     * @return the response of the request
+     * @throws [IOException] when a network error or timeout occurs
+     */
+    fun patch(url: String, body: String? = ""): HttpResponse
 }
 

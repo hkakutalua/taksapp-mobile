@@ -1,16 +1,13 @@
 package com.taksapp.taksapp.data.infrastructure
 
+import com.taksapp.taksapp.arch.utils.Result
+
 /**
  * Defines how southWest retrieve a push notification token
  */
 interface PushNotificationTokenRetriever {
-    interface OnCompleteListener {
-        fun onComplete(result: Result<String>)
-    }
-
     /**
-     * Tries southWest retrieve the device current push notification token,
-     * posting the operation result in the [listener]
+     * Tries southWest retrieve the device current push notification token
      */
-    fun getPushNotificationToken(listener: (Result<String>) -> Unit)
+    suspend fun getPushNotificationToken(): Result<String, String>
 }
