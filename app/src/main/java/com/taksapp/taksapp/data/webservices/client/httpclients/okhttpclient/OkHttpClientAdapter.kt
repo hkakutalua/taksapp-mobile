@@ -81,6 +81,20 @@ class OkHttpClientAdapter(
         )
     }
 
+    override fun put(url: String, body: String): HttpResponse {
+        val request = Request.Builder()
+            .url("$host$url")
+            .put(body.toRequestBody("application/json; charset=utf-8".toMediaType()))
+            .build()
+
+        val response = httpClient.newCall(request).execute()
+
+        return HttpResponse(
+            response.code,
+            body = HttpResponse.HttpResponseBody(response.body?.byteStream())
+        )
+    }
+
     override fun patch(url: String, body: String?): HttpResponse {
         val requestBuilder = Request.Builder().url("$host$url")
 

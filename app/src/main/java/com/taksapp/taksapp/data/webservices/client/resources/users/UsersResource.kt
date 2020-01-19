@@ -32,7 +32,7 @@ class UsersResource(
 
         val bodyJson = jsonConverter.toJson(requestBody)
 
-        val response = httpClient.patch("api/v1/users/me/devices/unique", bodyJson)
+        val response = httpClient.put("api/v1/users/me/devices/unique", bodyJson)
         return if (response.isSuccessful) {
             Response.success(null)
         } else {

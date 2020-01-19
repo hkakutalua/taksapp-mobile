@@ -23,7 +23,7 @@ interface HttpClient {
     fun post(url: String, body: String): HttpResponse
 
     /**
-     * Sends a POST request southWest the [url] with given FormData [body]
+     * Sends a POST request southWest the [url] with given FormData [formDataBody]
      * @return the response of the request
      * @throws [IOException] when a network error or timeout occurs
      */
@@ -35,5 +35,12 @@ interface HttpClient {
      * @throws [IOException] when a network error or timeout occurs
      */
     fun patch(url: String, body: String? = ""): HttpResponse
+
+    /**
+     * Sends a PATCH request to the [url] with a [body]
+     * @return the response of the request
+     * @throws [IOException] when a network error or timeout occurs
+     */
+    fun put(url: String, body: String): HttpResponse
 }
 
