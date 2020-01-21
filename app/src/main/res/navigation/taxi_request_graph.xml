@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/taxi_request_graph"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/taxi_request_graph"
     app:startDestination="@id/taxiRequestAcceptanceWaitFragment">
     
     <fragment
         android:id="@+id/taxiRequestAcceptanceWaitFragment"
         android:name="com.taksapp.taksapp.ui.taxi.TaxiRequestAcceptanceWaitFragment"
-        android:label="TaxiRequestAcceptanceWaitFragment" >
+        android:label="TaxiRequestAcceptanceWaitFragment"
+        tools:layout="@layout/fragment_taxi_request_acceptance_wait">
         <action
             android:id="@+id/action_taxiRequestAcceptanceWaitFragment_to_driverArrivingFragment"
             app:destination="@id/driverArrivingFragment" />
@@ -14,5 +17,15 @@
     <fragment
         android:id="@+id/driverArrivingFragment"
         android:name="com.taksapp.taksapp.ui.taxi.DriverArrivingFragment"
-        android:label="DriverArrivingFragment" />
+        android:label="DriverArrivingFragment"
+        tools:layout="@layout/fragment_driver_arriving">
+        <action
+            android:id="@+id/action_driverArrivingFragment_to_driverArrivedFragment"
+            app:destination="@id/driverArrivedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/driverArrivedFragment"
+        android:name="com.taksapp.taksapp.ui.taxi.DriverArrivedFragment"
+        android:label="fragment_driver_arrived"
+        tools:layout="@layout/fragment_driver_arrived" />
 </navigation>

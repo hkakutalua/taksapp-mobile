@@ -1,5 +1,6 @@
 package com.taksapp.taksapp.di.modules
 
+import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
 import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
@@ -19,6 +20,6 @@ val viewModelsModule = module {
     viewModel { RiderSignUpViewModel(get(), get()) }
     viewModel { RiderSignUpOtpConfirmationViewModel(get(), get()) }
     viewModel { AutocompletePlaceChooserViewModel(get()) }
-    viewModel { FareEstimationViewModel(get()) }
-    viewModel { TaxiRequestViewModel(get(), androidContext()) }
+    viewModel { FareEstimationViewModel(get(), get(), androidContext()) }
+    viewModel { (taxiRequest: TaxiRequest) -> TaxiRequestViewModel(taxiRequest, get(), androidContext()) }
 }

@@ -8,7 +8,7 @@ interface DevicesService {
     /**
      * Registers the device of the current user
      */
-    fun registerUserDevice(
+    suspend fun registerUserDevice(
         pushNotificationToken: String,
         platform: Platform
     ): Result<Nothing, String>

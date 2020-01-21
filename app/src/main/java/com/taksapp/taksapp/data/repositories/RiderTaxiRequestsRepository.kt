@@ -14,10 +14,6 @@ enum class CreateTaxiRequestError {
     SERVER_ERROR
 }
 
-enum class UpdateAsCancelledError {
-
-}
-
 class RiderTaxiRequestsRepository(
     private val ridersTaxiRequestService: RidersTaxiRequestService,
     private val devicesService: DevicesService,
@@ -66,7 +62,7 @@ class RiderTaxiRequestsRepository(
      * @return a [Result] containing the [TaxiRequest] if successful
      * @throws [IOException] if a network error occurs
      */
-    suspend fun updateCurrentAsCancelled(): Result<Nothing, UpdateAsCancelledError> {
+    suspend fun updateCurrentAsCancelled(): Result<Nothing, Nothing> {
         ridersTaxiRequestService.cancelCurrentTaxiRequest()
         return Result.success(null)
     }
@@ -76,7 +72,7 @@ class RiderTaxiRequestsRepository(
         taxiRequestResult: Result<TaxiRequest, TaxiRequestError>
     ): Boolean {
         val maxTries = 2
-        return tries >= maxTries && taxiRequestResult.hasFailed
+        return tries > maxTries && taxiRequestResult.hasFailed
     }
 
     private fun anActiveTaxiRequestExists(taxiRequestResult: Result<TaxiRequest, TaxiRequestError>) =

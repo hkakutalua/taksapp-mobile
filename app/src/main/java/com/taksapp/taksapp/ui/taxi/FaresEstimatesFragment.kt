@@ -2,19 +2,24 @@ package com.taksapp.taksapp.ui.taxi
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StableIdKeyProvider
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentFaresEstimatesBinding
 import com.taksapp.taksapp.ui.taxi.adapters.CompaniesAdapter
@@ -22,6 +27,10 @@ import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class FaresEstimatesFragment : Fragment() {
+    companion object {
+        const val TAXI_REQUEST_ACTIVITY_CODE = 100
+    }
+
     private val fareEstimationViewModel: FareEstimationViewModel by sharedViewModel()
 
     override fun onCreateView(
@@ -31,26 +40,82 @@ class FaresEstimatesFragment : Fragment() {
         val binding: FragmentFaresEstimatesBinding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_fares_estimates, container, false)
         binding.viewModel = fareEstimationViewModel
+        binding.lifecycleOwner = this
 
-        val companiesAdapter = CompaniesAdapter()
-        binding.recyclerViewCompanies.adapter = companiesAdapter
-        binding.recyclerViewCompanies.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        configureBackNavigationBehaviour()
+        val companiesAdapter = setUpCompaniesRecyclerView(binding)
 
-        val companiesSelectionTracker = buildSelectionTracker(binding)
-        companiesAdapter.setSelectionTracker(companiesSelectionTracker)
+        fareEstimationViewModel.fareEstimationWithRoute
+            .observeForever { fareEstimation ->
+                companiesAdapter.updateCompanies(fareEstimation.fares)
+            }
 
-        fareEstimationViewModel.fareEstimationWithRoute.observeForever { fareEstimation ->
-            companiesAdapter.updateCompanies(fareEstimation.fares)
+        fareEstimationViewModel.errorEvent.observe(this, Observer { event ->
+            val parentActivity = context as AppCompatActivity
+
+            if (!event.hasBeenHandled) {
+                Snackbar.make(
+                    parentActivity.findViewById(android.R.id.content),
+                    event.getContentIfNotHandled() ?: "",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+
+        })
+
+        fareEstimationViewModel.navigateToTaxiRequestEvent.observe(this,
+            Observer { eventWithTaxiRequest ->
+                if (eventWithTaxiRequest.hasBeenHandled)
+                    return@Observer
+
+                val intent = Intent(context, TaxiRequestActivity::class.java)
+                intent.putExtra(
+                    TaxiRequestActivity.EXTRA_TAXI_REQUEST,
+                    eventWithTaxiRequest.getContentIfNotHandled()
+                )
+                startActivityForResult(intent, TAXI_REQUEST_ACTIVITY_CODE)
+            })
+
+        return binding.root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == TAXI_REQUEST_ACTIVITY_CODE) {
+            val errorKind = data?.getStringExtra(TaxiRequestActivity.EXTRA_ERROR_KIND)
+
+            if (errorKind == TaxiRequestActivity.ERROR_KIND_TAXI_REQUEST_TIMEOUT) {
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.text_taxi_request_finished)
+                    .setMessage(R.string.text_no_drivers_answered_to_request)
+                    .setIcon(R.drawable.ic_logo)
+                    .setNeutralButton(android.R.string.ok) { _,_ -> }
+                    .create()
+                alertDialog.show()
+            }
         }
+    }
 
+    private fun configureBackNavigationBehaviour() {
         requireActivity().onBackPressedDispatcher.addCallback {
+            if (fareEstimationViewModel.sendingTaxiRequest.value == true)
+                return@addCallback
+
             fareEstimationViewModel.clearDirections()
             Navigation.findNavController(context as Activity, R.id.fragment_navigation_host)
                 .popBackStack()
         }
+    }
 
-        return binding.root
+    private fun setUpCompaniesRecyclerView(binding: FragmentFaresEstimatesBinding): CompaniesAdapter {
+        val companiesAdapter = CompaniesAdapter()
+        binding.recyclerViewCompanies.adapter = companiesAdapter
+        binding.recyclerViewCompanies.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val companiesSelectionTracker = buildSelectionTracker(binding)
+        companiesAdapter.setSelectionTracker(companiesSelectionTracker)
+        return companiesAdapter
     }
 
     private fun buildSelectionTracker(binding: FragmentFaresEstimatesBinding): SelectionTracker<Long> {

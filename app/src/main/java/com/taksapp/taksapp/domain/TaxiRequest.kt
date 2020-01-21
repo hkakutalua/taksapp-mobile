@@ -1,5 +1,8 @@
 package com.taksapp.taksapp.domain
 
+import org.joda.time.DateTime
+import java.io.Serializable
+
 enum class Status {
     WAITING_ACCEPTANCE,
     ACCEPTED,
@@ -7,4 +10,6 @@ enum class Status {
     CANCELLED,
 }
 
-class TaxiRequest(val status: Status);
+class TaxiRequest(val expirationDate: DateTime, val status: Status): Serializable {
+    fun hasExpired() = DateTime.now() > expirationDate
+}

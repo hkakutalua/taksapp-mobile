@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.taxi.DriverArrivingFragment">
+    tools:context=".ui.taxi.DriverArrivedFragment">
     
     <data>
     
@@ -18,14 +18,14 @@
             android:layout_height="wrap_content">
             
             <TextView
-                android:id="@+id/textview_driver_on_its_way"
+                android:id="@+id/textview_driver_arrived"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:text="@string/text_driver_on_its_way"
+                android:text="@string/text_driver_arrived"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textAllCaps="true" />
             
@@ -33,7 +33,7 @@
                 android:id="@+id/imageview_driver"
                 android:layout_width="@dimen/list_item_icon"
                 android:layout_height="@dimen/list_item_icon"
-                app:layout_constraintTop_toBottomOf="@id/textview_driver_on_its_way"
+                app:layout_constraintTop_toBottomOf="@id/textview_driver_arrived"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"

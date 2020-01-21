@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel" />
@@ -27,13 +28,26 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/button_request_taxi"
+                app:layout_constraintBottom_toTopOf="@id/progress_bar_taxi_request"
                 tools:itemCount="4"
                 tools:listitem="@layout/item_company_fare"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="horizontal"
                 android:padding="@dimen/margin_normal"
                 android:clipToPadding="false"/>
+    
+            <ProgressBar
+                android:id="@+id/progress_bar_taxi_request"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/button_request_taxi"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:indeterminate="true"
+                android:visibility="@{viewModel.sendingTaxiRequest ? View.VISIBLE : View.INVISIBLE}"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
     
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_request_taxi"
@@ -42,6 +56,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:insetBottom="0dp"
                 android:insetTop="0dp"
+                android:enabled="@{!viewModel.sendingTaxiRequest}"
+                android:onClick="@{_ -> viewModel.sendTaxiRequest()}"
                 app:cornerRadius="0dp"
                 android:textColor="@android:color/white"
                 android:text="@string/text_confirm" />

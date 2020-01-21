@@ -42,9 +42,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
-                android:text="@{viewModel.startLocation ?? @string/text_start_place_label}"
+                android:text="@{viewModel.startLocationName ?? @string/text_start_place_label}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@{viewModel.startLocation == null ? @color/color_label_text : @android:color/black}"
+                android:textColor="@{viewModel.startLocationName == null ? @color/color_label_text : @android:color/black}"
                 android:maxLines="1"
                 android:ellipsize="end" />
         
@@ -108,8 +108,8 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:maxLines="1"
-                android:textColor="@{viewModel.destinationLocation == null ? @color/color_label_text : @android:color/black}"
-                android:text="@{viewModel.destinationLocation ?? @string/text_destination_place_label}"
+                android:textColor="@{viewModel.destinationLocationName == null ? @color/color_label_text : @android:color/black}"
+                android:text="@{viewModel.destinationLocationName ?? @string/text_destination_place_label}"
                 android:ellipsize="end" />
         
             <androidx.appcompat.widget.AppCompatImageView

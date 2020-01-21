@@ -13,7 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.taxi.TaxiRequestActivity"></activity>
+        <activity
+            android:name=".ui.taxi.TaxiRequestActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"/>
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"

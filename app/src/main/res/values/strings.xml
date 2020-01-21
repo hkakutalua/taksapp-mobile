@@ -48,4 +48,7 @@
     <string name="text_cancel">Cancelar</string>
     <string name="text_driver_on_its_way">Motorista a caminho</string>
     <string name="error_no_available_drivers">Nao ha motoristas disponiveis</string>
+    <string name="text_driver_arrived">Motorista Chegou</string>
+    <string name="text_no_drivers_answered_to_request">Nenhum motorista respondeu ao seu pedido de taxi</string>
+    <string name="text_taxi_request_finished">Pedido Terminado</string>
 </resources>
