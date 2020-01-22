@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi.presentationmodels
+package com.taksapp.taksapp.application.taxirequest.presentationmodels
 
 data class FareEstimationPresentationModel(
     val northEastBound: LocationPresentationModel,

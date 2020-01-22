@@ -1,7 +1,7 @@
 package com.taksapp.taksapp.data.repositories
 
-import com.taksapp.taksapp.arch.utils.Result
-import com.taksapp.taksapp.data.infrastructure.PushNotificationTokenRetriever
+import com.taksapp.taksapp.application.arch.utils.Result
+import com.taksapp.taksapp.data.infrastructure.services.PushNotificationTokenRetriever
 import com.taksapp.taksapp.domain.interfaces.DevicesService
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService

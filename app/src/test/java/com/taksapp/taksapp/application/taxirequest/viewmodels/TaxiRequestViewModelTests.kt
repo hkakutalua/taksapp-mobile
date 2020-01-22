@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi.viewmodels
+package com.taksapp.taksapp.application.taxirequest.viewmodels
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest

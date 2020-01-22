@@ -3,15 +3,13 @@ package com.taksapp.taksapp.ui.taxi
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.addCallback
-import androidx.navigation.Navigation
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.domain.TaxiRequest
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
 import org.koin.android.viewmodel.ext.android.getViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {

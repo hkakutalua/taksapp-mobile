@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel" />
+            type="com.taksapp.taksapp.application.auth.viewmodels.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

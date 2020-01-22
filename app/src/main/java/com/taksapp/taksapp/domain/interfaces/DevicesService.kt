@@ -1,6 +1,6 @@
 package com.taksapp.taksapp.domain.interfaces
 
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 
 interface DevicesService {
     enum class Platform { ANDROID }

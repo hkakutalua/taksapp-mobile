@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderSignUpBinding
-import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpViewModel
+import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderSignUpActivity : AppCompatActivity() {

@@ -1,10 +1,8 @@
 package com.taksapp.taksapp.di.modules
 
 import com.taksapp.taksapp.BuildConfig
-import com.taksapp.taksapp.data.infrastructure.FirebasePushNotificationTokenRetriever
-import com.taksapp.taksapp.data.infrastructure.PushNotificationTokenRetriever
-import com.taksapp.taksapp.data.infrastructure.SessionExpiryHandler
-import com.taksapp.taksapp.data.infrastructure.SharedPreferencesSessionStore
+import com.taksapp.taksapp.data.infrastructure.services.SessionExpiryHandler
+import com.taksapp.taksapp.data.infrastructure.services.SharedPreferencesSessionStore
 import com.taksapp.taksapp.data.webservices.DevicesWebService
 import com.taksapp.taksapp.data.webservices.RidersTaxiRequestWebService
 import com.taksapp.taksapp.data.webservices.client.SessionStore

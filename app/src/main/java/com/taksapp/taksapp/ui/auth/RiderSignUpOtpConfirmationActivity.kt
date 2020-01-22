@@ -6,13 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderSignUpOtpConfirmationBinding
-import com.taksapp.taksapp.ui.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
+import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderSignUpOtpConfirmationActivity : AppCompatActivity() {

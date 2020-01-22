@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.ui.taxi.presentationmodels.CompanyPresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.CompanyPresentationModel
 import de.hdodenhof.circleimageview.CircleImageView
 
 class CompaniesAdapter : RecyclerView.Adapter<CompaniesAdapter.CompanyViewHolder>() {

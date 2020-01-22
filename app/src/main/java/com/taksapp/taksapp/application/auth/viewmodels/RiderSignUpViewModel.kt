@@ -1,12 +1,12 @@
-package com.taksapp.taksapp.ui.auth.viewmodels
+package com.taksapp.taksapp.application.auth.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.arch.utils.Event
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Event
+import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.repositories.AuthenticationRepository
 import com.taksapp.taksapp.data.repositories.SignUpFields
 

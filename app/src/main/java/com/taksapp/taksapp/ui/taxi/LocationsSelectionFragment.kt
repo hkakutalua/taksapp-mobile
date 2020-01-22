@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentLocationsSelectionBinding
-import com.taksapp.taksapp.ui.taxi.presentationmodels.PlacePresentationModel
-import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.time.ExperimentalTime
 

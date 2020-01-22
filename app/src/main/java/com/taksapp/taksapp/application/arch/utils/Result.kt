@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.arch.utils
+package com.taksapp.taksapp.application.arch.utils
 
 enum class Status {
     LOADING,

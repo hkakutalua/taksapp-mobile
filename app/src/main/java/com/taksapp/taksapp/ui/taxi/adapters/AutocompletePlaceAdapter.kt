@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.ui.taxi.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
 
 class AutocompletePlaceAdapter : RecyclerView.Adapter<AutocompletePlaceAdapter.PlaceViewHolder>() {
     private var places = listOf<PlacePresentationModel>()

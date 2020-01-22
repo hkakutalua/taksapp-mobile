@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.arch.utils
+package com.taksapp.taksapp.application.arch.utils
 
 open class Event<out T>(private val content: T?) {
     var hasBeenHandled = false

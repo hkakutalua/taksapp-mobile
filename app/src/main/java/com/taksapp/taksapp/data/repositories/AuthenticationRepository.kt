@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.data.webservices.client.UserType
 import com.taksapp.taksapp.data.webservices.client.exceptions.InternalServerErrorException

@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi.viewmodels
+package com.taksapp.taksapp.application.taxirequest.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest

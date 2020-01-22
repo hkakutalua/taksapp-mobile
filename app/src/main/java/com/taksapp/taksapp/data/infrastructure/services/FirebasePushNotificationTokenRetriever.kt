@@ -1,10 +1,10 @@
-package com.taksapp.taksapp.data.infrastructure
+package com.taksapp.taksapp.data.infrastructure.services
 
 import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.iid.FirebaseInstanceId
 import java.util.concurrent.ExecutionException
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

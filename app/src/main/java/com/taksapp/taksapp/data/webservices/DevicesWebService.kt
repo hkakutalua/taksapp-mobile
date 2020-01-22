@@ -1,6 +1,6 @@
 package com.taksapp.taksapp.data.webservices
 
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.data.webservices.client.resources.users.DeviceUpdateRequestBody
 import com.taksapp.taksapp.data.webservices.client.resources.users.Platform

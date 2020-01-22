@@ -1,6 +1,6 @@
-package com.taksapp.taksapp.data.infrastructure
+package com.taksapp.taksapp.data.infrastructure.services
 
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 
 /**
  * Defines how southWest retrieve a push notification token

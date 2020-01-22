@@ -10,7 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityAutocompletePlaceChooserBinding
 import com.taksapp.taksapp.ui.taxi.adapters.AutocompletePlaceAdapter
-import com.taksapp.taksapp.ui.taxi.viewmodels.AutocompletePlaceChooserViewModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.AutocompletePlaceChooserViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.time.ExperimentalTime
 

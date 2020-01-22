@@ -1,6 +1,6 @@
 package com.taksapp.taksapp.domain.interfaces
 
-import com.taksapp.taksapp.arch.utils.Result
+import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
 import java.io.IOException

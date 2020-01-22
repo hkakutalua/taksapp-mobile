@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
-import com.taksapp.taksapp.ui.auth.viewmodels.LoginViewModel
+import com.taksapp.taksapp.application.auth.viewmodels.LoginViewModel
 import com.taksapp.taksapp.ui.taxi.RiderMainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 

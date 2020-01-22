@@ -23,7 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentFaresEstimatesBinding
 import com.taksapp.taksapp.ui.taxi.adapters.CompaniesAdapter
-import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class FaresEstimatesFragment : Fragment() {

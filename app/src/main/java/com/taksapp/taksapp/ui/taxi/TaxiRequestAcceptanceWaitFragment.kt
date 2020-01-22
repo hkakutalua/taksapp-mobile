@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
-import com.taksapp.taksapp.ui.taxi.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class TaxiRequestAcceptanceWaitFragment : Fragment() {

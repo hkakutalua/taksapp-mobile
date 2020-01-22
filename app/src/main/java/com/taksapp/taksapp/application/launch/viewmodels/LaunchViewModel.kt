@@ -1,9 +1,9 @@
-package com.taksapp.taksapp.ui.launch.viewmodels
+package com.taksapp.taksapp.application.launch.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.data.repositories.AuthenticationRepository
 import com.taksapp.taksapp.data.repositories.LoginStatus
 

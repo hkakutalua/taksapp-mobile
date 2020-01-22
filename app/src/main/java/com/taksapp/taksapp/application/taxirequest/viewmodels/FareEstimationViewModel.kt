@@ -1,19 +1,19 @@
-package com.taksapp.taksapp.ui.taxi.viewmodels
+package com.taksapp.taksapp.application.taxirequest.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.*
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.arch.utils.Event
+import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.data.repositories.CreateTaxiRequestError
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.FareEstimation
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.FareRepository
-import com.taksapp.taksapp.ui.taxi.presentationmodels.CompanyPresentationModel
-import com.taksapp.taksapp.ui.taxi.presentationmodels.FareEstimationPresentationModel
-import com.taksapp.taksapp.ui.taxi.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.ui.taxi.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.CompanyPresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.FareEstimationPresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
 import kotlinx.coroutines.launch
 import java.io.IOException
 

@@ -12,9 +12,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.ui.taxi.presentationmodels.FareEstimationPresentationModel
-import com.taksapp.taksapp.ui.taxi.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.ui.taxi.viewmodels.FareEstimationViewModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.FareEstimationPresentationModel
+import com.taksapp.taksapp.application.taxirequest.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderMainActivity : AppCompatActivity(), OnMapReadyCallback {

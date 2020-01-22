@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.taksapp.taksapp.ui.launch.viewmodels.LaunchViewModel
+import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
 import com.taksapp.taksapp.ui.taxi.RiderMainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
