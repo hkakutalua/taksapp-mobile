@@ -3,7 +3,7 @@ package com.taksapp.taksapp.data.webservices.client.resources.riders
 import com.taksapp.taksapp.data.webservices.client.ConfigurationProvider
 import com.taksapp.taksapp.data.webservices.client.Response
 import com.taksapp.taksapp.data.webservices.client.resources.common.ErrorResponseBody
-import com.taksapp.taksapp.data.webservices.client.resources.common.Location
+import com.taksapp.taksapp.data.webservices.client.resources.common.LocationResponseBody
 
 enum class TaxiRequestApiError {
     RIDER_HAS_NO_REGISTERED_DEVICE,
@@ -22,7 +22,7 @@ enum class TaxiRequestFetchApiError {
     SERVER_ERROR
 }
 
-data class TaxiRequestRequestBody(val origin: Location, val destination: Location)
+data class TaxiRequestRequestBody(val origin: LocationResponseBody, val destination: LocationResponseBody)
 
 class RidersTaxiRequestsResource(private val configurationProvider: ConfigurationProvider) {
     fun create(body: TaxiRequestRequestBody): Response<TaxiRequestResponseBody, TaxiRequestApiError> {
@@ -80,6 +80,31 @@ class RidersTaxiRequestsResource(private val configurationProvider: Configuratio
         val jsonConverter = configurationProvider.jsonConverter
 
         val response = httpClient.get("api/v1/riders/me/taxi-requests/current")
+        return if (response.isSuccessful) {
+            val taxiRequestResponseBody = jsonConverter.fromJson(
+                response.body?.source!!, TaxiRequestResponseBody::class
+            )
+            Response.success(taxiRequestResponseBody)
+        } else {
+            if (response.code in 400..499) {
+                val errorBody = jsonConverter
+                    .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                    .errors[0]
+                when (errorBody.code) {
+                    "taxiRequestNotFound" -> Response.failure(TaxiRequestFetchApiError.NOT_FOUND)
+                    else -> Response.failure(TaxiRequestFetchApiError.SERVER_ERROR)
+                }
+            } else {
+                Response.failure(TaxiRequestFetchApiError.SERVER_ERROR)
+            }
+        }
+    }
+
+    fun getById(id: String): Response<TaxiRequestResponseBody, TaxiRequestFetchApiError> {
+        val httpClient = configurationProvider.client
+        val jsonConverter = configurationProvider.jsonConverter
+
+        val response = httpClient.get("api/v1/riders/me/taxi-requests/$id")
         return if (response.isSuccessful) {
             val taxiRequestResponseBody = jsonConverter.fromJson(
                 response.body?.source!!, TaxiRequestResponseBody::class

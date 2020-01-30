@@ -42,7 +42,6 @@ class FaresEstimatesFragment : Fragment() {
         binding.viewModel = fareEstimationViewModel
         binding.lifecycleOwner = this
 
-        configureBackNavigationBehaviour()
         val companiesAdapter = setUpCompaniesRecyclerView(binding)
 
         fareEstimationViewModel.fareEstimationWithRoute
@@ -79,10 +78,26 @@ class FaresEstimatesFragment : Fragment() {
         return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(requireActivity()) {
+            if (fareEstimationViewModel.sendingTaxiRequest.value == true)
+                return@addCallback
+
+            fareEstimationViewModel.clearDirections()
+            Navigation.findNavController(context as Activity, R.id.fragment_navigation_host)
+                .popBackStack()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == TAXI_REQUEST_ACTIVITY_CODE) {
+        if (resultCode != Activity.RESULT_OK)
+            return
+
+        if (requestCode == TAXI_REQUEST_ACTIVITY_CODE) {
             val errorKind = data?.getStringExtra(TaxiRequestActivity.EXTRA_ERROR_KIND)
 
             if (errorKind == TaxiRequestActivity.ERROR_KIND_TAXI_REQUEST_TIMEOUT) {
@@ -94,17 +109,16 @@ class FaresEstimatesFragment : Fragment() {
                     .create()
                 alertDialog.show()
             }
-        }
-    }
 
-    private fun configureBackNavigationBehaviour() {
-        requireActivity().onBackPressedDispatcher.addCallback {
-            if (fareEstimationViewModel.sendingTaxiRequest.value == true)
-                return@addCallback
-
-            fareEstimationViewModel.clearDirections()
-            Navigation.findNavController(context as Activity, R.id.fragment_navigation_host)
-                .popBackStack()
+            if (errorKind == TaxiRequestActivity.ERROR_KIND_TAXI_REQUEST_CANCELLED) {
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.text_taxi_request_finished)
+                    .setMessage(R.string.text_taxi_request_cancelled_by_driver)
+                    .setIcon(R.drawable.ic_logo)
+                    .setNeutralButton(android.R.string.ok) { _,_ -> }
+                    .create()
+                alertDialog.show()
+            }
         }
     }
 

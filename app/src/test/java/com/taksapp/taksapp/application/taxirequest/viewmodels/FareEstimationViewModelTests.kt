@@ -16,6 +16,7 @@ import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
+import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
@@ -68,8 +69,11 @@ class FareEstimationViewModelTests {
     fun sendsTaxiRequest() {
         coroutineScope.launch {
             // Arrange
+            val taxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.WAITING_ACCEPTANCE).build()
+
             whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
-                .thenReturn(Result.success(TaxiRequest(DateTime.now(), Status.WAITING_ACCEPTANCE)))
+                .thenReturn(Result.success(taxiRequest))
             val originPlace = PlacePresentationModel(
                 "Luanda", "", 0.28394, 1.02934)
             val destinationPlace = PlacePresentationModel(
@@ -154,9 +158,12 @@ class FareEstimationViewModelTests {
     fun registersDriverDeviceWhenTaxiRequestFails() {
         coroutineScope.launch {
             // Arrange
+            val taxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.WAITING_ACCEPTANCE).build()
+
             whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
                 .thenReturn(Result.error(TaxiRequestError.DEVICE_NOT_REGISTERED))
-                .thenReturn(Result.success(TaxiRequest(DateTime.now(), Status.WAITING_ACCEPTANCE)))
+                .thenReturn(Result.success(taxiRequest))
             whenever(pushNotificationTokenRetrieverMock.getPushNotificationToken())
                 .thenReturn(Result.success("push-notification-token"))
             whenever(devicesServiceMock.registerUserDevice(any(), any()))
@@ -200,10 +207,13 @@ class FareEstimationViewModelTests {
     fun navigatesToTaxiRequestDueToActiveTaxiRequest(activeStatus: Status) {
         coroutineScope.launch {
             // Arrange
+            val taxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(activeStatus).build()
+
             whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
                 .thenReturn(Result.error(TaxiRequestError.ACTIVE_TAXI_REQUEST_EXISTS))
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
-                .thenReturn(Result.success(TaxiRequest(DateTime.now(), activeStatus)))
+                .thenReturn(Result.success(taxiRequest))
 
             val originPlace = PlacePresentationModel(
                 "Luanda", "", 0.28394, 1.02934)

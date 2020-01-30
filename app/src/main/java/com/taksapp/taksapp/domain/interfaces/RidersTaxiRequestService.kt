@@ -48,4 +48,11 @@ interface RidersTaxiRequestService {
      * @throws [IOException] when a network error or timeout occurs
      */
     suspend fun getCurrentTaxiRequest(): Result<TaxiRequest, TaxiRequestRetrievalError>
+
+    /**
+     * Get taxi request by its [id]
+     * @return an [Result] indicating if the operation was successful
+     * @throws [IOException] when a network error or timeout occurs
+     */
+    suspend fun getTaxiRequestById(id: String): Result<TaxiRequest, TaxiRequestRetrievalError>
 }

@@ -2,19 +2,20 @@ package com.taksapp.taksapp.application.taxirequest.viewmodels
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.Status
-import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.CancellationError
 import com.taksapp.taksapp.domain.interfaces.FareRepository
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
+import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
+import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
+import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerDummy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -33,6 +34,7 @@ class TaxiRequestViewModelTests {
 
     private lateinit var fareRepositoryMock: FareRepository
     private lateinit var ridersTaxiRequestServiceMock: RidersTaxiRequestService
+    private lateinit var taskSchedulerMock: TaskScheduler
     private lateinit var contextMock: Context
     private lateinit var riderTaxiRequestsRepository: RiderTaxiRequestsRepository
     private lateinit var taxiRequestViewModel: TaxiRequestViewModel
@@ -41,14 +43,17 @@ class TaxiRequestViewModelTests {
     fun beforeEachTest() {
         fareRepositoryMock = mock()
         ridersTaxiRequestServiceMock = mock()
+        taskSchedulerMock = mock()
         contextMock = mock()
         riderTaxiRequestsRepository =
             RiderTaxiRequestsRepository(ridersTaxiRequestServiceMock, mock(), mock())
+
+        val taxiRequestInInitialStatus = TaxiRequestFactory.withBuilder()
+            .withStatus(Status.WAITING_ACCEPTANCE)
+            .build()
+
         taxiRequestViewModel = TaxiRequestViewModel(
-            TaxiRequest(DateTime.now(), Status.WAITING_ACCEPTANCE),
-            riderTaxiRequestsRepository,
-            contextMock
-        )
+            taxiRequestInInitialStatus, riderTaxiRequestsRepository, taskSchedulerMock, contextMock)
     }
 
     @Test
@@ -69,6 +74,34 @@ class TaxiRequestViewModelTests {
             Assert.assertEquals(false, taxiRequestViewModel.cancellingTaxiRequest.getOrAwaitValue())
             Assert.assertEquals(
                 false,
+                taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun navigateToMainWhenCountdownToTaxiRequestTimesOut() {
+        coroutineScope.launch {
+            // Arrange/Act
+            val taxiRequestWaitingAcceptance = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.WAITING_ACCEPTANCE)
+                .build()
+            val taskSchedulerDummy = TaskSchedulerDummy()
+
+            taxiRequestViewModel = TaxiRequestViewModel(
+                taxiRequestWaitingAcceptance,
+                riderTaxiRequestsRepository,
+                taskSchedulerDummy,
+                contextMock
+            )
+
+            // Assert
+            Assert.assertNull(
+                taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.value)
+
+            taskSchedulerDummy.executePendingTasks()
+
+            Assert.assertFalse(
                 taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled
             )
         }
@@ -116,13 +149,18 @@ class TaxiRequestViewModelTests {
     @Test
     fun navigatesToAcceptedStateWhenTaxiRequestIsInAcceptedState() {
         coroutineScope.launch {
+            // Arrange
+            val acceptedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.ACCEPTED)
+                .build()
+
             // Act
-            val taxiRequestViewModel =
-                TaxiRequestViewModel(
-                    TaxiRequest(DateTime.now(), Status.ACCEPTED),
-                    riderTaxiRequestsRepository,
-                    contextMock
-                )
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                acceptedTaxiRequest,
+                riderTaxiRequestsRepository,
+                taskSchedulerMock,
+                contextMock
+            )
 
             // Assert
             Assert.assertEquals(
@@ -135,13 +173,18 @@ class TaxiRequestViewModelTests {
     @Test
     fun navigatesToDriverArrivedStateWhenTaxiRequestIsInDriverArrivedState() {
         coroutineScope.launch {
+            // Arrange
+            val taxiRequestWithArrivedDriver = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.DRIVER_ARRIVED)
+                .build()
+
             // Act
-            val taxiRequestViewModel =
-                TaxiRequestViewModel(
-                    TaxiRequest(DateTime.now(), Status.DRIVER_ARRIVED),
-                    riderTaxiRequestsRepository,
-                    contextMock
-                )
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                taxiRequestWithArrivedDriver,
+                riderTaxiRequestsRepository,
+                taskSchedulerMock,
+                contextMock
+            )
 
             // Assert
             Assert.assertEquals(
@@ -151,19 +194,79 @@ class TaxiRequestViewModelTests {
         }
     }
 
-//    @Test
-//    fun navigatesToMainWhenTaxiRequestExpires() {
-//        coroutineScope.launch {
-//            // Arrange
-//            whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
-//                .thenReturn(Result.success(TaxiRequest(Status.WAITING_ACCEPTANCE)))
-//            val origin = LocationPresentationModel(0.28394, 1.02934)
-//            val destination = LocationPresentationModel(0.28394, 1.02934)
-//
-//            // Act
-//            taxiRequestViewModel.sendTaxiRequest(origin, destination)
-//
-//            // Arrange
-//        }
-//    }
+    @Test
+    fun navigatesToAcceptedStateWhenNotified() {
+        coroutineScope.launch {
+            // Arrange
+            val taxiRequest = TaxiRequestFactory.withBuilder()
+                .withExpirationDate(DateTime.now().plusSeconds(30))
+                .withStatus(Status.WAITING_ACCEPTANCE).build()
+
+            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                taxiRequest, riderTaxiRequestsRepository, taskSchedulerDummy, contextMock
+            )
+            val acceptedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.ACCEPTED)
+                .build()
+
+            // Act
+            taxiRequestViewModel.onTaxiRequestStatusChanged(
+                TaxiRequestStatusChangedEvent(acceptedTaxiRequest))
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                taxiRequestViewModel.navigateToAcceptedStateEvent.value?.hasBeenHandled
+            )
+
+            taskSchedulerDummy.assertThatHasCancelledTask()
+        }
+    }
+
+    @Test
+    fun navigatesToDriverArrivedStateWhenNotified() {
+        coroutineScope.launch {
+            // Arrange
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                null, riderTaxiRequestsRepository, taskSchedulerMock, contextMock
+            )
+            val driverArrivedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.DRIVER_ARRIVED)
+                .build()
+
+            // Act
+            taxiRequestViewModel.onTaxiRequestStatusChanged(
+                TaxiRequestStatusChangedEvent(driverArrivedTaxiRequest))
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                taxiRequestViewModel.navigateToDriverArrivedStateEvent.value?.hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun navigatesToMainWhenNotifiedWithCancelledState() {
+        coroutineScope.launch {
+            // Arrange
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                null, riderTaxiRequestsRepository, taskSchedulerMock, contextMock
+            )
+            val cancelledTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.CANCELLED)
+                .build()
+
+            // Act
+            taxiRequestViewModel.onTaxiRequestStatusChanged(
+                TaxiRequestStatusChangedEvent(cancelledTaxiRequest))
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                taxiRequestViewModel.showCancelledMessageAndNavigateBackEvent.value?.hasBeenHandled
+            )
+        }
+    }
 }

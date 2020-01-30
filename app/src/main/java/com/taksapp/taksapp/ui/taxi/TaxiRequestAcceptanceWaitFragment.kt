@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
 import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
@@ -23,9 +24,7 @@ class TaxiRequestAcceptanceWaitFragment : Fragment() {
     ): View? {
         viewModel.showTimeoutMessageAndNavigateBackEvent.observe(
             this, Observer {
-                val intent = Intent(requireContext(), RiderMainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                val intent = Intent()
                 intent.putExtra(
                     TaxiRequestActivity.EXTRA_ERROR_KIND,
                     TaxiRequestActivity.ERROR_KIND_TAXI_REQUEST_TIMEOUT)

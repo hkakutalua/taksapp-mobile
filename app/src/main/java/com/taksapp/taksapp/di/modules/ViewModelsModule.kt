@@ -21,5 +21,5 @@ val viewModelsModule = module {
     viewModel { RiderSignUpOtpConfirmationViewModel(get(), get()) }
     viewModel { AutocompletePlaceChooserViewModel(get()) }
     viewModel { FareEstimationViewModel(get(), get(), androidContext()) }
-    viewModel { (taxiRequest: TaxiRequest) -> TaxiRequestViewModel(taxiRequest, get(), androidContext()) }
+    viewModel { (taxiRequest: TaxiRequest) -> TaxiRequestViewModel(taxiRequest, get(), get(), androidContext()) }
 }

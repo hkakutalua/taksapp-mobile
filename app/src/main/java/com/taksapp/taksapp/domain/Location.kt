@@ -1,3 +1,5 @@
 package com.taksapp.taksapp.domain
 
-data class Location(val latitude: Double, val longitude: Double)
+import java.io.Serializable
+
+data class Location(val latitude: Double, val longitude: Double): Serializable

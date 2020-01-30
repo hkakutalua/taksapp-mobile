@@ -13,24 +13,18 @@ import com.taksapp.taksapp.domain.interfaces.CancellationError
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
 import com.taksapp.taksapp.utils.FileUtilities
-import com.taksapp.taksapp.utils.MainCoroutineScopeRule
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Assert
-import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
-@ExperimentalCoroutinesApi
+
 @ExperimentalTime
 class RidersTaxiRequestWebServiceTests {
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
     private val successfulTaxiRequestBodyPath =
         "json/riders/me/taxi-requests/successful_taxi_request.json"
     private val errorTaxiRequestActiveBodyPath =
@@ -44,7 +38,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun sendsTaxiRequest() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -68,7 +62,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun taxiRequestFailsDueToExistingActiveTaxiRequest() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -91,7 +85,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun taxiRequestFailsDueToNoAvailableDrivers() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -114,7 +108,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun taxiRequestFailsDueToRiderNotHavingDevice() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -137,7 +131,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun cancelsCurrentTaxiRequest() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(MockResponse().setResponseCode(204))
@@ -155,7 +149,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun cancellationFailsWhenCurrentTaxiRequestDoesNotExists() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -178,7 +172,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun getsCurrentTaxiRequest() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -201,7 +195,7 @@ class RidersTaxiRequestWebServiceTests {
 
     @Test
     fun currentTaxiRequestDoesNotExists() {
-        coroutineScope.launch {
+        runBlocking {
             // Arrange
             val server = MockWebServer()
             server.enqueue(
@@ -214,6 +208,54 @@ class RidersTaxiRequestWebServiceTests {
 
             // Act
             val result = taxiRequestWebService.getCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))
+            Assert.assertTrue(result.hasFailed)
+            Assert.assertEquals(TaxiRequestRetrievalError.NOT_FOUND, result.error)
+        }
+    }
+
+    @Test
+    fun getsTaxiRequestById() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(FileUtilities.getFileContent(successfulTaxiRequestBodyPath))
+            )
+            val taxiRequestWebService =
+                RidersTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService
+                .getTaxiRequestById("eda69fe5-ac0d-4a95-9261-c54d17143bd4")
+
+            // Assert
+            Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))
+            Assert.assertTrue(result.isSuccessful)
+            Assert.assertNotNull(result.data)
+        }
+    }
+
+    @Test
+    fun taxiRequestByIdDoesNotExists() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(
+                MockResponse()
+                    .setResponseCode(404)
+                    .setBody(FileUtilities.getFileContent(errorTaxiRequestNotFoundBodyPath))
+            )
+            val taxiRequestWebService =
+                RidersTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService
+                .getTaxiRequestById("eda69fe5-ac0d-4a95-9261-c54d17143bd4")
 
             // Assert
             Assert.assertNotNull(server.takeRequest(1, TimeUnit.MILLISECONDS))

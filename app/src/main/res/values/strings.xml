@@ -51,4 +51,6 @@
     <string name="text_driver_arrived">Motorista Chegou</string>
     <string name="text_no_drivers_answered_to_request">Nenhum motorista respondeu ao seu pedido de taxi</string>
     <string name="text_taxi_request_finished">Pedido Terminado</string>
+    <string name="text_taxi_request_cancelled_by_driver">O pedido de taxi foi cancelado pelo motorista.</string>
+    <string name="text_driver">Motorista</string>
 </resources>

@@ -10,18 +10,12 @@
         android:name="com.taksapp.taksapp.ui.taxi.TaxiRequestAcceptanceWaitFragment"
         android:label="TaxiRequestAcceptanceWaitFragment"
         tools:layout="@layout/fragment_taxi_request_acceptance_wait">
-        <action
-            android:id="@+id/action_taxiRequestAcceptanceWaitFragment_to_driverArrivingFragment"
-            app:destination="@id/driverArrivingFragment" />
     </fragment>
     <fragment
         android:id="@+id/driverArrivingFragment"
         android:name="com.taksapp.taksapp.ui.taxi.DriverArrivingFragment"
         android:label="DriverArrivingFragment"
         tools:layout="@layout/fragment_driver_arriving">
-        <action
-            android:id="@+id/action_driverArrivingFragment_to_driverArrivedFragment"
-            app:destination="@id/driverArrivedFragment" />
     </fragment>
     <fragment
         android:id="@+id/driverArrivedFragment"

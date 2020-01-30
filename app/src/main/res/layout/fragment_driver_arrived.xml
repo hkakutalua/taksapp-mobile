@@ -5,7 +5,9 @@
     tools:context=".ui.taxi.DriverArrivedFragment">
     
     <data>
-    
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel" />
     </data>
     
     <androidx.cardview.widget.CardView
@@ -29,7 +31,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textAllCaps="true" />
             
-            <de.hdodenhof.circleimageview.CircleImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageview_driver"
                 android:layout_width="@dimen/list_item_icon"
                 android:layout_height="@dimen/list_item_icon"
@@ -38,7 +40,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginStart="@dimen/margin_normal"
-                tools:src="@drawable/ic_logo" />
+                app:srcCompat="@drawable/ic_person" />
             
             <TextView
                 android:id="@+id/textview_driver_name"
@@ -48,6 +50,7 @@
                 app:layout_constraintStart_toEndOf="@id/imageview_driver"
                 android:layout_marginStart="@dimen/margin_small"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:text="@{viewModel.taxiRequestPresentation.driverName}"
                 tools:text="Henrick Kakutalua" />
             
             <TextView
@@ -71,6 +74,7 @@
                 android:layout_marginEnd="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:textColor="@android:color/black"
+                android:text="@{viewModel.taxiRequestPresentation.originName}"
                 tools:text="Universidade Tecnica de Angola"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -98,6 +102,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:textColor="@android:color/black"
+                android:text="@{viewModel.taxiRequestPresentation.destinationName}"
                 tools:text="Universidade Metodista de Angola"
                 android:maxLines="1"
                 android:ellipsize="end" />

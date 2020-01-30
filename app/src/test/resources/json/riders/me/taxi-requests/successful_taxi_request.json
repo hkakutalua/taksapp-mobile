@@ -8,6 +8,18 @@
     "latitude": 0.34051,
     "longitude": 1.20394
   },
+  "originLocationName": "Luanda",
+  "destinationLocationName": "Bengo",
+  "rider": {
+    "id": "4554c5f7-d30d-491d-808f-6c77de0d41d5",
+    "firstName": "Henrick",
+    "lastName": "Kakutalua",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0
+    }
+  },
+  "driver": null,
   "expirationDate": "2020-01-14T07:22:29+0000",
   "status": "waitingAcceptance"
 }

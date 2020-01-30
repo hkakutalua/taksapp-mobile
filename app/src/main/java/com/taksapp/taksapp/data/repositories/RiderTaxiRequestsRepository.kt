@@ -7,10 +7,16 @@ import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
 import java.io.IOException
 
 enum class CreateTaxiRequestError {
     NO_AVAILABLE_DRIVERS,
+    SERVER_ERROR
+}
+
+enum class GetTaxiRequestError {
+    NO_TAXI_REQUEST,
     SERVER_ERROR
 }
 
@@ -53,6 +59,24 @@ class RiderTaxiRequestsRepository(
                 }
             } else {
                 return Result.error(CreateTaxiRequestError.SERVER_ERROR)
+            }
+        }
+    }
+
+    /**
+     * Gets the rider's current taxi request
+     * @return a [Result] containing the [TaxiRequest] if successful
+     * @throws [IOException] if a network error occurs
+     */
+    suspend fun getCurrent(): Result<TaxiRequest, GetTaxiRequestError> {
+        val taxiRequestResult = ridersTaxiRequestService.getCurrentTaxiRequest()
+        return if (taxiRequestResult.isSuccessful) {
+            Result.success(taxiRequestResult.data)
+        } else {
+            when (taxiRequestResult.error) {
+                TaxiRequestRetrievalError.NOT_FOUND -> Result.error(GetTaxiRequestError.NO_TAXI_REQUEST)
+                TaxiRequestRetrievalError.SERVER_ERROR -> Result.error(GetTaxiRequestError.SERVER_ERROR)
+                else -> Result.error(GetTaxiRequestError.SERVER_ERROR)
             }
         }
     }
