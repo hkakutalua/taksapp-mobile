@@ -87,7 +87,7 @@
                 app:layout_constraintTop_toBottomOf="@id/line_horizontal"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/button_next"
+                app:layout_constraintBottom_toTopOf="@id/line_invisible"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
                 android:layout_marginBottom="@dimen/margin_normal"
@@ -102,7 +102,6 @@
                 app:layout_constraintTop_toBottomOf="@id/line_horizontal"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/button_next"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
                 android:layout_marginBottom="@dimen/margin_normal"
@@ -129,29 +128,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/line_horizontal"
-                app:layout_constraintBottom_toTopOf="@id/button_next"
+                app:layout_constraintBottom_toTopOf="@id/line_invisible"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true" />
-        
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_next"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:insetBottom="0dp"
-                android:insetTop="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:cornerRadius="0dp"
-                android:enabled="@{viewModel.canFetchFareEstimation}"
-                android:textColor="@android:color/white"
-                android:text="@string/text_confirm"
-                android:onClick="@{_ -> viewModel.fetchFareEstimationWithRoute()}"/>
-        
+    
+            <View
+                android:id="@+id/line_invisible"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                app:layout_constraintTop_toBottomOf="@id/textview_destination_place"
+                android:background="@android:color/transparent" />
+    
             <ProgressBar
                 android:id="@+id/progressbar_directions_fetch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/button_next"
+                app:layout_constraintTop_toBottomOf="@id/line_invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginStart="@dimen/margin_normal"
@@ -160,6 +157,19 @@
                 android:visibility="@{viewModel.estimatingFare ? View.VISIBLE : View.GONE}"
                 tools:visibility="visible"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+        
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                app:layout_constraintTop_toBottomOf="@id/progressbar_directions_fetch"
+                app:cornerRadius="0dp"
+                android:enabled="@{viewModel.canFetchFareEstimation}"
+                android:textColor="@android:color/white"
+                android:text="@string/text_confirm"
+                android:onClick="@{_ -> viewModel.fetchFareEstimationWithRoute()}"/>
         
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_start"

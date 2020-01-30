@@ -14,10 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StableIdKeyProvider
-import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
@@ -86,8 +83,10 @@ class FaresEstimatesFragment : Fragment() {
                 return@addCallback
 
             fareEstimationViewModel.clearDirections()
-            Navigation.findNavController(context as Activity, R.id.fragment_navigation_host)
-                .popBackStack()
+            context?.let {
+                Navigation.findNavController(it as Activity, R.id.fragment_navigation_host)
+                    .popBackStack()
+            }
         }
     }
 
@@ -144,7 +143,16 @@ class FaresEstimatesFragment : Fragment() {
             .build()
         // Workaround to disable long-pressing to select items.
         // See: https://stackoverflow.com/questions/55494599/how-to-select-first-item-without-long-press-using-recyclerviews-selectiontracke
-        companiesSelectionTracker.select(-1)
+        val noItemSelectedKey: Long = -1
+        companiesSelectionTracker.select(noItemSelectedKey)
+        companiesSelectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onItemStateChanged(key: Long, selected: Boolean) {
+                super.onItemStateChanged(key, selected)
+                if (key != noItemSelectedKey && !selected) {
+                    companiesSelectionTracker.select(noItemSelectedKey)
+                }
+            }
+        })
         return companiesSelectionTracker
     }
 }
