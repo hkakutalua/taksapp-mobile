@@ -57,29 +57,6 @@ class TaxiRequestViewModelTests {
     }
 
     @Test
-    fun cancelsCurrentTaxiRequest() {
-        coroutineScope.launch {
-            // Arrange
-            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
-                .thenReturn(Result.success(null))
-            coroutineScope.pauseDispatcher()
-
-            // Act
-            taxiRequestViewModel.cancelCurrentTaxiRequest()
-
-            // Assert
-            Assert.assertEquals(true, taxiRequestViewModel.cancellingTaxiRequest.getOrAwaitValue())
-
-            coroutineScope.advanceUntilIdle()
-            Assert.assertEquals(false, taxiRequestViewModel.cancellingTaxiRequest.getOrAwaitValue())
-            Assert.assertEquals(
-                false,
-                taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled
-            )
-        }
-    }
-
-    @Test
     fun navigateToMainWhenCountdownToTaxiRequestTimesOut() {
         coroutineScope.launch {
             // Arrange/Act
@@ -103,45 +80,6 @@ class TaxiRequestViewModelTests {
 
             Assert.assertFalse(
                 taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled
-            )
-        }
-    }
-
-    @Test
-    fun navigatesToMainScreenWhenTaxiRequestToBeCancelledIsNotActive() {
-        coroutineScope.launch {
-            // Arrange
-            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
-                .thenReturn(Result.error(CancellationError.TAXI_REQUEST_NOT_FOUND))
-
-            // Act
-            taxiRequestViewModel.cancelCurrentTaxiRequest()
-
-            // Assert
-            Assert.assertEquals(
-                false,
-                taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled
-            )
-        }
-    }
-
-    @Test
-    fun taxiRequestCancellationFailsDueToNetworkFailure() {
-        coroutineScope.launch {
-            // Arrange
-            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
-                .thenThrow(IOException())
-            whenever(contextMock.getString(R.string.text_internet_error))
-                .thenReturn("internet_error")
-
-            // Act
-            taxiRequestViewModel.cancelCurrentTaxiRequest()
-
-            // Assert
-            verify(ridersTaxiRequestServiceMock).cancelCurrentTaxiRequest()
-            Assert.assertEquals(
-                "internet_error",
-                taxiRequestViewModel.snackBarErrorEvent.getOrAwaitValue().peekContent()
             )
         }
     }
@@ -266,6 +204,138 @@ class TaxiRequestViewModelTests {
             Assert.assertEquals(
                 false,
                 taxiRequestViewModel.showCancelledMessageAndNavigateBackEvent.value?.hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun cancelsCurrentTaxiRequest() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenReturn(Result.success(null))
+            coroutineScope.pauseDispatcher()
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertEquals(true, taxiRequestViewModel.cancellingTaxiRequest.getOrAwaitValue())
+
+            coroutineScope.advanceUntilIdle()
+            Assert.assertEquals(false, taxiRequestViewModel.cancellingTaxiRequest.getOrAwaitValue())
+            Assert.assertEquals(
+                false,
+                taxiRequestViewModel.navigateBackEvent.getOrAwaitValue().hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun countdownToTaxiRequestTimeoutPausesDuringCancellation() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenReturn(Result.success(null))
+
+            val taxiRequestInInitialStatus = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.WAITING_ACCEPTANCE)
+                .build()
+            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                taxiRequestInInitialStatus, riderTaxiRequestsRepository, taskSchedulerDummy, contextMock
+            )
+            coroutineScope.pauseDispatcher()
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            taskSchedulerDummy.assertThatHasPausedTask()
+        }
+    }
+
+    @Test
+    fun countdownToTaxiRequestTimeoutResumesAfterCancellation() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenReturn(Result.success(null))
+
+            val taxiRequestInInitialStatus = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.WAITING_ACCEPTANCE)
+                .build()
+            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taxiRequestViewModel = TaxiRequestViewModel(
+                taxiRequestInInitialStatus, riderTaxiRequestsRepository, taskSchedulerDummy, contextMock
+            )
+            coroutineScope.pauseDispatcher()
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            coroutineScope.advanceUntilIdle()
+            taskSchedulerDummy.assertThatHasResumedTask()
+        }
+    }
+
+    @Test
+    fun navigatesToMainScreenWhenTaxiRequestToBeCancelledIsNotActive() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenReturn(Result.error(CancellationError.TAXI_REQUEST_NOT_FOUND))
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                taxiRequestViewModel.navigateBackEvent.getOrAwaitValue().hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun taxiRequestCancellationFailsDueToNetworkFailure() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenThrow(IOException())
+            whenever(contextMock.getString(R.string.text_internet_error))
+                .thenReturn("internet_error")
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            verify(ridersTaxiRequestServiceMock).cancelCurrentTaxiRequest()
+            Assert.assertEquals(
+                "internet_error",
+                taxiRequestViewModel.snackBarErrorEvent.getOrAwaitValue().peekContent()
+            )
+        }
+    }
+
+    @Test
+    fun taxiRequestCancellationFailsDueToServerError() {
+        coroutineScope.launch {
+            // Arrange
+            whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
+                .thenReturn(Result.error(CancellationError.SERVER_ERROR))
+            whenever(contextMock.getString(R.string.text_server_error))
+                .thenReturn("server_error")
+
+            // Act
+            taxiRequestViewModel.cancelCurrentTaxiRequest()
+
+            // Assert
+            verify(ridersTaxiRequestServiceMock).cancelCurrentTaxiRequest()
+            Assert.assertEquals(
+                "server_error",
+                taxiRequestViewModel.snackBarErrorEvent.getOrAwaitValue().peekContent()
             )
         }
     }

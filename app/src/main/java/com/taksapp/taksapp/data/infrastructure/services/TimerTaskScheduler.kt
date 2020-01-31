@@ -11,23 +11,65 @@ class TimerTaskScheduler : TaskScheduler {
     private val tasks = mutableListOf<ScheduledTask>()
 
     override fun schedule(date: DateTime, task: () -> Unit): String {
-        val timerTask = Timer().schedule(date.toDate()) {
-            val mainLooper = Looper.getMainLooper()
-            Handler(mainLooper).post { task() }
-        }
+        val scheduledTask = ScheduledTask(UUID.randomUUID().toString(), date, task)
+        tasks.add(scheduledTask)
+        return scheduledTask.id
+    }
 
-        val taskId = UUID.randomUUID().toString()
-        tasks.add(ScheduledTask(taskId, timerTask))
-        return taskId
+    override fun pause(taskIdentifier: String) {
+        val taskToPause = tasks.firstOrNull { x -> x.id == taskIdentifier }
+        taskToPause?.paused = true
+    }
+
+    override fun resume(taskIdentifier: String) {
+        val taskToResume = tasks.firstOrNull { x -> x.id == taskIdentifier }
+        taskToResume?.paused = false
     }
 
     override fun cancel(taskIdentifier: String) {
         val taskToCancel = tasks.firstOrNull { x -> x.id == taskIdentifier }
         taskToCancel?.let {
-            it.timerTask.cancel()
+            it.cancel()
             tasks.remove(taskToCancel)
         }
     }
 
-    private class ScheduledTask(val id: String, val timerTask: TimerTask)
+    private class ScheduledTask(
+        val id: String,
+        val scheduledDate: DateTime,
+        val task: () -> Unit) {
+
+        private var _timerTask: TimerTask
+        private var cancelled = false
+
+        var paused: Boolean = false
+            set(value) {
+                if (cancelled)
+                    return
+
+                if (value) {
+                    _timerTask.cancel()
+                } else {
+                    _timerTask = scheduleTask()
+                }
+
+                field = value
+            }
+
+        init {
+            _timerTask = scheduleTask()
+        }
+
+        fun cancel() {
+            _timerTask.cancel()
+            cancelled = true
+        }
+
+        private fun scheduleTask(): TimerTask {
+            return Timer().schedule(scheduledDate.toDate()) {
+                val mainLooper = Looper.getMainLooper()
+                Handler(mainLooper).post { task() }
+            }
+        }
+    }
 }

@@ -10,8 +10,18 @@ class TaskSchedulerDummy : TaskScheduler {
 
     override fun schedule(date: DateTime, task: () -> Unit): String {
         val taskIdentifier = UUID.randomUUID().toString()
-        scheduledTasks.add(ScheduledTask(taskIdentifier, date, task))
+        scheduledTasks.add(ScheduledTask(taskIdentifier, task))
         return taskIdentifier
+    }
+
+    override fun pause(taskIdentifier: String) {
+        val task = scheduledTasks.firstOrNull { x -> x.identifier == taskIdentifier }
+        task?.pause()
+    }
+
+    override fun resume(taskIdentifier: String) {
+        val task = scheduledTasks.firstOrNull { x -> x.identifier == taskIdentifier }
+        task?.resume()
     }
 
     override fun cancel(taskIdentifier: String) {
@@ -28,13 +38,31 @@ class TaskSchedulerDummy : TaskScheduler {
         Assert.assertTrue(scheduledTasks.any { x -> x.cancelled })
     }
 
-    class ScheduledTask(val identifier: String, val date: DateTime, val action: () -> Unit) {
+    fun assertThatHasPausedTask() {
+        Assert.assertTrue(scheduledTasks.any { x -> x.paused })
+    }
+
+    fun assertThatHasResumedTask() {
+        Assert.assertTrue(scheduledTasks.any { x -> !x.paused })
+    }
+
+    class ScheduledTask(val identifier: String, val action: () -> Unit) {
         private var _cancelled = false
-        val cancelled: Boolean
-            get() = _cancelled
+        private var _paused = false
+
+        val cancelled get() = _cancelled
+        val paused get() = _paused
 
         fun markAsCancelled() {
             _cancelled = true
+        }
+
+        fun pause() {
+            _paused = true
+        }
+
+        fun resume() {
+            _paused = false
         }
     }
 }

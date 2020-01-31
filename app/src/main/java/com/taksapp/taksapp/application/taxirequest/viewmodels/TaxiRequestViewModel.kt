@@ -9,6 +9,7 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.application.taxirequest.presentationmodels.LocationPresentationModel
 import com.taksapp.taksapp.application.taxirequest.presentationmodels.TaxiRequestPresentationModel
+import com.taksapp.taksapp.data.repositories.CancelTaxiRequestError
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
@@ -30,6 +31,7 @@ class TaxiRequestViewModel(
     private val _cancellingTaxiRequest = MutableLiveData<Boolean>()
     private val _showTimeoutMessageAndNavigateBackEvent = MutableLiveData<Event<Nothing>>()
     private val _showCancelledMessageAndNavigateBackEvent = MutableLiveData<Event<Nothing>>()
+    private val _navigateBackEvent = MutableLiveData<Event<Nothing>>()
     private val _navigateToAcceptedStateEvent = MutableLiveData<Event<TaxiRequest>>()
     private val _navigateToDriverArrivedStateEvent = MutableLiveData<Event<TaxiRequest>>()
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
@@ -42,6 +44,7 @@ class TaxiRequestViewModel(
         _showTimeoutMessageAndNavigateBackEvent
     val showCancelledMessageAndNavigateBackEvent: LiveData<Event<Nothing>> =
         _showCancelledMessageAndNavigateBackEvent
+    val navigateBackEvent: LiveData<Event<Nothing>> = _navigateBackEvent
     val navigateToAcceptedStateEvent: LiveData<Event<TaxiRequest>> = _navigateToAcceptedStateEvent
     val navigateToDriverArrivedStateEvent: LiveData<Event<TaxiRequest>> =
         _navigateToDriverArrivedStateEvent
@@ -92,16 +95,23 @@ class TaxiRequestViewModel(
 
     fun cancelCurrentTaxiRequest() {
         _cancellingTaxiRequest.value = true
+        taxiRequestExpiryTaskId?.let { taskScheduler.pause(it) }
 
         viewModelScope.launch {
             try {
                 val result = riderTaxiRequestsRepository.updateCurrentAsCancelled()
-                if (result.isSuccessful)
-                    _showTimeoutMessageAndNavigateBackEvent.postValue(Event(null))
+                if (result.isSuccessful ||
+                    result.error == CancelTaxiRequestError.NO_TAXI_REQUEST) {
+                    _navigateBackEvent.postValue(Event(null))
+                } else if (result.error == CancelTaxiRequestError.SERVER_ERROR) {
+                    _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_server_error)))
+                }
 
                 _cancellingTaxiRequest.postValue(false)
             } catch (e: IOException) {
                 _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_internet_error)))
+            } finally {
+                taxiRequestExpiryTaskId?.let { taskScheduler.resume(it) }
             }
         }
     }

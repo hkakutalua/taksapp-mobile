@@ -40,6 +40,8 @@ class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
         taxiRequest = intent.getSerializableExtra(EXTRA_TAXI_REQUEST) as TaxiRequest
         taxiRequestViewModel = getViewModel { parametersOf(taxiRequest) }
 
+        observeNavigateBackEvent()
+        observeTaxiRequestTimeoutEvent()
         observeCancelledMessageEvent()
         observeDriverArrivedEvent()
         observeTaxiRequestAcceptedEvent()
@@ -52,6 +54,26 @@ class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap?) {
         if (map == null)
             return
+    }
+
+    private fun observeNavigateBackEvent() {
+        taxiRequestViewModel.navigateBackEvent.observe(
+            this, Observer { finish() }
+        )
+    }
+
+    private fun observeTaxiRequestTimeoutEvent() {
+        taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.observe(
+            this, Observer {
+                val intent = Intent()
+                intent.putExtra(
+                    EXTRA_ERROR_KIND,
+                    ERROR_KIND_TAXI_REQUEST_TIMEOUT
+                )
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+        )
     }
 
     private fun observeTaxiRequestAcceptedEvent() {

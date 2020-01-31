@@ -5,7 +5,10 @@
     tools:context=".ui.taxi.TaxiRequestAcceptanceWaitFragment">
     
     <data>
-    
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel" />
     </data>
     
     <androidx.cardview.widget.CardView
@@ -44,19 +47,34 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginTop="@dimen/margin_small" />
             
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_cancel"
+            <ProgressBar
+                android:id="@+id/cancellation_progress_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/textview_waiting_acceptance"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginStart="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_small"
+                android:indeterminate="true"
+                android:visibility="@{viewModel.cancellingTaxiRequest ? View.VISIBLE : View.GONE}"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/cancellation_progress_bar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
                 android:layout_marginBottom="@dimen/margin_normal"
-                android:text="@string/text_cancel" />
+                android:text="@string/text_cancel"
+                android:enabled="@{!viewModel.cancellingTaxiRequest}"
+                android:onClick="@{_ -> viewModel.cancelCurrentTaxiRequest()}"/>
         
         </androidx.constraintlayout.widget.ConstraintLayout>
     

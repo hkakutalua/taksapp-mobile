@@ -1,18 +1,14 @@
 package com.taksapp.taksapp.ui.taxi
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
 import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class TaxiRequestAcceptanceWaitFragment : Fragment() {
@@ -22,18 +18,12 @@ class TaxiRequestAcceptanceWaitFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.showTimeoutMessageAndNavigateBackEvent.observe(
-            this, Observer {
-                val intent = Intent()
-                intent.putExtra(
-                    TaxiRequestActivity.EXTRA_ERROR_KIND,
-                    TaxiRequestActivity.ERROR_KIND_TAXI_REQUEST_TIMEOUT)
-                requireActivity().setResult(Activity.RESULT_OK, intent)
-                requireActivity().finish()
-            })
-
         val binding = DataBindingUtil.inflate<FragmentTaxiRequestAcceptanceWaitBinding>(
             inflater, R.layout.fragment_taxi_request_acceptance_wait, container, false)
+
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+
         return binding.root
     }
 }

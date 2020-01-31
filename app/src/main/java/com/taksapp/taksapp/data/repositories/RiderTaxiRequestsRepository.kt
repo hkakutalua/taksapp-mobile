@@ -2,12 +2,9 @@ package com.taksapp.taksapp.data.repositories
 
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.infrastructure.services.PushNotificationTokenRetriever
-import com.taksapp.taksapp.domain.interfaces.DevicesService
-import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
-import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
-import com.taksapp.taksapp.domain.interfaces.TaxiRequestRetrievalError
+import com.taksapp.taksapp.domain.interfaces.*
 import java.io.IOException
 
 enum class CreateTaxiRequestError {
@@ -16,6 +13,11 @@ enum class CreateTaxiRequestError {
 }
 
 enum class GetTaxiRequestError {
+    NO_TAXI_REQUEST,
+    SERVER_ERROR
+}
+
+enum class CancelTaxiRequestError {
     NO_TAXI_REQUEST,
     SERVER_ERROR
 }
@@ -86,9 +88,17 @@ class RiderTaxiRequestsRepository(
      * @return a [Result] containing the [TaxiRequest] if successful
      * @throws [IOException] if a network error occurs
      */
-    suspend fun updateCurrentAsCancelled(): Result<Nothing, Nothing> {
-        ridersTaxiRequestService.cancelCurrentTaxiRequest()
-        return Result.success(null)
+    suspend fun updateCurrentAsCancelled(): Result<Nothing, CancelTaxiRequestError> {
+        val result = ridersTaxiRequestService.cancelCurrentTaxiRequest()
+        return if (result.isSuccessful) {
+            return Result.success(null)
+        } else {
+            when (result.error) {
+                CancellationError.TAXI_REQUEST_NOT_FOUND -> Result.error(CancelTaxiRequestError.NO_TAXI_REQUEST)
+                CancellationError.SERVER_ERROR -> Result.error(CancelTaxiRequestError.SERVER_ERROR)
+                else -> Result.error(CancelTaxiRequestError.SERVER_ERROR)
+            }
+        }
     }
 
     private fun hasTaxiRequestReachedMaxTries(
