@@ -22,7 +22,9 @@ import com.taksapp.taksapp.databinding.FragmentFaresEstimatesBinding
 import com.taksapp.taksapp.ui.taxi.adapters.CompaniesAdapter
 import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class FaresEstimatesFragment : Fragment() {
     companion object {
         const val TAXI_REQUEST_ACTIVITY_CODE = 100

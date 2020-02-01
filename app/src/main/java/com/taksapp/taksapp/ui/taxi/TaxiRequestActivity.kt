@@ -15,7 +15,9 @@ import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewMod
 import com.taksapp.taksapp.domain.TaxiRequest
 import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         const val EXTRA_ERROR_KIND = "EXTRA_ERROR_KIND"

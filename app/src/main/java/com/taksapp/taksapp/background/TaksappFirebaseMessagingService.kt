@@ -2,8 +2,8 @@ package com.taksapp.taksapp.background
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.taksapp.taksapp.application.taxirequest.backgroundhandlers.TaxiRequestBackgroundHandler
-import org.koin.android.ext.android.inject
+import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
+import org.greenrobot.eventbus.EventBus
 
 class TaksappFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
@@ -14,12 +14,11 @@ class TaksappFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        // TODO: Drop messages with sent date superior to 30 seconds
+
         if (isTaxiRequestStatusChangedMessage(message)) {
-            val taxiRequestId = message.data[TAXI_REQUEST_ID_FIELD]
-            taxiRequestId?.let {
-                val taxiRequestBackgroundHandler: TaxiRequestBackgroundHandler by inject()
-                taxiRequestBackgroundHandler.handleTaxiRequestStatusChanged(taxiRequestId)
-            }
+            val taxiRequestId = message.data[TAXI_REQUEST_ID_FIELD]!!
+            EventBus.getDefault().post(TaxiRequestStatusChangedEvent(taxiRequestId))
         }
     }
 

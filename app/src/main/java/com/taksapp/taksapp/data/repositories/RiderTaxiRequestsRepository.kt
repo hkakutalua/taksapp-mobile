@@ -84,6 +84,24 @@ class RiderTaxiRequestsRepository(
     }
 
     /**
+     * Gets the rider's taxi request by its id
+     * @return a [Result] containing the [TaxiRequest] if successful
+     * @throws [IOException] if a network error occurs
+     */
+    suspend fun getById(taxiRequestId: String): Result<TaxiRequest, GetTaxiRequestError> {
+        val taxiRequestResult = ridersTaxiRequestService.getTaxiRequestById(taxiRequestId)
+        return if (taxiRequestResult.isSuccessful) {
+            Result.success(taxiRequestResult.data)
+        } else {
+            when (taxiRequestResult.error) {
+                TaxiRequestRetrievalError.NOT_FOUND -> Result.error(GetTaxiRequestError.NO_TAXI_REQUEST)
+                TaxiRequestRetrievalError.SERVER_ERROR -> Result.error(GetTaxiRequestError.SERVER_ERROR)
+                else -> Result.error(GetTaxiRequestError.SERVER_ERROR)
+            }
+        }
+    }
+
+    /**
      * Updates current taxi request as cancelled
      * @return a [Result] containing the [TaxiRequest] if successful
      * @throws [IOException] if a network error occurs

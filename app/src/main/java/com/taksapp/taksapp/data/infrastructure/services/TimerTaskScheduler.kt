@@ -6,14 +6,21 @@ import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import org.joda.time.DateTime
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class TimerTaskScheduler : TaskScheduler {
     private val tasks = mutableListOf<ScheduledTask>()
 
-    override fun schedule(date: DateTime, task: () -> Unit): String {
-        val scheduledTask = ScheduledTask(UUID.randomUUID().toString(), date, task)
+    override fun schedule(id: String, date: DateTime, task: () -> Unit) {
+        val scheduledTask = OneTimeExecutionTask(id, date, task)
         tasks.add(scheduledTask)
-        return scheduledTask.id
+    }
+
+    override fun schedule(id: String, interval: Duration, task: () -> Unit) {
+        val scheduledTask = PeriodicExecutionTask(id, interval, task)
+        tasks.add(scheduledTask)
     }
 
     override fun pause(taskIdentifier: String) {
@@ -34,12 +41,7 @@ class TimerTaskScheduler : TaskScheduler {
         }
     }
 
-    private class ScheduledTask(
-        val id: String,
-        val scheduledDate: DateTime,
-        val task: () -> Unit) {
-
-        private var _timerTask: TimerTask
+    private abstract class ScheduledTask(val id: String) {
         private var cancelled = false
 
         var paused: Boolean = false
@@ -48,28 +50,68 @@ class TimerTaskScheduler : TaskScheduler {
                     return
 
                 if (value) {
-                    _timerTask.cancel()
+                    cancelTask()
                 } else {
-                    _timerTask = scheduleTask()
+                    scheduleTask()
                 }
 
                 field = value
             }
 
-        init {
-            _timerTask = scheduleTask()
-        }
-
         fun cancel() {
-            _timerTask.cancel()
             cancelled = true
+            cancelTask()
         }
 
-        private fun scheduleTask(): TimerTask {
-            return Timer().schedule(scheduledDate.toDate()) {
+        protected abstract fun scheduleTask()
+        protected abstract fun cancelTask()
+    }
+
+    private class OneTimeExecutionTask(
+        id: String,
+        val scheduledDate: DateTime,
+        val task: () -> Unit): ScheduledTask(id) {
+
+        private lateinit var _timerTask: TimerTask
+
+        init {
+            scheduleTask()
+        }
+
+        override fun scheduleTask() {
+            _timerTask = Timer().schedule(scheduledDate.toDate()) {
                 val mainLooper = Looper.getMainLooper()
                 Handler(mainLooper).post { task() }
             }
+        }
+
+        override fun cancelTask() {
+            _timerTask.cancel()
+        }
+    }
+
+    private class PeriodicExecutionTask(
+        id: String,
+        val interval: Duration,
+        val task: () -> Unit): ScheduledTask(id) {
+
+        private lateinit var _timerTask: TimerTask
+
+        init {
+            scheduleTask()
+        }
+
+        override fun scheduleTask() {
+            val periodInMilliseconds = interval.toLongMilliseconds()
+            _timerTask =
+                Timer().schedule(delay = periodInMilliseconds, period = periodInMilliseconds) {
+                    val mainLooper = Looper.getMainLooper()
+                    Handler(mainLooper).post { task() }
+                }
+        }
+
+        override fun cancelTask() {
+            _timerTask.cancel()
         }
     }
 }

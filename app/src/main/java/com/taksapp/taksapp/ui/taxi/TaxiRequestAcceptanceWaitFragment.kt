@@ -10,7 +10,9 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class TaxiRequestAcceptanceWaitFragment : Fragment() {
     private val viewModel: TaxiRequestViewModel by sharedViewModel()
 

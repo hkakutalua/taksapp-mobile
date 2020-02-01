@@ -12,8 +12,10 @@ import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.databinding.FragmentDriverArrivedBinding
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import kotlin.time.ExperimentalTime
 
 
+@ExperimentalTime
 class DriverArrivedFragment : Fragment() {
     private val viewModel: TaxiRequestViewModel by sharedViewModel()
 

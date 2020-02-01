@@ -19,8 +19,7 @@ class TaksappApplication : MultiDexApplication() {
                 com.taksapp.taksapp.di.modules.infrastructureServicesModule,
                 com.taksapp.taksapp.di.modules.repositoriesModule,
                 com.taksapp.taksapp.di.modules.webServicesModule,
-                com.taksapp.taksapp.di.modules.viewModelsModule,
-                com.taksapp.taksapp.di.modules.backgroundHandlersModule
+                com.taksapp.taksapp.di.modules.viewModelsModule
             ))
         }
     }
