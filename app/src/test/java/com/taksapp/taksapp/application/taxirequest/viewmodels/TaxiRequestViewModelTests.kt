@@ -70,7 +70,8 @@ class TaxiRequestViewModelTests {
             Assert.assertNull(
                 taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.value)
 
-            taskSchedulerDummy.executePendingTasks()
+            taskSchedulerDummy
+                .executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
 
             Assert.assertFalse(
                 taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.getOrAwaitValue().hasBeenHandled

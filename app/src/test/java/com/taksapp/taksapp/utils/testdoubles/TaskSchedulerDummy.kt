@@ -38,10 +38,6 @@ class TaskSchedulerDummy : TaskScheduler {
         task?.action?.invoke()
     }
 
-    fun executePendingTasks() {
-        scheduledTasks.forEach { task -> task.action() }
-    }
-
     fun assertThatHasCancelledTask(id: String) {
         Assert.assertTrue(scheduledTasks.any { x -> x.identifier == id && x.cancelled })
     }
