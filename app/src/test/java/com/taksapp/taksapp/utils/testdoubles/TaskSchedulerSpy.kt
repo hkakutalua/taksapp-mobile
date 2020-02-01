@@ -7,7 +7,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-class TaskSchedulerDummy : TaskScheduler {
+class TaskSchedulerSpy : TaskScheduler {
     private val scheduledTasks = mutableListOf<ScheduledTask>()
 
     override fun schedule(id: String, date: DateTime, task: () -> Unit) {

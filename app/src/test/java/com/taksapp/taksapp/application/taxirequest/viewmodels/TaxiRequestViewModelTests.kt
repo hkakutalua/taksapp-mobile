@@ -13,7 +13,7 @@ import com.taksapp.taksapp.domain.interfaces.*
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
-import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerDummy
+import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerSpy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -59,18 +59,18 @@ class TaxiRequestViewModelTests {
             val taxiRequestWaitingAcceptance = TaxiRequestFactory.withBuilder()
                 .withStatus(Status.WAITING_ACCEPTANCE)
                 .build()
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
 
             val taxiRequestViewModel = buildTaxiRequestViewModel(
                 taxiRequestWaitingAcceptance,
-                taskScheduler = taskSchedulerDummy
+                taskScheduler = taskSchedulerSpy
             )
 
             // Assert
             Assert.assertNull(
                 taxiRequestViewModel.showTimeoutMessageAndNavigateBackEvent.value)
 
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
 
             Assert.assertFalse(
@@ -132,9 +132,9 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(synchronizedTaxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
-                initialTaxiRequest, taskScheduler = taskSchedulerDummy)
+                initialTaxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
             taxiRequestViewModel.onTaxiRequestStatusChanged(
@@ -146,7 +146,7 @@ class TaxiRequestViewModelTests {
                 taxiRequestViewModel.navigateToAcceptedStateEvent.value?.hasBeenHandled
             )
 
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasCancelledTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
@@ -163,12 +163,12 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(synchronizedTaxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
-                initialTaxiRequest, taskScheduler = taskSchedulerDummy)
+                initialTaxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
-            taskSchedulerDummy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
+            taskSchedulerSpy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
 
             // Assert
             Assert.assertEquals(
@@ -176,7 +176,7 @@ class TaxiRequestViewModelTests {
                 taxiRequestViewModel.navigateToAcceptedStateEvent.value?.hasBeenHandled
             )
 
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasCancelledTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
@@ -195,9 +195,9 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(synchronizedTaxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
-                initialTaxiRequest, taskScheduler = taskSchedulerDummy)
+                initialTaxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
             taxiRequestViewModel.onTaxiRequestStatusChanged(
@@ -225,12 +225,12 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(synchronizedTaxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
-                initialTaxiRequest, taskScheduler = taskSchedulerDummy)
+                initialTaxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
-            taskSchedulerDummy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
+            taskSchedulerSpy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
 
             // Assert
             Assert.assertEquals(
@@ -289,12 +289,12 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getTaxiRequestById(initialTaxiRequest.id))
                 .thenReturn(Result.success(synchronizedTaxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
-                initialTaxiRequest, taskScheduler = taskSchedulerDummy)
+                initialTaxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
-            taskSchedulerDummy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
+            taskSchedulerSpy.executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
 
             // Assert
             Assert.assertEquals(
@@ -334,10 +334,10 @@ class TaxiRequestViewModelTests {
             val initialTaxiRequest = TaxiRequestFactory.withBuilder()
                 .withStatus(Status.WAITING_ACCEPTANCE)
                 .build()
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
                 initialTaxiRequest,
-                taskScheduler = taskSchedulerDummy
+                taskScheduler = taskSchedulerSpy
             )
 
             whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
@@ -349,7 +349,7 @@ class TaxiRequestViewModelTests {
             taxiRequestViewModel.cancelCurrentTaxiRequest()
 
             // Assert
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasPausedTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
@@ -361,10 +361,10 @@ class TaxiRequestViewModelTests {
             val initialTaxiRequest = TaxiRequestFactory.withBuilder()
                 .withStatus(Status.WAITING_ACCEPTANCE)
                 .build()
-            val taskSchedulerDummy = TaskSchedulerDummy()
+            val taskSchedulerSpy = TaskSchedulerSpy()
             val taxiRequestViewModel = buildTaxiRequestViewModel(
                 initialTaxiRequest,
-                taskScheduler = taskSchedulerDummy
+                taskScheduler = taskSchedulerSpy
             )
 
             whenever(ridersTaxiRequestServiceMock.cancelCurrentTaxiRequest())
@@ -375,7 +375,7 @@ class TaxiRequestViewModelTests {
 
             // Assert
             coroutineScope.advanceUntilIdle()
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasResumedTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
@@ -391,16 +391,16 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(taxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
-            buildTaxiRequestViewModel(taxiRequest, taskScheduler = taskSchedulerDummy)
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            buildTaxiRequestViewModel(taxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
             coroutineScope.pauseDispatcher()
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
 
             // Assert
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasPausedTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
@@ -416,18 +416,18 @@ class TaxiRequestViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(taxiRequest))
 
-            val taskSchedulerDummy = TaskSchedulerDummy()
-            buildTaxiRequestViewModel(taxiRequest, taskScheduler = taskSchedulerDummy)
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            buildTaxiRequestViewModel(taxiRequest, taskScheduler = taskSchedulerSpy)
 
             // Act
             coroutineScope.pauseDispatcher()
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .executePendingTask(TaxiRequestViewModel.TAXI_REQUEST_PULL_TASK_ID)
 
             // Assert
             coroutineScope.advanceUntilIdle()
 
-            taskSchedulerDummy
+            taskSchedulerSpy
                 .assertThatHasResumedTask(TaxiRequestViewModel.TAXI_REQUEST_TIMEOUT_TASK_ID)
         }
     }
