@@ -53,4 +53,12 @@
     <string name="text_taxi_request_finished">Pedido Terminado</string>
     <string name="text_taxi_request_cancelled_by_driver">O pedido de taxi foi cancelado pelo motorista.</string>
     <string name="text_driver">Motorista</string>
+    <string name="text_online">Online</string>
+    <string name="text_accept">Aceitar</string>
+    <string name="text_refuse">Recusar</string>
+    <string name="text_incoming_taxi_request">Pedido de Taxi</string>
+    <string name="text_on_my_way">A caminho do cliente</string>
+    <string name="text_announce_arrival">Cheguei!</string>
+    <string name="text_arrived">A espera do cliente</string>
+    <string name="text_start_trip">Iniciar Viagem</string>
 </resources>
