@@ -8,7 +8,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.ui.taxi.viewmodels.AutocompletePlaceChooserViewModel" />
+            type="com.taksapp.taksapp.application.taxirequest.viewmodels.AutocompletePlaceChooserViewModel" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

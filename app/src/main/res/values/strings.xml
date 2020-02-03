@@ -44,4 +44,13 @@
     <string name="text_start_place_label">Escolha o local de partida</string>
     <string name="text_destination_place_label">Escolha o local de chegada</string>
     <string name="text_type_the_place_hint">Escreva o local</string>
+    <string name="text_waiting_for_driver_acceptance">Esperando resposta de motorista</string>
+    <string name="text_cancel">Cancelar</string>
+    <string name="text_driver_on_its_way">Motorista a caminho</string>
+    <string name="error_no_available_drivers">Nao ha motoristas disponiveis</string>
+    <string name="text_driver_arrived">Motorista Chegou</string>
+    <string name="text_no_drivers_answered_to_request">Nenhum motorista respondeu ao seu pedido de taxi</string>
+    <string name="text_taxi_request_finished">Pedido Terminado</string>
+    <string name="text_taxi_request_cancelled_by_driver">O pedido de taxi foi cancelado pelo motorista.</string>
+    <string name="text_driver">Motorista</string>
 </resources>
