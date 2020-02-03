@@ -492,6 +492,18 @@ class TaxiRequestViewModelTests {
         }
     }
 
+    @Test
+    fun centersMapOnDriverLocation() {
+        coroutineScope.launch {
+            // Act
+            taxiRequestViewModel.centerMapOnDriver()
+
+            // Assert
+            Assert.assertFalse(
+                taxiRequestViewModel.centerMapOnDriverEvent.getOrAwaitValue().hasBeenHandled)
+        }
+    }
+
     private fun buildTaxiRequestViewModel(
         initialTaxiRequest: TaxiRequest? = null,
         riderTaxiRequestsRepository: RiderTaxiRequestsRepository? = null,

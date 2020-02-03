@@ -7,12 +7,17 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.ui.utils.BitmapUtilities
 import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.time.ExperimentalTime
@@ -28,6 +33,8 @@ class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var taxiRequest: TaxiRequest
     private lateinit var taxiRequestViewModel: TaxiRequestViewModel
+    private var googleMap: GoogleMap? = null
+    private var driverLocationMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +54,7 @@ class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
         observeCancelledMessageEvent()
         observeDriverArrivedEvent()
         observeTaxiRequestAcceptedEvent()
+        observeDriverLocationEvents()
 
         val mapFragment: SupportMapFragment? =
             supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment?
@@ -56,6 +64,42 @@ class TaxiRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap?) {
         if (map == null)
             return
+
+        this.googleMap = map
+    }
+
+    private fun observeDriverLocationEvents() {
+        taxiRequestViewModel.taxiRequestPresentation.observe(
+            this, Observer { taxiRequestPresentation ->
+
+            googleMap?.let { map ->
+                if (taxiRequestPresentation.driverLocation == null)
+                    return@Observer
+
+                driverLocationMarker?.remove()
+
+                val driverLocation = taxiRequestPresentation.driverLocation
+
+                driverLocationMarker = map.addMarker(
+                    MarkerOptions()
+                        .title(taxiRequestPresentation.driverName)
+                        .icon(
+                            BitmapUtilities.getBitmapDescriptorForResource(
+                                R.drawable.ic_driver_location_blue,
+                                this
+                            )
+                        )
+                        .position(LatLng(driverLocation.latitude, driverLocation.longitude))
+                )
+            }
+        })
+
+        taxiRequestViewModel.centerMapOnDriverEvent.observe(
+            this, Observer { driverLocationEvent ->
+                val driverLocation = driverLocationEvent.getContentIfNotHandled() ?: return@Observer
+                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    LatLng(driverLocation.latitude, driverLocation.longitude), 15.0f))
+            })
     }
 
     private fun observeNavigateBackEvent() {

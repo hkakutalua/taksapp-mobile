@@ -13,6 +13,7 @@ import com.taksapp.taksapp.application.taxirequest.presentationmodels.TaxiReques
 import com.taksapp.taksapp.data.repositories.CancelTaxiRequestError
 import com.taksapp.taksapp.data.repositories.GetTaxiRequestError
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
+import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
@@ -47,6 +48,7 @@ class TaxiRequestViewModel(
     private val _navigateToAcceptedStateEvent = MutableLiveData<Event<TaxiRequest>>()
     private val _navigateToDriverArrivedStateEvent = MutableLiveData<Event<TaxiRequest>>()
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
+    private val _centerMapOnDriverEvent = MutableLiveData<Event<LocationPresentationModel>>()
     private val _taxiRequestPresentation = MutableLiveData<TaxiRequestPresentationModel>()
 
     val cancellingTaxiRequest: LiveData<Boolean> = _cancellingTaxiRequest
@@ -58,6 +60,7 @@ class TaxiRequestViewModel(
     val navigateToAcceptedStateEvent: LiveData<Event<TaxiRequest>> = _navigateToAcceptedStateEvent
     val navigateToDriverArrivedStateEvent: LiveData<Event<TaxiRequest>> =
         _navigateToDriverArrivedStateEvent
+    val centerMapOnDriverEvent: LiveData<Event<LocationPresentationModel>> = _centerMapOnDriverEvent
     val snackBarErrorEvent: LiveData<Event<String>> = _snackBarErrorEvent
     val taxiRequestPresentation: LiveData<TaxiRequestPresentationModel> = _taxiRequestPresentation
 
@@ -113,6 +116,12 @@ class TaxiRequestViewModel(
         }
     }
 
+    fun centerMapOnDriver() {
+        taxiRequestPresentation.value?.driverLocation?.let { driverLocation ->
+            _centerMapOnDriverEvent.value = Event(driverLocation)
+        }
+    }
+
     private fun syncTaxiRequestStatusChange(taxiRequestId: String) {
         taskScheduler.pause(TAXI_REQUEST_TIMEOUT_TASK_ID)
 
@@ -126,9 +135,9 @@ class TaxiRequestViewModel(
                     if (canSynchronize(updatedTaxiRequest)) {
                         taxiRequest = updatedTaxiRequest
                         navigateToCorrectDestinationGivenStatus(taxiRequest.status)
-                        _taxiRequestPresentation.value = mapToTaxiRequestPresentationModel(taxiRequest)
                     }
 
+                    _taxiRequestPresentation.value = mapToTaxiRequestPresentationModel(taxiRequest)
                     return@launch
                 }
 
@@ -183,10 +192,24 @@ class TaxiRequestViewModel(
 
     private fun mapToTaxiRequestPresentationModel(taxiRequest: TaxiRequest) =
         TaxiRequestPresentationModel(
-            origin = LocationPresentationModel(taxiRequest.origin.latitude, taxiRequest.origin.longitude),
-            destination = LocationPresentationModel(taxiRequest.destination.latitude, taxiRequest.destination.longitude),
+            origin = LocationPresentationModel(
+                taxiRequest.origin.latitude,
+                taxiRequest.origin.longitude
+            ),
+            destination = LocationPresentationModel(
+                taxiRequest.destination.latitude,
+                taxiRequest.destination.longitude
+            ),
             originName = taxiRequest.originName,
             destinationName = taxiRequest.destinationName,
-            driverName = "${taxiRequest.driver?.firstName} ${taxiRequest.driver?.lastName}"
+            driverName = "${taxiRequest.driver?.firstName} ${taxiRequest.driver?.lastName}",
+            driverLocation = mapToNullableLocationPresentationModel(taxiRequest.driver?.location),
+            driverLocationAvailable = taxiRequest.driver?.location != null
         )
+
+    private fun mapToNullableLocationPresentationModel(location: Location?): LocationPresentationModel? {
+        return if (location != null) {
+            LocationPresentationModel(location.latitude, location.longitude)
+        } else null
+    }
 }
