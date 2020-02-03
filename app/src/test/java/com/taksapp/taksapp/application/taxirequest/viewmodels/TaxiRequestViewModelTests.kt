@@ -495,6 +495,12 @@ class TaxiRequestViewModelTests {
     @Test
     fun centersMapOnDriverLocation() {
         coroutineScope.launch {
+            // Arrange
+            val taxiRequest = TaxiRequestFactory.withBuilder()
+                .withStatus(Status.ACCEPTED)
+                .build()
+            val taxiRequestViewModel = buildTaxiRequestViewModel(initialTaxiRequest = taxiRequest)
+
             // Act
             taxiRequestViewModel.centerMapOnDriver()
 
