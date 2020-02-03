@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi
+package com.taksapp.taksapp.ui.riders.taxirequests
 
 
 import android.content.Intent
@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentLocationsSelectionBinding
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
-import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.time.ExperimentalTime
 
@@ -42,7 +42,9 @@ class LocationsSelectionFragment : Fragment() {
                 fareEstimationViewModel.estimatingFare.value == false
             ) {
                 val intent = Intent(context, AutocompletePlaceChooserActivity::class.java)
-                startActivityForResult(intent, REQUEST_CODE_CHOOSE_START_LOCATION)
+                startActivityForResult(intent,
+                    REQUEST_CODE_CHOOSE_START_LOCATION
+                )
             }
         }
 
@@ -51,7 +53,9 @@ class LocationsSelectionFragment : Fragment() {
                 fareEstimationViewModel.estimatingFare.value == false
             ) {
                 val intent = Intent(context, AutocompletePlaceChooserActivity::class.java)
-                startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION_LOCATION)
+                startActivityForResult(intent,
+                    REQUEST_CODE_CHOOSE_DESTINATION_LOCATION
+                )
             }
         }
 

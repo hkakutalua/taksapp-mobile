@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
-import com.taksapp.taksapp.ui.taxi.RiderMainActivity
+import com.taksapp.taksapp.ui.riders.taxirequests.RiderMainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LaunchActivity : AppCompatActivity() {

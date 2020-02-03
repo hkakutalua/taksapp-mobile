@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi.adapters
+package com.taksapp.taksapp.ui.riders.taxirequests.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
 
 class AutocompletePlaceAdapter : RecyclerView.Adapter<AutocompletePlaceAdapter.PlaceViewHolder>() {
     private var places = listOf<PlacePresentationModel>()

@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.presentationmodels
+package com.taksapp.taksapp.application.riders.taxirequests.presentationmodels
 
 class TaxiRequestPresentationModel(
     val origin: LocationPresentationModel,

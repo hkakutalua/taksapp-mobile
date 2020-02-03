@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.presentationmodels
+package com.taksapp.taksapp.application.riders.taxirequests.presentationmodels
 
 import androidx.recyclerview.widget.DiffUtil
 import java.io.Serializable
@@ -13,7 +13,11 @@ data class PlacePresentationModel(
         fun getDiffCallback(
             oldList: List<PlacePresentationModel>,
             newList: List<PlacePresentationModel>
-        ) : PlaceDiffCallback = PlaceDiffCallback(oldList, newList)
+        ) : PlaceDiffCallback =
+            PlaceDiffCallback(
+                oldList,
+                newList
+            )
     }
 
     class PlaceDiffCallback(

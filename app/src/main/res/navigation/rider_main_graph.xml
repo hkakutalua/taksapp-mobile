@@ -7,7 +7,7 @@
     
     <fragment
         android:id="@+id/locationsSelectionFragment"
-        android:name="com.taksapp.taksapp.ui.taxi.LocationsSelectionFragment"
+        android:name="com.taksapp.taksapp.ui.riders.taxirequests.LocationsSelectionFragment"
         android:label="LocationsSelectionFragment"
         tools:layout="@layout/fragment_locations_selection">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/faresEstimatesFragment"
-        android:name="com.taksapp.taksapp.ui.taxi.FaresEstimatesFragment"
+        android:name="com.taksapp.taksapp.ui.riders.taxirequests.FaresEstimatesFragment"
         android:label="FaresEstimatesFragment"
         tools:layout="@layout/fragment_fares_estimates"/>
 </navigation>

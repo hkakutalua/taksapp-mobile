@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.viewmodels
+package com.taksapp.taksapp.application.riders.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

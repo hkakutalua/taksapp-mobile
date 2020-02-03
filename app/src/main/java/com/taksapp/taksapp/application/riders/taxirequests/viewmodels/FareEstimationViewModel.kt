@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.viewmodels
+package com.taksapp.taksapp.application.riders.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.*
@@ -10,10 +10,10 @@ import com.taksapp.taksapp.domain.FareEstimation
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.FareRepository
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.CompanyPresentationModel
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.FareEstimationPresentationModel
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.CompanyPresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.FareEstimationPresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
 import kotlinx.coroutines.launch
 import java.io.IOException
 

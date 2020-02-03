@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.taksapp.taksapp.ui.taxi.AutocompletePlaceChooserActivity">
+    tools:context="com.taksapp.taksapp.ui.riders.taxirequests.AutocompletePlaceChooserActivity">
     
     <data>
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.application.taxirequest.viewmodels.AutocompletePlaceChooserViewModel" />
+            type="com.taksapp.taksapp.application.riders.taxirequests.viewmodels.AutocompletePlaceChooserViewModel" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

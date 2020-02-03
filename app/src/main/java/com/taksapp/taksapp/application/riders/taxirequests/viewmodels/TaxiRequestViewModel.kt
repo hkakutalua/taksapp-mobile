@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.viewmodels
+package com.taksapp.taksapp.application.riders.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.application.arch.utils.Result
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.TaxiRequestPresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.data.repositories.CancelTaxiRequestError
 import com.taksapp.taksapp.data.repositories.GetTaxiRequestError
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
@@ -209,7 +209,10 @@ class TaxiRequestViewModel(
 
     private fun mapToNullableLocationPresentationModel(location: Location?): LocationPresentationModel? {
         return if (location != null) {
-            LocationPresentationModel(location.latitude, location.longitude)
+            LocationPresentationModel(
+                location.latitude,
+                location.longitude
+            )
         } else null
     }
 }

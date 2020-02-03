@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi
+package com.taksapp.taksapp.ui.riders.taxirequests
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityAutocompletePlaceChooserBinding
-import com.taksapp.taksapp.ui.taxi.adapters.AutocompletePlaceAdapter
-import com.taksapp.taksapp.application.taxirequest.viewmodels.AutocompletePlaceChooserViewModel
+import com.taksapp.taksapp.ui.riders.taxirequests.adapters.AutocompletePlaceAdapter
+import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.AutocompletePlaceChooserViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.time.ExperimentalTime
 
@@ -29,7 +29,8 @@ class AutocompletePlaceChooserActivity : AppCompatActivity() {
         binding.viewModel = placeChooserViewModel
         binding.lifecycleOwner = this
 
-        val autocompletePlaceAdapter = AutocompletePlaceAdapter()
+        val autocompletePlaceAdapter =
+            AutocompletePlaceAdapter()
         binding.recyclerViewSuggestions.adapter = autocompletePlaceAdapter
         binding.recyclerViewSuggestions.layoutManager = LinearLayoutManager(this)
 

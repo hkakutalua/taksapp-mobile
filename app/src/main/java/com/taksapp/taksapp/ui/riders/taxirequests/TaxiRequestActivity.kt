@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi
+package com.taksapp.taksapp.ui.riders.taxirequests
 
 import android.app.Activity
 import android.content.Intent
@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.ui.utils.BitmapUtilities
 import org.koin.android.viewmodel.ext.android.getViewModel

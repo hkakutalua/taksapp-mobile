@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.taxi.DriverArrivedFragment">
+    tools:context=".ui.riders.taxirequests.DriverArrivedFragment">
     
     <data>
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel" />
+            type="com.taksapp.taksapp.application.riders.taxirequests.viewmodels.TaxiRequestViewModel" />
     </data>
     
     <LinearLayout

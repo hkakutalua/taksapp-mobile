@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.viewmodels
+package com.taksapp.taksapp.application.riders.taxirequests.viewmodels
 
 import android.os.Handler
 import android.os.Looper
@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.data.repositories.PlacesRepository
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask

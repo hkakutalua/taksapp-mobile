@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.taxi.LocationsSelectionFragment">
+    tools:context=".ui.riders.taxirequests.LocationsSelectionFragment">
     
     <data>
         <import type="android.view.View" />
-        <variable name="viewModel" type="com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel" />
+        <variable name="viewModel" type="com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel" />
     </data>
     
     <androidx.cardview.widget.CardView

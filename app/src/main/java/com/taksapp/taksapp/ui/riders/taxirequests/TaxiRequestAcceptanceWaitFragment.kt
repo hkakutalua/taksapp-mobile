@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi
+package com.taksapp.taksapp.ui.riders.taxirequests
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taksapp.taksapp.R
-import com.taksapp.taksapp.application.taxirequest.viewmodels.TaxiRequestViewModel
+import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.databinding.FragmentTaxiRequestAcceptanceWaitBinding
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.time.ExperimentalTime

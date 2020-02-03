@@ -7,19 +7,19 @@
     
     <fragment
         android:id="@+id/taxiRequestAcceptanceWaitFragment"
-        android:name="com.taksapp.taksapp.ui.taxi.TaxiRequestAcceptanceWaitFragment"
+        android:name="com.taksapp.taksapp.ui.riders.taxirequests.TaxiRequestAcceptanceWaitFragment"
         android:label="TaxiRequestAcceptanceWaitFragment"
         tools:layout="@layout/fragment_taxi_request_acceptance_wait">
     </fragment>
     <fragment
         android:id="@+id/driverArrivingFragment"
-        android:name="com.taksapp.taksapp.ui.taxi.DriverArrivingFragment"
+        android:name="com.taksapp.taksapp.ui.riders.taxirequests.DriverArrivingFragment"
         android:label="DriverArrivingFragment"
         tools:layout="@layout/fragment_driver_arriving">
     </fragment>
     <fragment
         android:id="@+id/driverArrivedFragment"
-        android:name="com.taksapp.taksapp.ui.taxi.DriverArrivedFragment"
+        android:name="com.taksapp.taksapp.ui.riders.taxirequests.DriverArrivedFragment"
         android:label="fragment_driver_arrived"
         tools:layout="@layout/fragment_driver_arrived" />
 </navigation>

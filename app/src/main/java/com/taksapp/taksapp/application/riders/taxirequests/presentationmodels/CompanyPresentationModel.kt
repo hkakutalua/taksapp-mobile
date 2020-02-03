@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.presentationmodels
+package com.taksapp.taksapp.application.riders.taxirequests.presentationmodels
 
 import androidx.recyclerview.widget.DiffUtil
 
@@ -13,7 +13,11 @@ data class CompanyPresentationModel(
         fun getDiffCallback(
             oldList: List<CompanyPresentationModel>,
             newList: List<CompanyPresentationModel>
-        ): CompanyDiffCallback = CompanyDiffCallback(oldList, newList)
+        ): CompanyDiffCallback =
+            CompanyDiffCallback(
+                oldList,
+                newList
+            )
     }
 
     class CompanyDiffCallback(

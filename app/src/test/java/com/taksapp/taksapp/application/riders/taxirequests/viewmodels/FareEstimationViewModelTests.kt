@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.taxirequest.viewmodels
+package com.taksapp.taksapp.application.riders.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -9,12 +9,11 @@ import com.taksapp.taksapp.data.infrastructure.services.PushNotificationTokenRet
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
 import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.Status
-import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.DevicesService
 import com.taksapp.taksapp.domain.interfaces.FareRepository
 import com.taksapp.taksapp.domain.interfaces.RidersTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.TaxiRequestError
-import com.taksapp.taksapp.application.taxirequest.presentationmodels.PlacePresentationModel
+import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
@@ -22,7 +21,6 @@ import junitparams.JUnitParamsRunner
 import junitparams.Parameters
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -61,8 +59,10 @@ class FareEstimationViewModelTests {
                 pushNotificationTokenRetrieverMock
             )
 
-        fareEstimationViewModel = FareEstimationViewModel(
-            fareRepositoryMock, taxiRequestsRepository, contextMock)
+        fareEstimationViewModel =
+            FareEstimationViewModel(
+                fareRepositoryMock, taxiRequestsRepository, contextMock
+            )
     }
 
     @Test
@@ -74,10 +74,14 @@ class FareEstimationViewModelTests {
 
             whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
                 .thenReturn(Result.success(taxiRequest))
-            val originPlace = PlacePresentationModel(
-                "Luanda", "", 0.28394, 1.02934)
-            val destinationPlace = PlacePresentationModel(
-                "Benguela", "", 0.123, 1.0945)
+            val originPlace =
+                PlacePresentationModel(
+                    "Luanda", "", 0.28394, 1.02934
+                )
+            val destinationPlace =
+                PlacePresentationModel(
+                    "Benguela", "", 0.123, 1.0945
+                )
             fareEstimationViewModel.changeStartLocation(originPlace)
             fareEstimationViewModel.changeDestinationLocation(destinationPlace)
             coroutineScope.pauseDispatcher()
@@ -108,10 +112,14 @@ class FareEstimationViewModelTests {
                 .thenThrow(IOException())
             whenever(contextMock.getString(R.string.text_internet_error))
                 .thenReturn("internet_error")
-            val originPlace = PlacePresentationModel(
-                "Luanda", "", 0.28394, 1.02934)
-            val destinationPlace = PlacePresentationModel(
-                "Benguela", "", 0.123, 1.0945)
+            val originPlace =
+                PlacePresentationModel(
+                    "Luanda", "", 0.28394, 1.02934
+                )
+            val destinationPlace =
+                PlacePresentationModel(
+                    "Benguela", "", 0.123, 1.0945
+                )
             fareEstimationViewModel.changeStartLocation(originPlace)
             fareEstimationViewModel.changeDestinationLocation(destinationPlace)
 
@@ -135,10 +143,14 @@ class FareEstimationViewModelTests {
                 .thenReturn("no_available_drivers")
             whenever(ridersTaxiRequestServiceMock.sendTaxiRequest(any(), any()))
                 .thenReturn(Result.error(TaxiRequestError.NO_AVAILABLE_DRIVERS))
-            val originPlace = PlacePresentationModel(
-                "Luanda", "", 0.28394, 1.02934)
-            val destinationPlace = PlacePresentationModel(
-                "Benguela", "", 0.123, 1.0945)
+            val originPlace =
+                PlacePresentationModel(
+                    "Luanda", "", 0.28394, 1.02934
+                )
+            val destinationPlace =
+                PlacePresentationModel(
+                    "Benguela", "", 0.123, 1.0945
+                )
             fareEstimationViewModel.changeStartLocation(originPlace)
             fareEstimationViewModel.changeDestinationLocation(destinationPlace)
 
@@ -169,10 +181,14 @@ class FareEstimationViewModelTests {
             whenever(devicesServiceMock.registerUserDevice(any(), any()))
                 .thenReturn(Result.success(null))
 
-            val originPlace = PlacePresentationModel(
-                "Luanda", "", 0.28394, 1.02934)
-            val destinationPlace = PlacePresentationModel(
-                "Benguela", "", 0.28394, 1.02934)
+            val originPlace =
+                PlacePresentationModel(
+                    "Luanda", "", 0.28394, 1.02934
+                )
+            val destinationPlace =
+                PlacePresentationModel(
+                    "Benguela", "", 0.28394, 1.02934
+                )
             fareEstimationViewModel.changeStartLocation(originPlace)
             fareEstimationViewModel.changeDestinationLocation(destinationPlace)
 
@@ -215,10 +231,14 @@ class FareEstimationViewModelTests {
             whenever(ridersTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(taxiRequest))
 
-            val originPlace = PlacePresentationModel(
-                "Luanda", "", 0.28394, 1.02934)
-            val destinationPlace = PlacePresentationModel(
-                "Benguela", "", 0.123, 1.0945)
+            val originPlace =
+                PlacePresentationModel(
+                    "Luanda", "", 0.28394, 1.02934
+                )
+            val destinationPlace =
+                PlacePresentationModel(
+                    "Benguela", "", 0.123, 1.0945
+                )
             fareEstimationViewModel.changeStartLocation(originPlace)
             fareEstimationViewModel.changeDestinationLocation(destinationPlace)
 

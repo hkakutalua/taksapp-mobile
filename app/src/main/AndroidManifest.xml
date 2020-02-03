@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.taxi.TaxiRequestActivity"
+            android:name=".ui.riders.taxirequests.TaxiRequestActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"/>
         
@@ -42,11 +42,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.taxi.AutocompletePlaceChooserActivity"
-            android:parentActivityName=".ui.taxi.RiderMainActivity"
+            android:name=".ui.riders.taxirequests.AutocompletePlaceChooserActivity"
+            android:parentActivityName=".ui.riders.taxirequests.RiderMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.taxi.RiderMainActivity"
+            android:name=".ui.riders.taxirequests.RiderMainActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

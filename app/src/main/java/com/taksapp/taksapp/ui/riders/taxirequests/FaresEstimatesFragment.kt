@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.ui.taxi
+package com.taksapp.taksapp.ui.riders.taxirequests
 
 
 import android.app.Activity
@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.FragmentFaresEstimatesBinding
-import com.taksapp.taksapp.ui.taxi.adapters.CompaniesAdapter
-import com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel
+import com.taksapp.taksapp.ui.riders.taxirequests.adapters.CompaniesAdapter
+import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import kotlin.time.ExperimentalTime
 
@@ -71,7 +71,9 @@ class FaresEstimatesFragment : Fragment() {
                     TaxiRequestActivity.EXTRA_TAXI_REQUEST,
                     eventWithTaxiRequest.getContentIfNotHandled()
                 )
-                startActivityForResult(intent, TAXI_REQUEST_ACTIVITY_CODE)
+                startActivityForResult(intent,
+                    TAXI_REQUEST_ACTIVITY_CODE
+                )
             })
 
         return binding.root
@@ -124,7 +126,8 @@ class FaresEstimatesFragment : Fragment() {
     }
 
     private fun setUpCompaniesRecyclerView(binding: FragmentFaresEstimatesBinding): CompaniesAdapter {
-        val companiesAdapter = CompaniesAdapter()
+        val companiesAdapter =
+            CompaniesAdapter()
         binding.recyclerViewCompanies.adapter = companiesAdapter
         binding.recyclerViewCompanies.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
