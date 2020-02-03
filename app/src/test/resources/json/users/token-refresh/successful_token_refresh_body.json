@@ -1,0 +1,8 @@
+{
+  "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1Xa2hGOG9oc1MxbmlPV1JOYmxaUnciLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE1ODA3MTk1MzIsImV4cCI6MTU4MDcxOTgzMiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoibW9iaWxlX2FwcGxpY2F0aW9uIiwiaWF0IjoxNTgwNzE5NTMyLCJhdF9oYXNoIjoiWjQzS1BXaXdURUdwSFJfUDdnWndJZyIsInN1YiI6IjM1NjM4ZWRkLTUxMWUtNDc5Mi1hYjNmLWYwMThkZDJiMDc3NiIsImF1dGhfdGltZSI6MTU4MDcxOTUyMCwiaWRwIjoibG9jYWwiLCJhbXIiOlsicHdkIl19.LjwBuWVRpD5UD-h1i0-fgVp5w9uZh_OViRmgiSuqRzBnwkE-YP3h0jK6XUufU-MIe5Bb9Yv6q9VY2osh67_EEOC-qTUxDFZNwXSqT8Qk4l0HsjYn2kY4lV1jX7UfzuW94dmDZr4zPlXwXeKs0ppXQZD3hqA8tHBQqmLZq4htA-SJFkLqQTD2nLnQnjuqmF-tQxA3Q_C_G6j7w-oD-VtjOJOXuPM3C93o4bJMKQSO4DRkgEEqspF6iWywZmnZMn6d0bWSg7IsKR-6XhbxTFyGlhmFtVs2lhFopwbYjM76EeHvFw69yE_s0DgC-DMVmtSWPC4sP2g44NHlgamVzA4xzA",
+  "access_token": "new-access-token",
+  "expires_in": 3600,
+  "token_type": "Bearer",
+  "refresh_token": "new-refresh-token",
+  "scope": "openid profile taksapp_api offline_access"
+}

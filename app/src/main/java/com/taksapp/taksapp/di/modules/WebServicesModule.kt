@@ -44,6 +44,6 @@ val webServicesModule = module {
 
     factory<SessionStore> { SharedPreferencesSessionStore(get()) }
     factory<SessionExpiryListener> { SessionExpiryHandler(get()) }
-    factory { TokenRefreshAuthenticator(get(), get(), MoshiJsonConverterAdapter()) }
+    factory { TokenRefreshAuthenticator(BuildConfig.BASE_URL, get(), get(), MoshiJsonConverterAdapter()) }
     factory { AccessTokenInterceptor(get()) }
 }

@@ -18,6 +18,7 @@ data class TokenRefreshResponseBody(val access_token: String, val refresh_token:
  */
 @ExperimentalTime
 class TokenRefreshAuthenticator(
+    private val baseUrl: String,
     private val sessionStore: SessionStore,
     private val sessionExpiryListener: SessionExpiryListener,
     private val jsonConverter: JsonConverter) : Authenticator {
@@ -40,7 +41,7 @@ class TokenRefreshAuthenticator(
 
 
         val httpClient = OkHttpClientAdapter(
-            BuildConfig.BASE_URL,
+            baseUrl,
             30.toDuration(TimeUnit.SECONDS),
             NullAuthenticator(),
             NullInterceptor()
@@ -52,7 +53,7 @@ class TokenRefreshAuthenticator(
             "client_id" to "mobile_application"
         )
 
-        val httpResponse = httpClient.post("token", body)
+        val httpResponse = httpClient.post("connect/token", body)
         if (httpResponse.isSuccessful) {
             val tokenRefreshResponseBody =
                 jsonConverter.fromJson(httpResponse.body!!.source!!, TokenRefreshResponseBody::class)
