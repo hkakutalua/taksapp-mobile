@@ -94,6 +94,8 @@ class DriverMainViewModelTests {
             Assert.assertEquals(
                 "internet_error_message",
                 driverMainViewModel.snackBarErrorEvent.getOrAwaitValue().getContentIfNotHandled())
+
+            Assert.assertFalse(driverMainViewModel.isDriverOnline.getOrAwaitValue())
         }
     }
 
@@ -120,6 +122,8 @@ class DriverMainViewModelTests {
             Assert.assertEquals(
                 "server_error_message",
                 driverMainViewModel.snackBarErrorEvent.getOrAwaitValue().getContentIfNotHandled())
+
+            Assert.assertFalse(driverMainViewModel.isDriverOnline.getOrAwaitValue())
         }
     }
 
@@ -136,6 +140,7 @@ class DriverMainViewModelTests {
 
             whenever(driversServiceMock.setAsOnline())
                 .thenReturn(Result.error(DriversService.OnlineSwitchError.DRIVER_HAS_NO_DEVICE))
+                .thenReturn(Result.success(null))
             whenever(devicesServiceMock.registerUserDevice(any(), any()))
                 .thenReturn(Result.success(null))
             whenever(pushNotificationTokenRetriever.getPushNotificationToken())
@@ -151,6 +156,8 @@ class DriverMainViewModelTests {
                     "push_notification_token", DevicesService.Platform.ANDROID)
                 verify(driversServiceMock).setAsOnline()
             }
+
+            Assert.assertTrue(driverMainViewModel.isDriverOnline.getOrAwaitValue())
         }
     }
 

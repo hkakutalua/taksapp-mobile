@@ -3,7 +3,6 @@ package com.taksapp.taksapp.application.drivers.taxirequests.viewmodels
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
@@ -22,10 +21,10 @@ import kotlin.time.toDuration
 @ExperimentalTime
 class DriverMainViewModel(
     private val driversService: DriversService,
-    private val context: Context,
     private val devicesService: DevicesService,
     private val pushNotificationTokenRetriever: PushNotificationTokenRetriever,
-    private val taskScheduler: TaskScheduler
+    private val taskScheduler: TaskScheduler,
+    private val context: Context
 ): ViewModel() {
     companion object {
         const val ONLINE_COUNTDOWN_TASK = "ONLINE_COUNTDOWN_TASK"
@@ -64,6 +63,7 @@ class DriverMainViewModel(
                     triesCount++
 
                     if (hasStatusSetReachedMaxTries(triesCount, result)) {
+                        _isDriverOnline.postValue(false)
                         break
                     }
 
@@ -74,11 +74,13 @@ class DriverMainViewModel(
                         registerUserDevice()
                         continue
                     } else if (failedDueToServerError(result)) {
+                        _isDriverOnline.postValue(false)
                         _snackBarErrorEvent
                             .postValue(Event(context.getString(R.string.text_server_error)))
                         break
                     }
                 } catch (e: IOException) {
+                    _isDriverOnline.postValue(false)
                     _snackBarErrorEvent
                         .postValue(Event(context.getString(R.string.text_internet_error)))
                     break

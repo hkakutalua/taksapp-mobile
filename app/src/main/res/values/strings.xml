@@ -61,4 +61,5 @@
     <string name="text_announce_arrival">Cheguei!</string>
     <string name="text_arrived">A espera do cliente</string>
     <string name="text_start_trip">Iniciar Viagem</string>
+    <string name="text_offline">Offline</string>
 </resources>
