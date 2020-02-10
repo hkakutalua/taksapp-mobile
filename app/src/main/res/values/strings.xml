@@ -62,4 +62,7 @@
     <string name="text_arrived">A espera do cliente</string>
     <string name="text_start_trip">Iniciar Viagem</string>
     <string name="text_offline">Offline</string>
+    <string name="text_location_permission">Permissao de Localizacao</string>
+    <string name="text_adjust_location_settings">O Taksapp necessita que active as permissoes de localizaçao para que funcione.</string>
+    <string name="text_go_to_settings">Ir em definicoes</string>
 </resources>
