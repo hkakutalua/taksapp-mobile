@@ -1,6 +1,5 @@
-package com.taksapp.taksapp.data.webservices.client.resources.riders
+package com.taksapp.taksapp.data.webservices.client.resources.common
 
-import com.taksapp.taksapp.data.webservices.client.resources.common.LocationResponseBody
 import org.joda.time.DateTime
 
 enum class TaxiRequestStatus {

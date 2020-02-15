@@ -2,7 +2,8 @@ package com.taksapp.taksapp.data.webservices
 
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
-import com.taksapp.taksapp.data.webservices.client.resources.common.LocationResponseBody
+import com.taksapp.taksapp.data.webservices.client.TaxiRequestResponseBodyMapper
+import com.taksapp.taksapp.data.webservices.client.resources.common.*
 import com.taksapp.taksapp.data.webservices.client.resources.riders.*
 import com.taksapp.taksapp.domain.*
 import com.taksapp.taksapp.domain.interfaces.CancellationError
@@ -24,7 +25,7 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
 
             val response = taksapp.riders.taxiRequests.create(requestBody)
             return@withContext if (response.successful) {
-                val taxiRequest = mapToTaxiRequest(response.data!!)
+                val taxiRequest = TaxiRequestResponseBodyMapper.mapToTaxiRequest(response.data!!)
                 Result.success<TaxiRequest, TaxiRequestError>(taxiRequest)
             } else {
                 when (response.error) {
@@ -57,7 +58,7 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
         return withContext(Dispatchers.IO) {
             val response = taksapp.riders.taxiRequests.getCurrent()
             return@withContext if (response.successful) {
-                val taxiRequest = mapToTaxiRequest(response.data!!)
+                val taxiRequest = TaxiRequestResponseBodyMapper.mapToTaxiRequest(response.data!!)
                 Result.success<TaxiRequest, TaxiRequestRetrievalError>(taxiRequest)
             } else {
                 when (response.error) {
@@ -73,7 +74,7 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
         return withContext(Dispatchers.IO) {
             val response = taksapp.riders.taxiRequests.getById(id)
             return@withContext if (response.successful) {
-                val taxiRequest =  mapToTaxiRequest(response.data!!)
+                val taxiRequest =  TaxiRequestResponseBodyMapper.mapToTaxiRequest(response.data!!)
                 Result.success<TaxiRequest, TaxiRequestRetrievalError>(taxiRequest)
             } else {
                 when (response.error) {
@@ -82,54 +83,6 @@ class RidersTaxiRequestWebService(private val taksapp: Taksapp) : RidersTaxiRequ
                     else -> Result.error(TaxiRequestRetrievalError.SERVER_ERROR)
                 }
             }
-        }
-    }
-
-    private fun mapToTaxiRequest(taxiRequestResponseBody: TaxiRequestResponseBody): TaxiRequest {
-        return TaxiRequest.withBuilder()
-            .withId(taxiRequestResponseBody.id)
-            .withOrigin(
-                mapToLocation(taxiRequestResponseBody.origin),
-                taxiRequestResponseBody.originLocationName
-            )
-            .withDestination(
-                mapToLocation(taxiRequestResponseBody.destination),
-                taxiRequestResponseBody.destinationLocationName
-            )
-            .withRider(mapToRider(taxiRequestResponseBody.rider))
-            .withOptionalDriver(mapToNullableDriver(taxiRequestResponseBody.driver))
-            .withExpirationDate(taxiRequestResponseBody.expirationDate)
-            .withStatus(mapTaxiRequestStatus(taxiRequestResponseBody.status))
-            .build()
-    }
-
-    private fun mapToRider(rider: RiderResponseBody) =
-        Rider(rider.id, rider.firstName, rider.lastName, mapToNullableLocation(rider.location))
-
-    private fun mapToNullableDriver(driver: DriverResponseBody?) =
-        if (driver != null)
-            Driver(
-                driver.id,
-                driver.firstName,
-                driver.lastName,
-                mapToNullableLocation(driver.location)
-            )
-        else null
-
-    private fun mapToLocation(sourceLocation: LocationResponseBody) =
-        Location(sourceLocation.latitude, sourceLocation.longitude)
-
-    private fun mapToNullableLocation(sourceLocation: LocationResponseBody?) =
-        if (sourceLocation != null)
-            Location(sourceLocation.latitude, sourceLocation.longitude)
-        else null
-
-    private fun mapTaxiRequestStatus(taxiRequestStatus: TaxiRequestStatus): Status {
-        return when (taxiRequestStatus) {
-            TaxiRequestStatus.waitingAcceptance -> Status.WAITING_ACCEPTANCE
-            TaxiRequestStatus.accepted -> Status.ACCEPTED
-            TaxiRequestStatus.driverArrived -> Status.DRIVER_ARRIVED
-            TaxiRequestStatus.cancelled -> Status.CANCELLED
         }
     }
 }

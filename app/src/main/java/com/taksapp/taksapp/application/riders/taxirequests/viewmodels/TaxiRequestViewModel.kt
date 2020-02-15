@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.application.arch.utils.Result
-import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.LocationPresentationModel
-import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.TaxiRequestPresentationModel
+import com.taksapp.taksapp.application.shared.mappers.TaxiRequestMapper
+import com.taksapp.taksapp.application.shared.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.data.repositories.CancelTaxiRequestError
 import com.taksapp.taksapp.data.repositories.GetTaxiRequestError
 import com.taksapp.taksapp.data.repositories.RiderTaxiRequestsRepository
-import com.taksapp.taksapp.domain.Location
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
@@ -78,7 +78,7 @@ class TaxiRequestViewModel(
             10.toDuration(TimeUnit.SECONDS)
         ) { syncTaxiRequestStatusChange(taxiRequest.id) }
 
-        _taxiRequestPresentation.value = mapToTaxiRequestPresentationModel(taxiRequest)
+        _taxiRequestPresentation.value = TaxiRequestMapper().map(taxiRequest)
         navigateToCorrectDestinationGivenStatus(taxiRequest.status)
     }
 
@@ -137,7 +137,7 @@ class TaxiRequestViewModel(
                         navigateToCorrectDestinationGivenStatus(taxiRequest.status)
                     }
 
-                    _taxiRequestPresentation.value = mapToTaxiRequestPresentationModel(taxiRequest)
+                    _taxiRequestPresentation.value = TaxiRequestMapper().map(taxiRequest)
                     return@launch
                 }
 
@@ -153,8 +153,7 @@ class TaxiRequestViewModel(
                             navigateToCorrectDestinationGivenStatus(taxiRequest.status)
                         }
 
-                        _taxiRequestPresentation.value =
-                            mapToTaxiRequestPresentationModel(taxiRequest)
+                        _taxiRequestPresentation.value = TaxiRequestMapper().map(taxiRequest)
                     }
                 }
             } catch (e: IOException) { }
@@ -189,30 +188,4 @@ class TaxiRequestViewModel(
 
     private fun hasNoTaxiRequestToBeCancelled(result: Result<Nothing, CancelTaxiRequestError>) =
         result.error == CancelTaxiRequestError.NO_TAXI_REQUEST
-
-    private fun mapToTaxiRequestPresentationModel(taxiRequest: TaxiRequest) =
-        TaxiRequestPresentationModel(
-            origin = LocationPresentationModel(
-                taxiRequest.origin.latitude,
-                taxiRequest.origin.longitude
-            ),
-            destination = LocationPresentationModel(
-                taxiRequest.destination.latitude,
-                taxiRequest.destination.longitude
-            ),
-            originName = taxiRequest.originName,
-            destinationName = taxiRequest.destinationName,
-            driverName = "${taxiRequest.driver?.firstName} ${taxiRequest.driver?.lastName}",
-            driverLocation = mapToNullableLocationPresentationModel(taxiRequest.driver?.location),
-            driverLocationAvailable = taxiRequest.driver?.location != null
-        )
-
-    private fun mapToNullableLocationPresentationModel(location: Location?): LocationPresentationModel? {
-        return if (location != null) {
-            LocationPresentationModel(
-                location.latitude,
-                location.longitude
-            )
-        } else null
-    }
 }

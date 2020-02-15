@@ -8,11 +8,18 @@ import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.application.arch.utils.Result
+import com.taksapp.taksapp.application.shared.mappers.TaxiRequestMapper
+import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.data.infrastructure.services.PushNotificationTokenRetriever
+import com.taksapp.taksapp.domain.Status
+import com.taksapp.taksapp.domain.events.IncomingTaxiRequestEvent
 import com.taksapp.taksapp.domain.interfaces.DevicesService
 import com.taksapp.taksapp.domain.interfaces.DriversService
+import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
@@ -21,6 +28,7 @@ import kotlin.time.toDuration
 @ExperimentalTime
 class DriverMainViewModel(
     private val driversService: DriversService,
+    private val driversTaxiRequestService: DriversTaxiRequestService,
     private val devicesService: DevicesService,
     private val pushNotificationTokenRetriever: PushNotificationTokenRetriever,
     private val taskScheduler: TaskScheduler,
@@ -32,10 +40,13 @@ class DriverMainViewModel(
 
     private val _switchingDriverStatus = MutableLiveData<Boolean>()
     private val _isDriverOnline = MutableLiveData<Boolean>()
+    private val _showIncomingTaxiRequestEvent = MutableLiveData<Event<TaxiRequestPresentationModel>>()
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
 
     val switchingDriverStatus: LiveData<Boolean> = _switchingDriverStatus
     val isDriverOnline: LiveData<Boolean> = _isDriverOnline
+    val showIncomingTaxiRequestEvent: LiveData<Event<TaxiRequestPresentationModel>> =
+        _showIncomingTaxiRequestEvent
     val snackBarErrorEvent: MutableLiveData<Event<String>> = _snackBarErrorEvent
 
     init {
@@ -106,6 +117,26 @@ class DriverMainViewModel(
             } finally {
                 _switchingDriverStatus.postValue(false)
                 _isDriverOnline.postValue(false)
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaxiRequestReceived(incomingTaxiRequestEvent: IncomingTaxiRequestEvent) {
+        viewModelScope.launch {
+            val result = driversTaxiRequestService
+                .getTaxiRequestById(incomingTaxiRequestEvent.taxiRequestId)
+
+            if (result.hasFailed)
+                return@launch
+
+            val taxiRequest = result.data
+
+            taxiRequest?.let {
+                if (taxiRequest.hasExpired() || taxiRequest.status != Status.WAITING_ACCEPTANCE)
+                    return@launch
+
+                _showIncomingTaxiRequestEvent.postValue(Event(TaxiRequestMapper().map(taxiRequest)))
             }
         }
     }

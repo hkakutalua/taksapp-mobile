@@ -65,4 +65,6 @@
     <string name="text_location_permission">Permissao de Localizacao</string>
     <string name="text_adjust_location_settings">O Taksapp necessita que active as permissoes de localizaçao para que funcione.</string>
     <string name="text_go_to_settings">Ir em definicoes</string>
+    <string name="error_taxi_request_accepted_by_another_driver">Pedido de taxi ja foi aceite por outro motorista</string>
+    <string name="error_taxi_request_acceptance_failed_due_to_expiry">O pedido de taxi que tentou aceitar ja nao se encontra disponivel.</string>
 </resources>

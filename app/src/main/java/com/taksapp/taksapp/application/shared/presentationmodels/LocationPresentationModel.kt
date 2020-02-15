@@ -1,3 +1,3 @@
-package com.taksapp.taksapp.application.riders.taxirequests.presentationmodels
+package com.taksapp.taksapp.application.shared.presentationmodels
 
 data class LocationPresentationModel(val latitude: Double, val longitude: Double)

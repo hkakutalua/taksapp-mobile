@@ -1,4 +1,6 @@
-package com.taksapp.taksapp.application.riders.taxirequests.presentationmodels
+package com.taksapp.taksapp.application.shared.presentationmodels
+
+import com.taksapp.taksapp.application.shared.presentationmodels.LocationPresentationModel
 
 class TaxiRequestPresentationModel(
     val origin: LocationPresentationModel,

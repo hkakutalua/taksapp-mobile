@@ -5,6 +5,7 @@ import com.taksapp.taksapp.application.auth.viewmodels.LoginViewModel
 import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
 import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.DriverMainViewModel
+import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.TaxiRequestAcceptanceViewModel
 import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.AutocompletePlaceChooserViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel
@@ -40,5 +41,6 @@ val viewModelsModule = module {
             androidContext()
         )
     }
-    viewModel { DriverMainViewModel(get(), get(), get(), get(), androidContext())}
+    viewModel { DriverMainViewModel(get(), get(), get(), get(), get(), androidContext())}
+    viewModel { TaxiRequestAcceptanceViewModel(get(), get(), androidContext()) }
 }

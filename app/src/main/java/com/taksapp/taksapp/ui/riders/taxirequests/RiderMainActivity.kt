@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.FareEstimationPresentationModel
-import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.shared.presentationmodels.LocationPresentationModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 

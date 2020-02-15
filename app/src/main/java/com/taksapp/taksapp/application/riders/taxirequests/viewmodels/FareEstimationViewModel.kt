@@ -12,7 +12,7 @@ import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.FareRepository
 import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.CompanyPresentationModel
 import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.FareEstimationPresentationModel
-import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.LocationPresentationModel
+import com.taksapp.taksapp.application.shared.presentationmodels.LocationPresentationModel
 import com.taksapp.taksapp.application.riders.taxirequests.presentationmodels.PlacePresentationModel
 import kotlinx.coroutines.launch
 import java.io.IOException

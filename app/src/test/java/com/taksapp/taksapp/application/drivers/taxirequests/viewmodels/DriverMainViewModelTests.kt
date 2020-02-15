@@ -6,14 +6,20 @@ import com.nhaarman.mockitokotlin2.*
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.infrastructure.services.PushNotificationTokenRetriever
+import com.taksapp.taksapp.domain.Status
+import com.taksapp.taksapp.domain.events.IncomingTaxiRequestEvent
 import com.taksapp.taksapp.domain.interfaces.DevicesService
 import com.taksapp.taksapp.domain.interfaces.DriversService
+import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
+import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.TaxiRequestRetrievalError
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
+import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
 import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerSpy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +36,7 @@ class DriverMainViewModelTests {
     val coroutineScopeRule = MainCoroutineScopeRule()
 
     private lateinit var driversServiceMock: DriversService
+    private lateinit var driversTaxiRequestService: DriversTaxiRequestService
     private lateinit var devicesServiceMock: DevicesService
     private lateinit var pushNotificationTokenRetriever: PushNotificationTokenRetriever
     private lateinit var taskScheduler: TaskScheduler
@@ -38,6 +45,7 @@ class DriverMainViewModelTests {
     @Before
     fun beforeEachTest() {
         driversServiceMock = mock()
+        driversTaxiRequestService = mock()
         devicesServiceMock = mock()
         pushNotificationTokenRetriever = mock()
         taskScheduler = mock()
@@ -292,8 +300,114 @@ class DriverMainViewModelTests {
         }
     }
 
+    @Test
+    fun showsIncomingTaxiRequestWhenReceivingItByPush() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val incomingTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withExpirationDate(DateTime.now().plusSeconds(10))
+                .withStatus(Status.WAITING_ACCEPTANCE)
+                .build()
+            val driverMainViewModel = buildDriverMainViewModel()
+
+            whenever(driversTaxiRequestService.getTaxiRequestById("random-taxi-id"))
+                .thenReturn(Result.success(incomingTaxiRequest))
+
+            // Act
+            driverMainViewModel
+                .onTaxiRequestReceived(IncomingTaxiRequestEvent("random-taxi-id"))
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                driverMainViewModel.showIncomingTaxiRequestEvent.value?.hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun ignoresTaxiRequestReceivedByPushWhenItsRetrievalFailsDueToInternetError() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val driverMainViewModel = buildDriverMainViewModel()
+
+            whenever(driversTaxiRequestService.getTaxiRequestById("random-taxi-id"))
+                .thenThrow(IOException())
+
+            // Act
+            driverMainViewModel
+                .onTaxiRequestReceived(IncomingTaxiRequestEvent("random-taxi-id"))
+
+            // Assert
+            Assert.assertNull(driverMainViewModel.showIncomingTaxiRequestEvent.value)
+        }
+    }
+
+    @Test
+    fun ignoresTaxiRequestReceivedByPushWhenIsExpired() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val expiredTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withExpirationDate(DateTime.now().minusSeconds(2))
+                .withStatus(Status.WAITING_ACCEPTANCE)
+                .build()
+            val driverMainViewModel = buildDriverMainViewModel()
+
+            whenever(driversTaxiRequestService.getTaxiRequestById("random-taxi-id"))
+                .thenReturn(Result.success(expiredTaxiRequest))
+
+            // Act
+            driverMainViewModel
+                .onTaxiRequestReceived(IncomingTaxiRequestEvent("random-taxi-id"))
+
+            // Assert
+            Assert.assertNull(driverMainViewModel.showIncomingTaxiRequestEvent.value)
+        }
+    }
+
+    @Test
+    fun ignoresTaxiRequestReceivedByPushWhenItIsPastAcceptance() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val taxiRequestPastAcceptance = TaxiRequestFactory.withBuilder()
+                .withExpirationDate(DateTime.now().minusSeconds(2))
+                .withStatus(Status.ACCEPTED)
+                .build()
+            val driverMainViewModel = buildDriverMainViewModel()
+
+            whenever(driversTaxiRequestService.getTaxiRequestById("random-taxi-id"))
+                .thenReturn(Result.success(taxiRequestPastAcceptance))
+
+            // Act
+            driverMainViewModel
+                .onTaxiRequestReceived(IncomingTaxiRequestEvent("random-taxi-id"))
+
+            // Assert
+            Assert.assertNull(driverMainViewModel.showIncomingTaxiRequestEvent.value)
+        }
+    }
+
+    @Test
+    fun ignoresTaxiRequestReceivedByPushWhenIsNotFound() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val driverMainViewModel = buildDriverMainViewModel()
+
+            whenever(driversTaxiRequestService.getTaxiRequestById("random-taxi-id"))
+                .thenReturn(Result.error(TaxiRequestRetrievalError.NOT_FOUND))
+
+            // Act
+            driverMainViewModel
+                .onTaxiRequestReceived(IncomingTaxiRequestEvent("random-taxi-id"))
+
+            // Assert
+            Assert.assertNull(driverMainViewModel.showIncomingTaxiRequestEvent.value)
+        }
+    }
+
     private fun buildDriverMainViewModel(
         driversService: DriversService? = null,
+        driversTaxiRequestService: DriversTaxiRequestService? = null,
         devicesService: DevicesService? = null,
         pushNotificationTokenRetriever: PushNotificationTokenRetriever? = null,
         taskScheduler: TaskScheduler? = null,
@@ -301,6 +415,7 @@ class DriverMainViewModelTests {
     ): DriverMainViewModel {
         return DriverMainViewModel(
             driversService = driversService ?: this.driversServiceMock,
+            driversTaxiRequestService = driversTaxiRequestService ?: this.driversTaxiRequestService,
             devicesService = devicesService ?: this.devicesServiceMock,
             pushNotificationTokenRetriever = pushNotificationTokenRetriever
                 ?: this.pushNotificationTokenRetriever,
