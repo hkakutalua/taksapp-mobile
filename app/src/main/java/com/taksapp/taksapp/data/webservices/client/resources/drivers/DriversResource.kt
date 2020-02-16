@@ -58,7 +58,7 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val httpClient = configurationProvider.client
             val jsonConverter = configurationProvider.jsonConverter
 
-            val response = httpClient.get("/api/v1/drivers/me/taxi-requests/$taxiRequestId")
+            val response = httpClient.get("api/v1/drivers/me/taxi-requests/$taxiRequestId")
 
             return if (response.isSuccessful) {
                 val taxiRequestResponseBody = jsonConverter
@@ -84,7 +84,7 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val httpClient = configurationProvider.client
             val jsonConverter = configurationProvider.jsonConverter
 
-            val response = httpClient.get("/api/v1/drivers/me/taxi-requests/current")
+            val response = httpClient.get("api/v1/drivers/me/taxi-requests/current")
 
             return if (response.isSuccessful) {
                 val taxiRequestResponseBody = jsonConverter
@@ -111,7 +111,7 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val jsonConverter = configurationProvider.jsonConverter
 
             val response = httpClient.patch(
-                "/api/v1/drivers/me/taxi-requests/$taxiRequestId/accept")
+                "api/v1/drivers/me/taxi-requests/$taxiRequestId/accept")
 
             return if (response.isSuccessful) {
                 Response.success(null)

@@ -18,6 +18,7 @@ import com.taksapp.taksapp.domain.interfaces.DriversService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
@@ -60,6 +61,8 @@ class DriverMainViewModel(
                 taskScheduler.cancel(ONLINE_COUNTDOWN_TASK)
             }
         }
+
+        EventBus.getDefault().register(this)
     }
 
     fun switchToOnline() {

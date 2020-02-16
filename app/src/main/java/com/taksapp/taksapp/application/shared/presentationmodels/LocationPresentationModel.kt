@@ -1,3 +1,5 @@
 package com.taksapp.taksapp.application.shared.presentationmodels
 
-data class LocationPresentationModel(val latitude: Double, val longitude: Double)
+import java.io.Serializable
+
+data class LocationPresentationModel(val latitude: Double, val longitude: Double): Serializable

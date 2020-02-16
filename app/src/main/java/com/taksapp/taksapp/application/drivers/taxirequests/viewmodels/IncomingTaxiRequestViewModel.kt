@@ -1,4 +1,4 @@
-package com.taksapp.taksapp.application.drivers.taxirequests.viewmodels;
+package com.taksapp.taksapp.application.drivers.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
 import com.taksapp.taksapp.application.arch.utils.Result
+import com.taksapp.taksapp.application.shared.mappers.TaxiRequestMapper
+import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
@@ -21,26 +23,35 @@ import java.io.IOException
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-class TaxiRequestAcceptanceViewModel(
+class IncomingTaxiRequestViewModel(
+    private val taxiRequest: TaxiRequestPresentationModel,
     private val driversTaxiRequestService: DriversTaxiRequestService,
     private val taskScheduler: TaskScheduler,
     private val context: Context) : ViewModel() {
 
     companion object {
         const val TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID = "TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID"
-
-        private const val TAXI_REQUEST_COUNTDOWN_SECONDS = 10
+        private const val TAXI_REQUEST_COUNTDOWN_SECONDS = 10L
     }
 
+    private val _taxiRequestPresentation = MutableLiveData<TaxiRequestPresentationModel>()
+    private val _startTaxiRequestSecondsCountdownEvent = MutableLiveData<Event<Long>>()
+    private val _pauseTaxiRequestCountdownEvent = MutableLiveData<Event<Nothing>>()
+    private val _resumeTaxiRequestCountdownEvent = MutableLiveData<Event<Nothing>>()
     private val _navigateToMainScreen = MutableLiveData<Event<Nothing>>()
-    private val _navigateToTaxiRequestEvent = MutableLiveData<Event<TaxiRequest>>()
+    private val _navigateToTaxiRequestEvent = MutableLiveData<Event<TaxiRequestPresentationModel>>()
     private val _navigateToMainScreenWithErrorEvent = MutableLiveData<Event<String>>()
     private val _acceptingTaxiRequest = MutableLiveData<Boolean>()
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
 
+    val taxiRequestPresentation: LiveData<TaxiRequestPresentationModel> = _taxiRequestPresentation
+    val startTaxiRequestSecondsCountdownEvent: LiveData<Event<Long>> =
+        _startTaxiRequestSecondsCountdownEvent
+    val pauseTaxiRequestCountdownEvent: LiveData<Event<Nothing>> = _pauseTaxiRequestCountdownEvent
+    val resumeTaxiRequestCountdownEvent: LiveData<Event<Nothing>> = _resumeTaxiRequestCountdownEvent
     val navigateToMainScreen: LiveData<Event<Nothing>> =
         _navigateToMainScreen
-    val navigateToTaxiRequestEvent: LiveData<Event<TaxiRequest>> =
+    val navigateToTaxiRequestEvent: LiveData<Event<TaxiRequestPresentationModel>> =
         _navigateToTaxiRequestEvent
     val navigateToMainScreenWithErrorEvent: LiveData<Event<String>> =
         _navigateToMainScreenWithErrorEvent
@@ -49,19 +60,26 @@ class TaxiRequestAcceptanceViewModel(
     val snackBarErrorEvent: MutableLiveData<Event<String>> = _snackBarErrorEvent
 
     init {
+        _taxiRequestPresentation.value = taxiRequest
+
         taskScheduler.schedule(
             TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID,
-            DateTime.now().plusSeconds(TAXI_REQUEST_COUNTDOWN_SECONDS)
+            DateTime.now().plusSeconds(TAXI_REQUEST_COUNTDOWN_SECONDS.toInt())
         ) { _navigateToMainScreen.value = Event(null) }
+
+        _startTaxiRequestSecondsCountdownEvent.value = Event(TAXI_REQUEST_COUNTDOWN_SECONDS)
     }
 
-    fun acceptTaxiRequest(taxiRequestId: String) {
+    fun acceptTaxiRequest() {
         _acceptingTaxiRequest.value = true
+
+        taskScheduler.pause(TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID)
+        _pauseTaxiRequestCountdownEvent.value = Event(null)
 
         viewModelScope.launch {
             try {
                 val taxiRequestAcceptanceResult =
-                    driversTaxiRequestService.acceptTaxiRequest(taxiRequestId)
+                    driversTaxiRequestService.acceptTaxiRequest(taxiRequest.id)
 
                 if (taxiRequestAcceptanceResult.isSuccessful) {
                     val taxiRequestRetrievalResult =
@@ -94,6 +112,8 @@ class TaxiRequestAcceptanceViewModel(
                 )
             } finally {
                 _acceptingTaxiRequest.postValue(false)
+                taskScheduler.resume(TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID)
+                _resumeTaxiRequestCountdownEvent.postValue(Event(null))
             }
         }
     }
@@ -103,8 +123,11 @@ class TaxiRequestAcceptanceViewModel(
 
         if (taxiRequestRetrievalResult.isSuccessful) {
             val taxiRequest = taxiRequestRetrievalResult.data
-            taskScheduler.cancel(TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID)
-            _navigateToTaxiRequestEvent.postValue(Event(taxiRequest))
+            taxiRequest?.let {
+                taskScheduler.cancel(TAXI_REQUEST_DENIAL_COUNTDOWN_TASK_ID)
+                val event = Event(TaxiRequestMapper().map(taxiRequest))
+                _navigateToTaxiRequestEvent.postValue(event)
+            }
         }
     }
 }

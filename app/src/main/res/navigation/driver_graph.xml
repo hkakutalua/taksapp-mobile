@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/driver_graph"
+    app:startDestination="@id/driverMainFragment">
+    
+    <fragment
+        android:id="@+id/driverMainFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.taxirequests.DriverMainFragment"
+        android:label="DriverMainFragment"
+        tools:layout="@layout/fragment_driver_main">
+        <action
+            android:id="@+id/to_incomingTaxiRequest_action"
+            app:destination="@id/incomingTaxiRequestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/incomingTaxiRequestFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.taxirequests.IncomingTaxiRequestFragment"
+        android:label="IncomingTaxiRequestFragment"
+        tools:layout="@layout/fragment_incoming_taxi_request">
+        <argument
+            android:name="taxiRequest"
+            app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel" />
+        <action
+            android:id="@+id/to_arrivingToRider_action"
+            app:destination="@id/arrivingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/arrivingFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.taxirequests.ArrivingFragment"
+        android:label="fragment_arriving"
+        tools:layout="@layout/fragment_arriving" >
+        <argument
+            android:name="taxiRequest"
+            app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/arrivedFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.taxirequests.ArrivedFragment"
+        android:label="fragment_arrived"
+        tools:layout="@layout/fragment_arrived" />
+</navigation>
