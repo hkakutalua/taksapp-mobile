@@ -3,17 +3,15 @@ package com.taksapp.taksapp.data.webservices
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.data.webservices.client.Taksapp
 import com.taksapp.taksapp.data.webservices.client.TaxiRequestResponseBodyMapper
-import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource.CurrentDriverResource.TaxiRequestAcceptanceApiError
-import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource.CurrentDriverResource.TaxiRetrievalApiError
+import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource
+import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource.CurrentDriverResource.*
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
-import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.TaxiRequestAcceptanceError
-import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.TaxiRequestRetrievalError
+import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DriversTaxiRequestWebService(private val taksapp: Taksapp) : DriversTaxiRequestService {
-
     override suspend fun getTaxiRequestById(id: String): Result<TaxiRequest, TaxiRequestRetrievalError> {
         return withContext(Dispatchers.IO) {
             val result = taksapp.drivers.me.getTaxiRequestById(id)
@@ -73,4 +71,41 @@ class DriversTaxiRequestWebService(private val taksapp: Taksapp) : DriversTaxiRe
         }
     }
 
+    override suspend fun announceArrival(): Result<Nothing, TaxiRequestArrivalAnnounceError> {
+        return withContext(Dispatchers.IO) {
+            val result = taksapp.drivers.me.announceArrival()
+
+            return@withContext if (result.successful) {
+                Result.success<Nothing, TaxiRequestArrivalAnnounceError>(null)
+            } else {
+                when (result.error) {
+                    TaxiRequestAnnounceApiError.TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS ->
+                        Result.error(TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS)
+                    TaxiRequestAnnounceApiError.NOT_FOUND ->
+                        Result.error(TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_FOUND)
+                    TaxiRequestAnnounceApiError.SERVER_ERROR ->
+                        Result.error(TaxiRequestArrivalAnnounceError.SERVER_ERROR)
+                    null -> Result.error(TaxiRequestArrivalAnnounceError.SERVER_ERROR)
+                }
+            }
+        }
+    }
+
+    override suspend fun cancelCurrentTaxiRequest(): Result<Nothing, TaxiRequestCancellationError> {
+        return withContext(Dispatchers.IO) {
+            val result = taksapp.drivers.me.cancelCurrent()
+
+            return@withContext if (result.successful) {
+                Result.success<Nothing, TaxiRequestCancellationError>(null)
+            } else {
+                when (result.error) {
+                    TaxiRequestCancellationApiError.NOT_FOUND ->
+                        Result.error(TaxiRequestCancellationError.TAXI_REQUEST_NOT_FOUND)
+                    TaxiRequestCancellationApiError.SERVER_ERROR ->
+                        Result.error(TaxiRequestCancellationError.SERVER_ERROR)
+                    null -> Result.error(TaxiRequestCancellationError.SERVER_ERROR)
+                }
+            }
+        }
+    }
 }

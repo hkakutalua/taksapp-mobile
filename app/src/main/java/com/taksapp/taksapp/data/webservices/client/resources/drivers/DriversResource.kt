@@ -18,6 +18,15 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             NOT_FOUND,
             SERVER_ERROR
         }
+        enum class TaxiRequestAnnounceApiError {
+            TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS,
+            NOT_FOUND,
+            SERVER_ERROR
+        }
+        enum class TaxiRequestCancellationApiError {
+            NOT_FOUND,
+            SERVER_ERROR
+        }
 
         fun setAsOnline(): Response<Nothing, OnlineSwitchApiError> {
             val httpClient = configurationProvider.client
@@ -133,6 +142,62 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
                     }
                 } else {
                     Response.failure(TaxiRequestAcceptanceApiError.SERVER_ERROR)
+                }
+            }
+        }
+
+        fun announceArrival(): Response<Nothing, TaxiRequestAnnounceApiError> {
+            val httpClient = configurationProvider.client
+            val jsonConverter = configurationProvider.jsonConverter
+
+            val response = httpClient.patch(
+                "api/v1/drivers/me/taxi-requests/current/announce-arrival")
+
+            return if (response.isSuccessful) {
+                Response.success(null)
+            } else {
+                if (response.code in 400..499) {
+                    val errorBody = jsonConverter
+                        .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                        .errors[0]
+
+                    when (errorBody.code) {
+                        "taxiRequestNotInAcceptedStatus" ->
+                            Response.failure(TaxiRequestAnnounceApiError.TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS)
+                        "taxiRequestNotFound" ->
+                            Response.failure(TaxiRequestAnnounceApiError.NOT_FOUND)
+                        else ->
+                            Response.failure(TaxiRequestAnnounceApiError.SERVER_ERROR)
+                    }
+                } else {
+                    Response.failure(TaxiRequestAnnounceApiError.SERVER_ERROR)
+                }
+            }
+        }
+
+        fun cancelCurrent(): Response<Nothing, TaxiRequestCancellationApiError> {
+            val httpClient = configurationProvider.client
+            val jsonConverter = configurationProvider.jsonConverter
+
+            val response = httpClient.patch(
+                "api/v1/drivers/me/taxi-requests/current/cancel")
+
+            return if (response.isSuccessful) {
+                Response.success(null)
+            } else {
+                if (response.code in 400..499) {
+                    val errorBody = jsonConverter
+                        .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                        .errors[0]
+
+                    when (errorBody.code) {
+                        "taxiRequestNotFound" ->
+                            Response.failure(TaxiRequestCancellationApiError.NOT_FOUND)
+                        else ->
+                            Response.failure(TaxiRequestCancellationApiError.SERVER_ERROR)
+                    }
+                } else {
+                    Response.failure(TaxiRequestCancellationApiError.SERVER_ERROR)
                 }
             }
         }

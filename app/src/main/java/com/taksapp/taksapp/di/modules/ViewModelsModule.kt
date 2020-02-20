@@ -4,6 +4,7 @@ import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.application.auth.viewmodels.LoginViewModel
 import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpOtpConfirmationViewModel
 import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpViewModel
+import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivingViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.DriverMainViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.IncomingTaxiRequestViewModel
 import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
@@ -42,11 +43,21 @@ val viewModelsModule = module {
             androidContext()
         )
     }
+
     viewModel { DriverMainViewModel(get(), get(), get(), get(), get(), androidContext())}
+
     viewModel { (taxiRequest: TaxiRequestPresentationModel) ->
         IncomingTaxiRequestViewModel(
             taxiRequest,
             get(),
+            get(),
+            androidContext()
+        )
+    }
+
+    viewModel { (taxiRequest: TaxiRequestPresentationModel) ->
+        ArrivingViewModel(
+            taxiRequest,
             get(),
             androidContext()
         )

@@ -7,13 +7,13 @@ import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.Null
 import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.NullInterceptor
 import com.taksapp.taksapp.data.webservices.client.httpclients.okhttpclient.OkHttpClientAdapter
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.MoshiJsonConverterAdapter
-import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
+import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.TaxiRequestAcceptanceError.*
-import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.TaxiRequestRetrievalError
 import com.taksapp.taksapp.utils.FileUtilities
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.Assert
 import org.junit.Test
 import java.util.concurrent.TimeUnit
@@ -33,6 +33,8 @@ class DriversTaxiRequestWebServiceTests {
         "json/drivers/me/taxi-requests/error_taxi_request_already_accepted_by_another_driver.json"
     private val errorTaxiRequestExpiredBodyPath =
         "json/drivers/me/taxi-requests/error_taxi_request_expired.json"
+    private val errorTaxiRequestNotInAcceptedStatusBodyPath =
+        "json/drivers/me/taxi-requests/error_taxi_request_not_in_accepted_status.json"
 
     @Test
     fun getsCurrentTaxiRequest() {
@@ -241,6 +243,154 @@ class DriversTaxiRequestWebServiceTests {
             Assert.assertEquals(TAXI_REQUEST_NOT_FOUND, result.error)
         }
     }
+
+    @Test
+    fun announcesArrival() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(MockResponse().setResponseCode(204))
+
+            val taxiRequestWebService =
+                DriversTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.announceArrival()
+
+            // Assert
+            Assert.assertTrue(result.isSuccessful)
+
+            val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+
+            Assert.assertEquals(
+                "/api/v1/drivers/me/taxi-requests/current/announce-arrival",
+                request?.getRequestPath()
+            )
+
+            Assert.assertEquals(
+                "patch",
+                request?.getRequestMethod()
+            )
+        }
+    }
+
+    @Test
+    fun arrivalAnnouncementFailsWhenTaxiRequestIsNotFound() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(MockResponse()
+                .setResponseCode(404)
+                .setBody(FileUtilities.getFileContent(errorTaxiRequestNotFoundBodyPath)))
+
+            val taxiRequestWebService =
+                DriversTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.announceArrival()
+
+            // Assert
+            Assert.assertTrue(result.hasFailed)
+            Assert.assertEquals(result.error, TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_FOUND)
+
+            val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+
+            Assert.assertEquals(
+                "patch",
+                request?.getRequestMethod()
+            )
+        }
+    }
+
+    @Test
+    fun arrivalAnnouncementFailsWhenTaxiRequestIsNotInAcceptedStatus() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(MockResponse()
+                .setResponseCode(403)
+                .setBody(FileUtilities.getFileContent(errorTaxiRequestNotInAcceptedStatusBodyPath)))
+
+            val taxiRequestWebService =
+                DriversTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.announceArrival()
+
+            // Assert
+            Assert.assertTrue(result.hasFailed)
+            Assert.assertEquals(
+                result.error,
+                TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS)
+
+            val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+
+            Assert.assertEquals(
+                "patch",
+                request?.getRequestMethod()
+            )
+        }
+    }
+
+    @Test
+    fun cancelCurrentTaxiRequest() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(MockResponse().setResponseCode(204))
+
+            val taxiRequestWebService =
+                DriversTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.cancelCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertTrue(result.isSuccessful)
+
+            val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+
+            Assert.assertEquals(
+                "/api/v1/drivers/me/taxi-requests/current/cancel",
+                request?.getRequestPath()
+            )
+
+            Assert.assertEquals(
+                "patch",
+                request?.getRequestMethod()
+            )
+        }
+    }
+
+    @Test
+    fun currentTaxiRequestCancellationFailsWhenTaxiIsNotFound() {
+        runBlocking {
+            // Arrange
+            val server = MockWebServer()
+            server.enqueue(MockResponse()
+                .setResponseCode(404)
+                .setBody(FileUtilities.getFileContent(errorTaxiRequestNotFoundBodyPath)))
+
+            val taxiRequestWebService =
+                DriversTaxiRequestWebService(getTaksapp(server.url("").toString()))
+
+            // Act
+            val result = taxiRequestWebService.cancelCurrentTaxiRequest()
+
+            // Assert
+            Assert.assertTrue(result.hasFailed)
+            Assert.assertEquals(
+                TaxiRequestCancellationError.TAXI_REQUEST_NOT_FOUND,
+                result.error
+            )
+        }
+    }
+
+    private fun RecordedRequest.getRequestMethod() =
+        this.method?.toLowerCase()
+
+    private fun RecordedRequest.getRequestPath() =
+        this.requestUrl?.toUrl()?.path
 
     private fun getTaksapp(baseUrl: String): Taksapp {
         return Taksapp.Builder()

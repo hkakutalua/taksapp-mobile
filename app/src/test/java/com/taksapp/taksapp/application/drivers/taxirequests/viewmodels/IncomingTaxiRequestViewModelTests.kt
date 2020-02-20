@@ -2,10 +2,7 @@ package com.taksapp.taksapp.application.drivers.taxirequests.viewmodels
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockitokotlin2.inOrder
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
@@ -36,14 +33,14 @@ class IncomingTaxiRequestViewModelTests {
     @get:Rule
     val coroutineScopeRule = MainCoroutineScopeRule()
 
-    private lateinit var taxiRequest: TaxiRequestPresentationModel
+    private lateinit var taxiRequestPresentation: TaxiRequestPresentationModel
     private lateinit var driversTaxiRequestServiceMock: DriversTaxiRequestService
     private lateinit var taskScheduler: TaskScheduler
     private lateinit var contextMock: Context
 
     @Before
     fun beforeEachTest() {
-        taxiRequest = TaxiRequestPresentationModelFactory.withBuilder().build()
+        taxiRequestPresentation = TaxiRequestPresentationModelFactory.withBuilder().build()
         driversTaxiRequestServiceMock = mock()
         taskScheduler = mock()
         contextMock = mock()
@@ -96,11 +93,12 @@ class IncomingTaxiRequestViewModelTests {
             val incomingTaxiRequestViewModel = buildIncomingTaxiRequestViewModel()
 
             val acceptedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withId(taxiRequestPresentation.id)
                 .withStatus(Status.ACCEPTED)
                 .withExpirationDate(DateTime.now().plusSeconds(12))
                 .build()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(acceptedTaxiRequest.id))
                 .thenReturn(Result.success(null))
             whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(acceptedTaxiRequest))
@@ -108,7 +106,7 @@ class IncomingTaxiRequestViewModelTests {
             coroutineScopeRule.pauseDispatcher()
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertTrue(incomingTaxiRequestViewModel.acceptingTaxiRequest.getOrAwaitValue())
@@ -122,7 +120,7 @@ class IncomingTaxiRequestViewModelTests {
 
             inOrder(driversTaxiRequestServiceMock) {
                 verify(driversTaxiRequestServiceMock, times(1))
-                    .acceptTaxiRequest("random-taxi-id")
+                    .acceptTaxiRequest(acceptedTaxiRequest.id)
                 verify(driversTaxiRequestServiceMock, times(1)).getCurrentTaxiRequest()
             }
         }
@@ -149,7 +147,7 @@ class IncomingTaxiRequestViewModelTests {
             coroutineScopeRule.pauseDispatcher()
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
             
             // Assert
             taskSchedulerSpy.assertThatHasPausedTask(
@@ -183,7 +181,7 @@ class IncomingTaxiRequestViewModelTests {
             coroutineScopeRule.pauseDispatcher()
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             coroutineScopeRule.advanceUntilIdle()
@@ -204,13 +202,13 @@ class IncomingTaxiRequestViewModelTests {
             // Arrange
             val incomingTaxiRequestViewModel = buildIncomingTaxiRequestViewModel()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(any()))
                 .thenThrow(IOException())
             whenever(contextMock.getString(R.string.text_internet_error))
                 .thenReturn("internet_error")
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertEquals(
@@ -226,13 +224,13 @@ class IncomingTaxiRequestViewModelTests {
             // Arrange
             val incomingTaxiRequestViewModel = buildIncomingTaxiRequestViewModel()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(any()))
                 .thenReturn(Result.error(SERVER_ERROR))
             whenever(contextMock.getString(R.string.text_server_error))
                 .thenReturn("server_error")
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertEquals(
@@ -248,13 +246,13 @@ class IncomingTaxiRequestViewModelTests {
             // Arrange
             val incomingTaxiRequestViewModel = buildIncomingTaxiRequestViewModel()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(any()))
                 .thenReturn(Result.error(TAXI_REQUEST_ALREADY_ACCEPTED_BY_ANOTHER_DRIVER))
             whenever(contextMock.getString(R.string.error_taxi_request_accepted_by_another_driver))
                 .thenReturn("taxi_request_already_accepted_error")
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertEquals(
@@ -275,13 +273,13 @@ class IncomingTaxiRequestViewModelTests {
                 .withExpirationDate(DateTime.now().plusSeconds(12))
                 .build()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(taxiRequestPresentation.id))
                 .thenReturn(Result.error(TAXI_REQUEST_ALREADY_ACCEPTED_BY_YOU))
             whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(acceptedTaxiRequest))
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertEquals(
@@ -291,7 +289,7 @@ class IncomingTaxiRequestViewModelTests {
 
             inOrder(driversTaxiRequestServiceMock) {
                 verify(driversTaxiRequestServiceMock, times(1))
-                    .acceptTaxiRequest("random-taxi-id")
+                    .acceptTaxiRequest(taxiRequestPresentation.id)
                 verify(driversTaxiRequestServiceMock, times(1)).getCurrentTaxiRequest()
             }
         }
@@ -303,13 +301,13 @@ class IncomingTaxiRequestViewModelTests {
             // Arrange
             val incomingTaxiRequestViewModel = buildIncomingTaxiRequestViewModel()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(any()))
                 .thenReturn(Result.error(TAXI_REQUEST_EXPIRED))
             whenever(contextMock.getString(R.string.error_taxi_request_acceptance_failed_due_to_expiry))
                 .thenReturn("error_taxi_request_acceptance_failed_due_to_expiry")
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             Assert.assertEquals(
@@ -332,13 +330,13 @@ class IncomingTaxiRequestViewModelTests {
                 .withExpirationDate(DateTime.now().plusSeconds(12))
                 .build()
 
-            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest("random-taxi-id"))
+            whenever(driversTaxiRequestServiceMock.acceptTaxiRequest(any()))
                 .thenReturn(Result.success(null))
             whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
                 .thenReturn(Result.success(acceptedTaxiRequest))
 
             // Act
-            incomingTaxiRequestViewModel.acceptTaxiRequest("random-taxi-id")
+            incomingTaxiRequestViewModel.acceptTaxiRequest()
 
             // Assert
             taskSchedulerSpy.assertThatHasCancelledTask(
@@ -352,7 +350,7 @@ class IncomingTaxiRequestViewModelTests {
         context: Context? = null
     ): IncomingTaxiRequestViewModel {
         return IncomingTaxiRequestViewModel(
-            taxiRequest = taxiRequest,
+            taxiRequest = taxiRequestPresentation,
             driversTaxiRequestService = driversTaxiRequestService ?: this.driversTaxiRequestServiceMock,
             taskScheduler = taskScheduler ?: this.taskScheduler,
             context = context ?: this.contextMock

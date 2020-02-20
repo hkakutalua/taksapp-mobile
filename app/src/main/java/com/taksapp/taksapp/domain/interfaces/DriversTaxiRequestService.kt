@@ -18,6 +18,17 @@ interface DriversTaxiRequestService {
         SERVER_ERROR
     }
 
+    enum class TaxiRequestArrivalAnnounceError {
+        TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS,
+        TAXI_REQUEST_NOT_FOUND,
+        SERVER_ERROR
+    }
+
+    enum class TaxiRequestCancellationError {
+        TAXI_REQUEST_NOT_FOUND,
+        SERVER_ERROR
+    }
+
     /**
      * Get taxi request by its [id]
      * @return an [Result] indicating if the operation was successful
@@ -41,4 +52,20 @@ interface DriversTaxiRequestService {
      */
     @Throws(IOException::class)
     suspend fun acceptTaxiRequest(id: String): Result<Nothing, TaxiRequestAcceptanceError>
+
+    /**
+     * Announce the driver arrival for the current taxi request
+     * @return an [Result] indicating if the operation was successful
+     * @throws [IOException] when a network error or timeout occurs
+     */
+    @Throws(IOException::class)
+    suspend fun announceArrival(): Result<Nothing, TaxiRequestArrivalAnnounceError>
+
+    /**
+     * Cancels the current taxi request
+     * @return an [Result] indicating if the operation was successful
+     * @throws [IOException] when a network error or timeout occurs
+     */
+    @Throws(IOException::class)
+    suspend fun cancelCurrentTaxiRequest(): Result<Nothing, TaxiRequestCancellationError>
 }

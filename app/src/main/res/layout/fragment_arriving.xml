@@ -5,6 +5,10 @@
     tools:context=".ui.drivers.taxirequests.ArrivingFragment">
     
     <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivingViewModel" />
     </data>
     
     <LinearLayout
@@ -61,6 +65,7 @@
                     app:layout_constraintStart_toEndOf="@id/imageview_rider"
                     android:layout_marginStart="@dimen/margin_small"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:text="@{viewModel.taxiRequestPresentation.riderName}"
                     tools:text="Henrick Kakutalua" />
                 
                 <TextView
@@ -85,6 +90,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@android:color/black"
                     tools:text="Universidade Tecnica de Angola"
+                    android:text="@{viewModel.taxiRequestPresentation.originName}"
                     android:maxLines="1"
                     android:ellipsize="end" />
                 
@@ -112,6 +118,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@android:color/black"
                     tools:text="Universidade Metodista de Angola"
+                    android:text="@{viewModel.taxiRequestPresentation.destinationName}"
                     android:maxLines="1"
                     android:ellipsize="end" />
                 
@@ -135,6 +142,7 @@
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
                     android:indeterminate="true"
+                    android:visibility="@{viewModel.processing ? View.VISIBLE : View.GONE}"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
     
                 <com.google.android.material.button.MaterialButton
@@ -149,7 +157,9 @@
                     android:layout_marginEnd="@dimen/margin_small"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:text="@string/text_cancel"
+                    android:visibility="@{!viewModel.processing ? View.VISIBLE : View.GONE}"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:onClick="@{_ ->viewModel.cancelTaxiRequest()}"
                     android:textColor="@color/colorAccent"/>
     
                 <com.google.android.material.button.MaterialButton
@@ -162,6 +172,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_small"
+                    android:visibility="@{!viewModel.processing ? View.VISIBLE : View.GONE}"
+                    android:onClick="@{_ -> viewModel.announceArrival()}"
                     android:text="@string/text_announce_arrival" />
                 
                 <androidx.constraintlayout.widget.Guideline
