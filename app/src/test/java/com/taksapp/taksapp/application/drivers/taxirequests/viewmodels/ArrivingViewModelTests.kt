@@ -11,11 +11,14 @@ import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.application.shared.mappers.TaxiRequestMapper
 import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.domain.Status
+import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
+import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
+import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerSpy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.junit.Assert
@@ -23,7 +26,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 @ExperimentalCoroutinesApi
 class ArrivingViewModelTests {
     @get:Rule
@@ -31,8 +36,9 @@ class ArrivingViewModelTests {
     @get:Rule
     val coroutineScopeRule = MainCoroutineScopeRule()
 
-    private lateinit var taxiRequest: TaxiRequestPresentationModel
+    private lateinit var taxiRequestPresentation: TaxiRequestPresentationModel
     private lateinit var driversTaxiRequestServiceMock: DriversTaxiRequestService
+    private lateinit var taskSchedulerMock: TaskScheduler
     private lateinit var contextMock: Context
 
     @Before
@@ -41,7 +47,8 @@ class ArrivingViewModelTests {
             .withBuilder()
             .withStatus(Status.ACCEPTED)
 
-        taxiRequest = TaxiRequestMapper().map(taxiRequestBuilder.build())
+        taxiRequestPresentation = TaxiRequestMapper().map(taxiRequestBuilder.build())
+        taskSchedulerMock = mock()
         driversTaxiRequestServiceMock = mock()
         contextMock = mock()
     }
@@ -50,7 +57,7 @@ class ArrivingViewModelTests {
     fun announcesArrival() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.announceArrival())
                 .thenReturn(Result.success(null))
@@ -66,7 +73,7 @@ class ArrivingViewModelTests {
             Assert.assertEquals(false, arrivingViewModel.processing.getOrAwaitValue())
 
             Assert.assertEquals(
-                taxiRequest,
+                taxiRequestPresentation,
                 arrivingViewModel.navigateToArrivedEvent.getOrAwaitValue().peekContent()
             )
 
@@ -78,7 +85,7 @@ class ArrivingViewModelTests {
     fun failsToAnnounceArrivalDueToInternetFailure() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.announceArrival())
                 .thenThrow(IOException())
@@ -100,7 +107,7 @@ class ArrivingViewModelTests {
     fun failsToAnnounceArrivalDueToServerIssues() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.announceArrival())
                 .thenReturn(Result.error(TaxiRequestArrivalAnnounceError.SERVER_ERROR))
@@ -122,7 +129,7 @@ class ArrivingViewModelTests {
     fun navigatesToMainWhenAnnounceArrivalDoesNotFindTaxiRequest() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.announceArrival())
                 .thenReturn(Result.error(TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_FOUND))
@@ -144,10 +151,10 @@ class ArrivingViewModelTests {
     fun navigatesToArrivedWhenAnnouncementFailsDueToCurrentTaxiRequestInArrivedState() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             val taxiRequestInArrivedState = TaxiRequestFactory.withBuilder()
-                .withId(taxiRequest.id)
+                .withId(taxiRequestPresentation.id)
                 .withStatus(Status.DRIVER_ARRIVED)
                 .build()
 
@@ -161,7 +168,7 @@ class ArrivingViewModelTests {
 
             // Assert
             Assert.assertEquals(
-                taxiRequest,
+                taxiRequestPresentation,
                 arrivingViewModel.navigateToArrivedEvent.getOrAwaitValue().peekContent()
             )
 
@@ -173,7 +180,7 @@ class ArrivingViewModelTests {
     fun navigatesToMainWhenAnnouncementFailsDueToCurrentTaxiBeingDifferentFromUserInterfaceOne() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest = taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequest = taxiRequestPresentation)
 
             val taxiRequestInArrivedState = TaxiRequestFactory.withBuilder()
                 .withId("different-taxi-request")
@@ -202,7 +209,7 @@ class ArrivingViewModelTests {
     fun cancelsTaxiRequest() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.cancelCurrentTaxiRequest())
                 .thenReturn(Result.success(null))
@@ -231,7 +238,7 @@ class ArrivingViewModelTests {
     fun navigateToMainWhenTaxiRequestCancellationFailsDueToRequestNotFound() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.cancelCurrentTaxiRequest())
                 .thenReturn(Result.error(TaxiRequestCancellationError.TAXI_REQUEST_NOT_FOUND))
@@ -253,7 +260,7 @@ class ArrivingViewModelTests {
     fun failsToCancelTaxiRequestDueToInternetError() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.cancelCurrentTaxiRequest())
                 .thenThrow(IOException())
@@ -275,7 +282,7 @@ class ArrivingViewModelTests {
     fun failsToCancelTaxiRequestDueToServerError() {
         coroutineScopeRule.launch {
             // Arrange
-            val arrivingViewModel = buildViewModel(taxiRequest)
+            val arrivingViewModel = buildViewModel(taxiRequestPresentation)
 
             whenever(driversTaxiRequestServiceMock.cancelCurrentTaxiRequest())
                 .thenReturn(Result.error(TaxiRequestCancellationError.SERVER_ERROR))
@@ -293,8 +300,125 @@ class ArrivingViewModelTests {
         }
     }
 
-    private fun buildViewModel(taxiRequest: TaxiRequestPresentationModel?) = ArrivingViewModel(
-        taxiRequest = taxiRequest ?: this.taxiRequest,
+    @Test
+    fun navigatesToArrivedWhenSynchronizedByPush() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withId(taxiRequestPresentation.id)
+                .withStatus(Status.DRIVER_ARRIVED)
+                .build()
+
+            whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
+                .thenReturn(Result.success(synchronizedTaxiRequest))
+
+            val arrivingViewModel = buildViewModel()
+
+            // Act
+            arrivingViewModel.onTaxiRequestStatusChanged(
+                TaxiRequestStatusChangedEvent(synchronizedTaxiRequest.id))
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                arrivingViewModel.navigateToArrivedEvent.value?.hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun navigatesToArrivedWhenSynchronizedByPull() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withId(taxiRequestPresentation.id)
+                .withStatus(Status.DRIVER_ARRIVED)
+                .build()
+
+            whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
+                .thenReturn(Result.success(synchronizedTaxiRequest))
+
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            val arrivingViewModel = buildViewModel(taskScheduler = taskSchedulerSpy)
+
+            // Act
+            taskSchedulerSpy.executePendingTask(ArrivingViewModel.TAXI_REQUEST_PULL_TASK_ID)
+
+            // Assert
+            Assert.assertEquals(
+                false,
+                arrivingViewModel.navigateToArrivedEvent.value?.hasBeenHandled
+            )
+        }
+    }
+
+    @Test
+    fun navigatesToMainWhenSynchronizedByPushAsCancelled() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withId(taxiRequestPresentation.id)
+                .withStatus(Status.CANCELLED)
+                .build()
+
+            whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
+                .thenReturn(Result.error(TaxiRequestRetrievalError.NOT_FOUND))
+            whenever(driversTaxiRequestServiceMock.getTaxiRequestById(synchronizedTaxiRequest.id))
+                .thenReturn(Result.success(synchronizedTaxiRequest))
+            whenever(contextMock.getString(R.string.text_taxi_request_already_cancelled))
+                .thenReturn("text_taxi_request_already_cancelled")
+
+            val arrivingViewModel = buildViewModel()
+
+            // Act
+            arrivingViewModel.onTaxiRequestStatusChanged(
+                TaxiRequestStatusChangedEvent(synchronizedTaxiRequest.id))
+
+            // Assert
+            Assert.assertEquals(
+                "text_taxi_request_already_cancelled",
+                arrivingViewModel.navigateToMainWithErrorEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    @Test
+    fun navigatesToMainWhenSynchronizedByPullAsCancelled() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedTaxiRequest = TaxiRequestFactory.withBuilder()
+                .withId(taxiRequestPresentation.id)
+                .withStatus(Status.CANCELLED)
+                .build()
+
+            whenever(driversTaxiRequestServiceMock.getCurrentTaxiRequest())
+                .thenReturn(Result.error(TaxiRequestRetrievalError.NOT_FOUND))
+            whenever(driversTaxiRequestServiceMock.getTaxiRequestById(synchronizedTaxiRequest.id))
+                .thenReturn(Result.success(synchronizedTaxiRequest))
+            whenever(contextMock.getString(R.string.text_taxi_request_already_cancelled))
+                .thenReturn("text_taxi_request_already_cancelled")
+
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            val arrivingViewModel = buildViewModel(taskScheduler = taskSchedulerSpy)
+
+            // Act
+            taskSchedulerSpy.executePendingTask(ArrivingViewModel.TAXI_REQUEST_PULL_TASK_ID)
+
+            // Assert
+            Assert.assertEquals(
+                "text_taxi_request_already_cancelled",
+                arrivingViewModel.navigateToMainWithErrorEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    private fun buildViewModel(
+        taxiRequest: TaxiRequestPresentationModel? = null,
+        taskScheduler: TaskScheduler? = null
+    ) = ArrivingViewModel(
+        taxiRequestPresentationModel = taxiRequest ?: this.taxiRequestPresentation,
         driversTaxiRequestService = driversTaxiRequestServiceMock,
-        context = contextMock)
+        taskScheduler = taskScheduler ?: this.taskSchedulerMock,
+        context = contextMock
+    )
 }

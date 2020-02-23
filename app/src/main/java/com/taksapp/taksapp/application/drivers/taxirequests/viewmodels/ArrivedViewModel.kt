@@ -24,7 +24,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
 @ExperimentalTime
-class ArrivingViewModel(
+class ArrivedViewModel(
     private val taxiRequestPresentationModel: TaxiRequestPresentationModel,
     private val driversTaxiRequestService: DriversTaxiRequestService,
     taskScheduler: TaskScheduler,
@@ -34,14 +34,12 @@ class ArrivingViewModel(
     }
 
     private val _taxiRequestPresentation = MutableLiveData<TaxiRequestPresentationModel>()
-    private val _navigateToArrivedEvent = MutableLiveData<Event<TaxiRequestPresentationModel>>()
     private val _processing = MutableLiveData<Boolean>()
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
     private val _navigateToMain = MutableLiveData<Event<Nothing>>()
     private val _navigateToMainWithErrorEvent = MutableLiveData<Event<String>>()
 
     val taxiRequestPresentation: LiveData<TaxiRequestPresentationModel> = _taxiRequestPresentation
-    val navigateToArrivedEvent: LiveData<Event<TaxiRequestPresentationModel>> = _navigateToArrivedEvent
     val processing: LiveData<Boolean> = _processing
     val snackBarErrorEvent: LiveData<Event<String>> = _snackBarErrorEvent
     val navigateToMain: LiveData<Event<Nothing>> = _navigateToMain
@@ -56,38 +54,6 @@ class ArrivingViewModel(
             TAXI_REQUEST_PULL_TASK_ID,
             10.toDuration(TimeUnit.SECONDS)
         ) { navigateIfCurrentTaxiRequestStatusChanges() }
-    }
-
-    fun announceArrival() {
-        _processing.value = true
-
-        viewModelScope.launch {
-            try {
-                val result = driversTaxiRequestService.announceArrival()
-
-                if (result.isSuccessful) {
-                    _navigateToArrivedEvent.postValue(Event(taxiRequestPresentationModel))
-
-                } else if (result.hasFailed) {
-                    when (result.error) {
-                        TaxiRequestArrivalAnnounceError.SERVER_ERROR ->
-                            _snackBarErrorEvent.postValue(
-                                Event(context.getString(R.string.text_server_error)))
-
-                        TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_FOUND ->
-                            _navigateToMainWithErrorEvent.postValue(
-                                Event(context.getString(R.string.text_taxi_request_already_cancelled)))
-
-                        TaxiRequestArrivalAnnounceError.TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS ->
-                            navigateIfCurrentTaxiRequestStatusChanges()
-                    }
-                }
-            } catch (e: IOException) {
-              _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_internet_error)))
-            } finally {
-                _processing.postValue(false)
-            }
-        }
     }
 
     fun cancelTaxiRequest() {
@@ -129,12 +95,8 @@ class ArrivingViewModel(
 
             fun navigate(taxiRequest: TaxiRequest?) {
                 when {
-                    taxiRequest?.id != this@ArrivingViewModel.taxiRequestPresentationModel.id ->
+                    taxiRequest?.id != this@ArrivedViewModel.taxiRequestPresentationModel.id ->
                         _navigateToMain.postValue(Event(null))
-
-                    taxiRequest.status == Status.DRIVER_ARRIVED ->
-                        _navigateToArrivedEvent.postValue(
-                            Event(this@ArrivingViewModel.taxiRequestPresentationModel))
 
                     taxiRequest.status == Status.CANCELLED ->
                         _navigateToMainWithErrorEvent.postValue(

@@ -18,7 +18,9 @@ import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivingV
 import com.taksapp.taksapp.databinding.FragmentArrivingBinding
 import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class ArrivingFragment : Fragment() {
     private lateinit var arrivingViewModel: ArrivingViewModel
     private val args: ArrivingFragmentArgs by navArgs()

@@ -59,6 +59,7 @@ val viewModelsModule = module {
         ArrivingViewModel(
             taxiRequest,
             get(),
+            get(),
             androidContext()
         )
     }
