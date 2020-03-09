@@ -2,6 +2,7 @@ package com.taksapp.taksapp.data.webservices.client
 
 import com.taksapp.taksapp.data.webservices.client.httpclients.HttpClient
 import com.taksapp.taksapp.data.webservices.client.jsonconverters.JsonConverter
+import com.taksapp.taksapp.data.webservices.client.resources.drivers.DriversResource
 import com.taksapp.taksapp.data.webservices.client.resources.fares.FaresResource
 import com.taksapp.taksapp.data.webservices.client.resources.places.PlacesResource
 import com.taksapp.taksapp.data.webservices.client.resources.riders.RidersResource
@@ -73,4 +74,5 @@ class Taksapp(
     val routes = RoutesResource(this)
     val fares = FaresResource(this)
     val riders = RidersResource(this)
+    val drivers = DriversResource(this)
 }

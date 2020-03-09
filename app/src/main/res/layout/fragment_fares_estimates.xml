@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.taksapp.taksapp.application.taxirequest.viewmodels.FareEstimationViewModel" />
+            type="com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel" />
     </data>
     
     <androidx.cardview.widget.CardView

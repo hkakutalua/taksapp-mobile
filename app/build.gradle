@@ -32,7 +32,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    testOptions{
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    testOptions {
         unitTests {
             includeAndroidResources = true
             all {
@@ -83,6 +86,7 @@ dependencies {
 
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }
 
 kapt {
@@ -91,5 +95,6 @@ kapt {
     }
 }
 
+apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'

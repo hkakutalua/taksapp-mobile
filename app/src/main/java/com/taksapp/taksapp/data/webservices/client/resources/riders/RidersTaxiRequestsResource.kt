@@ -4,6 +4,7 @@ import com.taksapp.taksapp.data.webservices.client.ConfigurationProvider
 import com.taksapp.taksapp.data.webservices.client.Response
 import com.taksapp.taksapp.data.webservices.client.resources.common.ErrorResponseBody
 import com.taksapp.taksapp.data.webservices.client.resources.common.LocationResponseBody
+import com.taksapp.taksapp.data.webservices.client.resources.common.TaxiRequestResponseBody
 
 enum class TaxiRequestApiError {
     RIDER_HAS_NO_REGISTERED_DEVICE,

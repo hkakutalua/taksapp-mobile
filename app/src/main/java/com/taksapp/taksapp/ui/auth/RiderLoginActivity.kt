@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.databinding.ActivityRiderLoginBinding
 import com.taksapp.taksapp.application.auth.viewmodels.LoginViewModel
-import com.taksapp.taksapp.ui.taxi.RiderMainActivity
+import com.taksapp.taksapp.ui.riders.taxirequests.RiderMainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RiderLoginActivity : AppCompatActivity() {

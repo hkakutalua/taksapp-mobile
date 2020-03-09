@@ -53,4 +53,20 @@
     <string name="text_taxi_request_finished">Pedido Terminado</string>
     <string name="text_taxi_request_cancelled_by_driver">O pedido de taxi foi cancelado pelo motorista.</string>
     <string name="text_driver">Motorista</string>
+    <string name="text_online">Online</string>
+    <string name="text_accept">Aceitar</string>
+    <string name="text_refuse">Recusar</string>
+    <string name="text_incoming_taxi_request">Pedido de Taxi</string>
+    <string name="text_on_my_way">A caminho do cliente</string>
+    <string name="text_announce_arrival">Cheguei!</string>
+    <string name="text_arrived">A espera do cliente</string>
+    <string name="text_start_trip">Iniciar Viagem</string>
+    <string name="text_offline">Offline</string>
+    <string name="text_location_permission">Permissao de Localizacao</string>
+    <string name="text_adjust_location_settings">O Taksapp necessita que active as permissoes de localizaçao para que funcione.</string>
+    <string name="text_go_to_settings">Ir em definicoes</string>
+    <string name="error_taxi_request_accepted_by_another_driver">Pedido de taxi ja foi aceite por outro motorista</string>
+    <string name="error_taxi_request_acceptance_failed_due_to_expiry">O pedido de taxi que tentou aceitar ja nao se encontra disponivel.</string>
+    <string name="error_title">Erro!</string>
+    <string name="text_taxi_request_already_cancelled">A operacao falhou porque o pedido de taxi foi cancelado.</string>
 </resources>

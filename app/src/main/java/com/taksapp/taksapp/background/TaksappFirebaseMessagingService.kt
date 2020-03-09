@@ -2,6 +2,7 @@ package com.taksapp.taksapp.background
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.taksapp.taksapp.domain.events.IncomingTaxiRequestEvent
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -19,8 +20,14 @@ class TaksappFirebaseMessagingService : FirebaseMessagingService() {
         if (isTaxiRequestStatusChangedMessage(message)) {
             val taxiRequestId = message.data[TAXI_REQUEST_ID_FIELD]!!
             EventBus.getDefault().post(TaxiRequestStatusChangedEvent(taxiRequestId))
+        } else if (isIncomingTaxiRequestMessage(message)) {
+            val taxiRequestId = message.data[TAXI_REQUEST_ID_FIELD]!!
+            EventBus.getDefault().post(IncomingTaxiRequestEvent(taxiRequestId))
         }
     }
+
+    private fun isIncomingTaxiRequestMessage(message: RemoteMessage) =
+        message.data[NOTIFICATION_TYPE_FIELD] == "incomingTaxiRequest"
 
     private fun isTaxiRequestStatusChangedMessage(message: RemoteMessage) =
         message.data[NOTIFICATION_TYPE_FIELD] == "taxiRequestStatusChanged"

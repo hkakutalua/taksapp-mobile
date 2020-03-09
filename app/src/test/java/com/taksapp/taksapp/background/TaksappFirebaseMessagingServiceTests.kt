@@ -2,9 +2,8 @@ package com.taksapp.taksapp.background
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.messaging.RemoteMessage
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
+import com.taksapp.taksapp.domain.events.IncomingTaxiRequestEvent
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -34,11 +33,36 @@ class TaksappFirebaseMessagingServiceTests {
 
         // Assert
         verify(taxiRequestEventHandlerMock)
-            .onEventReceived(argThat { taxiRequestId == "28c9a3cc-34a7-4ffa-a811-fbb1f2fd0f7a" })
+            .onTaxiRequestStatusChanged(argThat { taxiRequestId == "28c9a3cc-34a7-4ffa-a811-fbb1f2fd0f7a" })
+    }
+
+    @Test
+    fun dispatchesIncomingTaxiRequestEventAfterReceivingMessage() {
+        // Arrange
+        val remoteMessage = RemoteMessage.Builder("push-notification-token")
+            .setMessageId("bogus-id")
+            .addData("notificationType", "incomingTaxiRequest")
+            .addData("taxiRequestId", "4c8151d8-3702-4543-aef7-bfd3d0996b96")
+            .build()
+        val firebaseMessagingService = TaksappFirebaseMessagingService()
+
+        EventBus
+            .getDefault()
+            .register(taxiRequestEventHandlerMock)
+
+        // Act
+        firebaseMessagingService.onMessageReceived(remoteMessage)
+
+        // Assert
+        verify(taxiRequestEventHandlerMock)
+            .onIncomingTaxiRequest(argThat { taxiRequestId == "4c8151d8-3702-4543-aef7-bfd3d0996b96" })
     }
 
     open class TaxiRequestEventHandler {
         @Subscribe
-        open fun onEventReceived(event: TaxiRequestStatusChangedEvent) {}
+        open fun onTaxiRequestStatusChanged(event: TaxiRequestStatusChangedEvent) {}
+
+        @Subscribe
+        open fun onIncomingTaxiRequest(event: IncomingTaxiRequestEvent) {}
     }
 }

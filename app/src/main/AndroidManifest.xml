@@ -3,6 +3,7 @@
     package="com.taksapp.taksapp">
     
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
     <application
         android:name=".TaksappApplication"
@@ -13,10 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".ui.taxi.TaxiRequestActivity"
+        <activity android:name=".ui.drivers.taxirequests.DriverMainActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.riders.taxirequests.TaxiRequestActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -25,11 +29,9 @@
         <service
             android:name=".background.TaksappFirebaseMessagingService"
             android:exported="false">
-            
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-            
         </service>
         
         <activity
@@ -42,11 +44,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.taxi.AutocompletePlaceChooserActivity"
-            android:parentActivityName=".ui.taxi.RiderMainActivity"
+            android:name=".ui.riders.taxirequests.AutocompletePlaceChooserActivity"
+            android:parentActivityName=".ui.riders.taxirequests.RiderMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.taxi.RiderMainActivity"
+            android:name=".ui.riders.taxirequests.RiderMainActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
