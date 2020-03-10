@@ -1,5 +1,15 @@
 {
   "id": "a1ee49f5-e0a7-484f-8d87-d2e4f377efb7",
+  "origin": {
+    "latitude": 0.459,
+    "longitude": 1.2039
+  },
+  "destination": {
+    "latitude": 0.459,
+    "longitude": 1.2039
+  },
+  "originLocationName": "Luanda",
+  "destinationLocationName": "Bengo",
   "status": "started",
   "startDate": "2001-01-01T00:00:00",
   "endDate": "2001-01-01T00:15:00",

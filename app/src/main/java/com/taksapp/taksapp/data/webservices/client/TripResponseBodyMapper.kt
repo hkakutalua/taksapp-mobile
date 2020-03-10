@@ -9,6 +9,10 @@ class TripResponseBodyMapper {
         fun mapToTrip(tripResponseBody: TripResponseBody): Trip {
             return Trip(
                 id = tripResponseBody.id,
+                origin = mapToLocation(tripResponseBody.origin),
+                destination = mapToLocation(tripResponseBody.destination),
+                originLocationName = tripResponseBody.originLocationName,
+                destinationLocationName = tripResponseBody.destinationLocationName,
                 status = mapTripStatus(tripResponseBody.status),
                 startDate = tripResponseBody.startDate,
                 endDate = tripResponseBody.endDate,
@@ -24,6 +28,9 @@ class TripResponseBodyMapper {
 
         private fun mapToDriver(driver: DriverResponseBody) =
             Driver(driver.id, driver.firstName, driver.lastName, mapToNullableLocation(driver.location))
+
+        private fun mapToLocation(sourceLocation: LocationResponseBody) =
+            Location(sourceLocation.latitude, sourceLocation.longitude)
 
         private fun mapToNullableLocation(sourceLocation: LocationResponseBody?) =
             if (sourceLocation != null)

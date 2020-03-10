@@ -10,6 +10,10 @@ enum class TripStatus {
 
 data class TripResponseBody(
     val id: String,
+    val origin: LocationResponseBody,
+    val destination: LocationResponseBody,
+    val originLocationName: String,
+    val destinationLocationName: String,
     val status: TripStatus,
     val startDate: DateTime,
     val endDate: DateTime?,

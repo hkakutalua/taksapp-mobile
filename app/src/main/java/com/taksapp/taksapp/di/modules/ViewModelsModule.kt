@@ -7,11 +7,13 @@ import com.taksapp.taksapp.application.auth.viewmodels.RiderSignUpViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivingViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.DriverMainViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.IncomingTaxiRequestViewModel
+import com.taksapp.taksapp.application.drivers.trips.viewmodels.TripInProgressViewModel
 import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.AutocompletePlaceChooserViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.FareEstimationViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.TaxiRequestViewModel
 import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
+import com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -58,6 +60,15 @@ val viewModelsModule = module {
     viewModel { (taxiRequest: TaxiRequestPresentationModel) ->
         ArrivingViewModel(
             taxiRequest,
+            get(),
+            get(),
+            androidContext()
+        )
+    }
+
+    viewModel { (trip: TripPresentationModel) ->
+        TripInProgressViewModel(
+            trip,
             get(),
             get(),
             androidContext()
