@@ -7,6 +7,7 @@ enum class TaxiRequestStatus {
     accepted,
     driverArrived,
     cancelled,
+    finished
 }
 
 data class TaxiRequestResponseBody(
@@ -19,18 +20,4 @@ data class TaxiRequestResponseBody(
     val driver: DriverResponseBody?,
     val expirationDate: DateTime,
     val status: TaxiRequestStatus
-)
-
-data class RiderResponseBody(
-    val id: String,
-    val firstName: String,
-    val lastName: String,
-    val location: LocationResponseBody?
-)
-
-data class DriverResponseBody(
-    val id: String,
-    val firstName: String,
-    val lastName: String,
-    val location: LocationResponseBody?
 )

@@ -8,6 +8,7 @@ enum class Status {
     ACCEPTED,
     DRIVER_ARRIVED,
     CANCELLED,
+    FINISHED
 }
 
 class TaxiRequest private constructor(

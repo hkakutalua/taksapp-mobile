@@ -18,6 +18,23 @@ class MoshiJsonConverterAdapter : JsonConverter {
             .toJson(body)
     }
 
+    @ToJson
+    override fun <T : Any> toJson(
+        body: T,
+        kClass: KClass<T>,
+        rootType: Type,
+        vararg typeParams: Type
+    ): String {
+        val parameterizedType = Types.newParameterizedType(rootType, *typeParams)
+
+        return Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .add(BigDecimalJsonAdapter())
+            .build()
+            .adapter<T>(parameterizedType)
+            .toJson(body)
+    }
+
     @FromJson
     override fun <T : Any> fromJson(stream: InputStream, kClass: KClass<T>): T {
         val bufferedSource = stream.source().buffer()
@@ -25,6 +42,7 @@ class MoshiJsonConverterAdapter : JsonConverter {
         return Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .add(MoshiDateTimeIsoAdapter())
+            .add(BigDecimalJsonAdapter())
             .build()
             .adapter(kClass.java)
             .fromJson(JsonReader.of(bufferedSource))!!
@@ -42,6 +60,7 @@ class MoshiJsonConverterAdapter : JsonConverter {
 
         return Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
+            .add(BigDecimalJsonAdapter())
             .build()
             .adapter<T>(parameterizedType)
             .fromJson(JsonReader.of(bufferedSource))!!

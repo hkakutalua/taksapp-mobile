@@ -12,6 +12,12 @@ interface JsonConverter {
      */
     fun toJson(body: Any): String
 
+    fun <T: Any> toJson(
+        body: T,
+        kClass: KClass<T>,
+        rootType: Type,
+        vararg typeParams: Type): String
+
     /**
      * Converts the JSON contained in the [stream] southWest Kotlin object
      * @param stream that contains the JSON

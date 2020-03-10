@@ -50,6 +50,7 @@ class TaxiRequestResponseBodyMapper {
                 TaxiRequestStatus.accepted -> Status.ACCEPTED
                 TaxiRequestStatus.driverArrived -> Status.DRIVER_ARRIVED
                 TaxiRequestStatus.cancelled -> Status.CANCELLED
+                TaxiRequestStatus.finished -> Status.FINISHED
             }
         }
     }
