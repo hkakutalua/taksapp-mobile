@@ -3,9 +3,11 @@ package com.taksapp.taksapp.data.webservices.client.resources.drivers
 import com.taksapp.taksapp.data.webservices.client.ConfigurationProvider
 import com.taksapp.taksapp.data.webservices.client.Response
 import com.taksapp.taksapp.data.webservices.client.resources.common.ErrorResponseBody
+import com.taksapp.taksapp.data.webservices.client.resources.common.LocationRequestBody
 import com.taksapp.taksapp.data.webservices.client.resources.common.TaxiRequestResponseBody
+import com.taksapp.taksapp.data.webservices.client.resources.common.TripResponseBody
 
-class DriversResource(private val configurationProvider: ConfigurationProvider) {
+class DriversResource(configurationProvider: ConfigurationProvider) {
     val me = CurrentDriverResource(configurationProvider)
 
     class CurrentDriverResource(private val configurationProvider: ConfigurationProvider) {
@@ -18,14 +20,182 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             NOT_FOUND,
             SERVER_ERROR
         }
+
         enum class TaxiRequestAnnounceApiError {
             TAXI_REQUEST_NOT_IN_ACCEPTED_STATUS,
             NOT_FOUND,
             SERVER_ERROR
         }
+
         enum class TaxiRequestCancellationApiError {
             NOT_FOUND,
             SERVER_ERROR
+        }
+
+        enum class TripStartApiError {
+            NO_TAXI_REQUEST_TO_START_TRIP_FROM,
+            SERVER_ERROR
+        }
+
+        enum class TripRetrievalApiError {
+            NO_TRIP_FOUND,
+            SERVER_ERROR
+        }
+
+        enum class LocationToRouteApiError {
+            ACTIVE_TRIP_NOT_FOUND,
+            SERVER_ERROR
+        }
+
+        enum class TripFinishApiError {
+            ACTIVE_TRIP_NOT_FOUND,
+            SERVER_ERROR
+        }
+
+        val trips = DriversTripsResource(configurationProvider)
+
+        class DriversTripsResource(private val configurationProvider: ConfigurationProvider) {
+            fun start(): Response<TripResponseBody, TripStartApiError> {
+                val httpClient = configurationProvider.client
+                val jsonConverter = configurationProvider.jsonConverter
+
+                val response = httpClient.post("api/v1/drivers/me/trips", "")
+
+                return if (response.isSuccessful) {
+                    val tripResponseBody = jsonConverter
+                        .fromJson(response.body?.source!!, TripResponseBody::class)
+                    Response.success(tripResponseBody)
+                } else {
+                    if (response.code in 400..499) {
+                        val errorBody = jsonConverter
+                            .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                            .errors[0]
+                        when (errorBody.code) {
+                            "noTaxiRequestToStartTripFrom" ->
+                                Response.failure(TripStartApiError.NO_TAXI_REQUEST_TO_START_TRIP_FROM)
+                            else -> Response.failure(TripStartApiError.SERVER_ERROR)
+                        }
+                    } else {
+                        Response.failure(TripStartApiError.SERVER_ERROR)
+                    }
+                }
+            }
+
+            fun getById(tripId: String): Response<TripResponseBody, TripRetrievalApiError> {
+                val httpClient = configurationProvider.client
+                val jsonConverter = configurationProvider.jsonConverter
+
+                val response = httpClient.get("api/v1/drivers/me/trips/$tripId")
+
+                return if (response.isSuccessful) {
+                    val tripResponseBody = jsonConverter
+                        .fromJson(response.body?.source!!, TripResponseBody::class)
+                    Response.success(tripResponseBody)
+                } else {
+                    if (response.code in 400..499) {
+                        val errorBody = jsonConverter
+                            .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                            .errors[0]
+                        when (errorBody.code) {
+                            "noTripFound" ->
+                                Response.failure(TripRetrievalApiError.NO_TRIP_FOUND)
+                            else -> Response.failure(TripRetrievalApiError.SERVER_ERROR)
+                        }
+                    } else {
+                        Response.failure(TripRetrievalApiError.SERVER_ERROR)
+                    }
+                }
+            }
+
+            fun getCurrent(): Response<TripResponseBody, TripRetrievalApiError> {
+                val httpClient = configurationProvider.client
+                val jsonConverter = configurationProvider.jsonConverter
+
+                val response = httpClient.get("api/v1/drivers/me/trips/current")
+
+                return if (response.isSuccessful) {
+                    val tripResponseBody = jsonConverter
+                        .fromJson(response.body?.source!!, TripResponseBody::class)
+                    Response.success(tripResponseBody)
+                } else {
+                    if (response.code in 400..499) {
+                        val errorBody = jsonConverter
+                            .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                            .errors[0]
+                        when (errorBody.code) {
+                            "noActiveTripFound" ->
+                                Response.failure(TripRetrievalApiError.NO_TRIP_FOUND)
+                            else -> Response.failure(TripRetrievalApiError.SERVER_ERROR)
+                        }
+                    } else {
+                        Response.failure(TripRetrievalApiError.SERVER_ERROR)
+                    }
+                }
+            }
+
+            fun addToRoute(locations: List<LocationRequestBody>): Response<TripResponseBody, LocationToRouteApiError> {
+                val httpClient = configurationProvider.client
+                val jsonConverter = configurationProvider.jsonConverter
+
+                val jsonBody = jsonConverter.toJson(
+                    locations,
+                    classOf<List<LocationRequestBody>>(),
+                    List::class.java,
+                    LocationRequestBody::class.java
+                )
+
+                val response = httpClient.patch(
+                    "api/v1/drivers/me/trips/current/route",
+                    jsonBody
+                )
+
+                return if (response.isSuccessful) {
+                    val tripResponseBody = jsonConverter
+                        .fromJson(response.body?.source!!, TripResponseBody::class)
+                    Response.success(tripResponseBody)
+                } else {
+                    if (response.code in 400..499) {
+                        val errorBody = jsonConverter
+                            .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                            .errors[0]
+                        when (errorBody.code) {
+                            "noActiveTripFound" ->
+                                Response.failure(LocationToRouteApiError.ACTIVE_TRIP_NOT_FOUND)
+                            else -> Response.failure(LocationToRouteApiError.SERVER_ERROR)
+                        }
+                    } else {
+                        Response.failure(LocationToRouteApiError.SERVER_ERROR)
+                    }
+                }
+            }
+
+            fun finishCurrent(): Response<TripResponseBody, TripFinishApiError> {
+                val httpClient = configurationProvider.client
+                val jsonConverter = configurationProvider.jsonConverter
+
+                val response = httpClient.patch("api/v1/drivers/me/trips/current/finish")
+
+                return if (response.isSuccessful) {
+                    val tripResponseBody = jsonConverter
+                        .fromJson(response.body?.source!!, TripResponseBody::class)
+                    Response.success(tripResponseBody)
+                } else {
+                    if (response.code in 400..499) {
+                        val errorBody = jsonConverter
+                            .fromJson(response.body?.source!!, ErrorResponseBody::class)
+                            .errors[0]
+                        when (errorBody.code) {
+                            "noActiveTripFound" ->
+                                Response.failure(TripFinishApiError.ACTIVE_TRIP_NOT_FOUND)
+                            else -> Response.failure(TripFinishApiError.SERVER_ERROR)
+                        }
+                    } else {
+                        Response.failure(TripFinishApiError.SERVER_ERROR)
+                    }
+                }
+            }
+
+            private inline fun <reified T: Any> classOf() = T::class
         }
 
         fun setAsOnline(): Response<Nothing, OnlineSwitchApiError> {
@@ -120,7 +290,8 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val jsonConverter = configurationProvider.jsonConverter
 
             val response = httpClient.patch(
-                "api/v1/drivers/me/taxi-requests/$taxiRequestId/accept")
+                "api/v1/drivers/me/taxi-requests/$taxiRequestId/accept"
+            )
 
             return if (response.isSuccessful) {
                 Response.success(null)
@@ -151,7 +322,8 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val jsonConverter = configurationProvider.jsonConverter
 
             val response = httpClient.patch(
-                "api/v1/drivers/me/taxi-requests/current/announce-arrival")
+                "api/v1/drivers/me/taxi-requests/current/announce-arrival"
+            )
 
             return if (response.isSuccessful) {
                 Response.success(null)
@@ -180,7 +352,8 @@ class DriversResource(private val configurationProvider: ConfigurationProvider) 
             val jsonConverter = configurationProvider.jsonConverter
 
             val response = httpClient.patch(
-                "api/v1/drivers/me/taxi-requests/current/cancel")
+                "api/v1/drivers/me/taxi-requests/current/cancel"
+            )
 
             return if (response.isSuccessful) {
                 Response.success(null)

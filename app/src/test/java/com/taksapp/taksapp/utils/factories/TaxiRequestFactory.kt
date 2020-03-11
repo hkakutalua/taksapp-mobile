@@ -1,6 +1,5 @@
 package com.taksapp.taksapp.utils.factories
 
-import com.devskiller.jfairy.Fairy
 import com.taksapp.taksapp.domain.*
 import org.joda.time.DateTime
 import org.joda.time.Duration
@@ -32,7 +31,6 @@ class TaxiRequestFactory {
         }
 
         fun build(): TaxiRequest {
-            val fairy = Fairy.create()
             return TaxiRequest.withBuilder()
                 .withId(id ?: UUID.randomUUID().toString())
                 .withOrigin(Location(0.0, 0.0), "Foo")

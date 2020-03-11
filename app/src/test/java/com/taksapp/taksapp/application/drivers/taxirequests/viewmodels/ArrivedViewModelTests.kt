@@ -11,12 +11,17 @@ import com.taksapp.taksapp.application.arch.utils.Result
 import com.taksapp.taksapp.application.shared.mappers.TaxiRequestMapper
 import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
 import com.taksapp.taksapp.domain.Status
+import com.taksapp.taksapp.domain.TripStatus
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
+import com.taksapp.taksapp.domain.events.TripStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
+import com.taksapp.taksapp.domain.interfaces.DriversTripsService
+import com.taksapp.taksapp.domain.interfaces.DriversTripsService.TripStartError
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
+import com.taksapp.taksapp.utils.factories.TripFactory
 import com.taksapp.taksapp.utils.getOrAwaitValue
 import com.taksapp.taksapp.utils.testdoubles.TaskSchedulerSpy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +43,7 @@ class ArrivedViewModelTests {
 
     private lateinit var taxiRequestPresentation: TaxiRequestPresentationModel
     private lateinit var driversTaxiRequestServiceMock: DriversTaxiRequestService
+    private lateinit var driversTripsServiceMock: DriversTripsService
     private lateinit var taskSchedulerMock: TaskScheduler
     private lateinit var contextMock: Context
 
@@ -50,6 +56,7 @@ class ArrivedViewModelTests {
         taxiRequestPresentation = TaxiRequestMapper().map(taxiRequestBuilder.build())
         taskSchedulerMock = mock()
         driversTaxiRequestServiceMock = mock()
+        driversTripsServiceMock = mock()
         contextMock = mock()
     }
 
@@ -208,12 +215,191 @@ class ArrivedViewModelTests {
         }
     }
 
+    @Test
+    fun navigatesToTripWhenSynchronizedByPushWithStartedTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedStartedTrip = TripFactory.withBuilder()
+                .withId("any-id")
+                .withStatus(TripStatus.STARTED)
+                .build();
+
+            whenever(driversTripsServiceMock.getCurrentTrip())
+                .thenReturn(Result.success(synchronizedStartedTrip))
+
+            val viewModel = buildViewModel()
+
+            // Act
+            viewModel.onTripStatusChanged(
+                TripStatusChangedEvent(synchronizedStartedTrip.id)
+            )
+
+            // Assert
+            Assert.assertNotNull(
+                viewModel.navigateToTripEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    @Test
+    fun doesNotNavigateToTripWhenSynchronizedByPushWithNoActiveTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.getCurrentTrip())
+                .thenReturn(Result.error(DriversTripsService.TripRetrievalError.TRIP_NOT_FOUND))
+
+            val viewModel = buildViewModel()
+
+            // Act
+            viewModel.onTripStatusChanged(TripStatusChangedEvent("any-id"))
+
+            // Assert
+            Assert.assertNull(viewModel.navigateToTripEvent.value)
+        }
+    }
+
+    @Test
+    fun navigatesToTripWhenSynchronizedByPullWithStartedTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val synchronizedStartedTrip = TripFactory.withBuilder()
+                .withId("any-id")
+                .withStatus(TripStatus.STARTED)
+                .build()
+
+            whenever(driversTripsServiceMock.getCurrentTrip())
+                .thenReturn(Result.success(synchronizedStartedTrip))
+
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            val viewModel = buildViewModel(taskScheduler = taskSchedulerSpy)
+
+            // Act
+            taskSchedulerSpy.executePendingTask(ArrivedViewModel.TRIP_PULL_TASK_ID)
+
+            // Assert
+            Assert.assertNotNull(
+                viewModel.navigateToTripEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    @Test
+    fun doesNotNavigateToTripWhenSynchronizedByPullWithWithNoActiveTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.getCurrentTrip())
+                .thenReturn(Result.error(DriversTripsService.TripRetrievalError.TRIP_NOT_FOUND))
+
+            val taskSchedulerSpy = TaskSchedulerSpy()
+            val arrivedViewModel = buildViewModel(taskScheduler = taskSchedulerSpy)
+
+            // Act
+            taskSchedulerSpy.executePendingTask(ArrivedViewModel.TRIP_PULL_TASK_ID)
+
+            // Assert
+            Assert.assertNull(arrivedViewModel.navigateToTripEvent.value)
+        }
+    }
+
+    @Test
+    fun startsTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val startedTrip = TripFactory.withBuilder()
+                .withId("any-id")
+                .withStatus(TripStatus.STARTED)
+                .build();
+
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.success(startedTrip))
+
+            coroutineScopeRule.pauseDispatcher()
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(true, arrivedViewModel.processing.getOrAwaitValue())
+            coroutineScopeRule.advanceUntilIdle()
+            Assert.assertEquals(false, arrivedViewModel.processing.getOrAwaitValue())
+
+            Assert.assertNotNull(
+                arrivedViewModel.navigateToTripEvent.value?.getContentIfNotHandled()
+            )
+
+            verify(driversTripsServiceMock, times(1)).startTrip()
+        }
+    }
+
+    @Test
+    fun navigatesToMainWhenTheresNoTaxiRequestToStartTripFrom() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.error(TripStartError.NO_TAXI_REQUEST_TO_START_TRIP_FROM))
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertNotNull(arrivedViewModel.navigateToMain.value)
+        }
+    }
+
+    @Test
+    fun failsToStartTripDueToInternetError() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip()).thenThrow(IOException())
+            whenever(contextMock.getString(R.string.text_internet_error))
+                .thenReturn("internet_error")
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(
+                "internet_error",
+                arrivedViewModel.snackBarErrorEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    @Test
+    fun failsToStartTripDueToServerError() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.error(TripStartError.SERVER_ERROR))
+            whenever(contextMock.getString(R.string.text_server_error))
+                .thenReturn("server_error")
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(
+                "server_error",
+                arrivedViewModel.snackBarErrorEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
     private fun buildViewModel(
         taxiRequest: TaxiRequestPresentationModel? = null,
         taskScheduler: TaskScheduler? = null
     ) = ArrivedViewModel(
         taxiRequestPresentationModel = taxiRequest ?: this.taxiRequestPresentation,
         driversTaxiRequestService = driversTaxiRequestServiceMock,
+        driversTripsService = driversTripsServiceMock,
         taskScheduler = taskScheduler ?: this.taskSchedulerMock,
         context = contextMock
     )

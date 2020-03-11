@@ -46,5 +46,29 @@
         <argument
             android:name="taxiRequest"
             app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel" />
+        <action
+            android:id="@+id/to_tripInProgress_action"
+            app:destination="@id/tripInProgressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripInProgressFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.trips.TripInProgressFragment"
+        android:label="TripInProgressFragment"
+        tools:layout="@layout/fragment_trip_in_progress">
+        <argument
+            android:name="trip"
+            app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel" />
+        <action
+            android:id="@+id/to_tripFinished_action"
+            app:destination="@id/tripFinishedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripFinishedFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.trips.TripFinishedFragment"
+        android:label="TripFinishedFragment"
+        tools:layout="@layout/fragment_trip_finished">
+        <argument
+            android:name="trip"
+            app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel" />
     </fragment>
 </navigation>

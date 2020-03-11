@@ -69,4 +69,7 @@
     <string name="error_taxi_request_acceptance_failed_due_to_expiry">O pedido de taxi que tentou aceitar ja nao se encontra disponivel.</string>
     <string name="error_title">Erro!</string>
     <string name="text_taxi_request_already_cancelled">A operacao falhou porque o pedido de taxi foi cancelado.</string>
+    <string name="text_trip_in_progress">Viagem em Progresso</string>
+    <string name="text_finish_trip">Finalizar Viagem</string>
+    <string name="text_trip_finished">Viagem Terminada</string>
 </resources>

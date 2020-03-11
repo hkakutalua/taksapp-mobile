@@ -1,23 +1,24 @@
 package com.taksapp.taksapp.data.webservices.client.resources.common
 
 import org.joda.time.DateTime
+import java.math.BigDecimal
 
-enum class TaxiRequestStatus {
-    waitingAcceptance,
-    accepted,
-    driverArrived,
-    cancelled,
+enum class TripStatus {
+    started,
     finished
 }
 
-data class TaxiRequestResponseBody(
+data class TripResponseBody(
     val id: String,
     val origin: LocationResponseBody,
     val destination: LocationResponseBody,
     val originLocationName: String,
     val destinationLocationName: String,
+    val status: TripStatus,
+    val startDate: DateTime,
+    val endDate: DateTime?,
+    val fareAmount: BigDecimal,
+    val rating: Double?,
     val rider: RiderResponseBody,
-    val driver: DriverResponseBody?,
-    val expirationDate: DateTime,
-    val status: TaxiRequestStatus
+    val driver: DriverResponseBody
 )

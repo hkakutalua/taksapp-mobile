@@ -41,6 +41,7 @@ class ArrivedFragment : Fragment() {
 
         observeNavigateToMainWithErrorEvent()
         observeNavigateToMainEvent()
+        observeNavigationToTripInProgress()
         observeSnackbarErrorEvent()
 
         return binding.root
@@ -69,6 +70,23 @@ class ArrivedFragment : Fragment() {
                 }
 
                 requireView().findNavController().popBackStack(R.id.driverMainFragment, false)
+            }
+        )
+    }
+
+    private fun observeNavigationToTripInProgress() {
+        arrivedViewModel.navigateToTripEvent.observe(
+            this, Observer { event ->
+                if (event.hasBeenHandled)
+                    return@Observer
+
+                val trip = event.peekContent()
+
+                trip?.let {
+                    val navigateToTripInProgressAction =
+                        ArrivedFragmentDirections.toTripInProgressAction(trip)
+                    requireView().findNavController().navigate(navigateToTripInProgressAction)
+                }
             }
         )
     }
