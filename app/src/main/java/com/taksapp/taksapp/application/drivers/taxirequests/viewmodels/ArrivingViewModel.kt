@@ -7,12 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taksapp.taksapp.R
 import com.taksapp.taksapp.application.arch.utils.Event
+import com.taksapp.taksapp.application.shared.mappers.TripMapper
 import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPresentationModel
+import com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.domain.TripStatus
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
+import com.taksapp.taksapp.domain.events.TripStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
+import com.taksapp.taksapp.domain.interfaces.DriversTripsService
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -27,10 +32,12 @@ import kotlin.time.toDuration
 class ArrivingViewModel(
     private val taxiRequestPresentationModel: TaxiRequestPresentationModel,
     private val driversTaxiRequestService: DriversTaxiRequestService,
+    private val driversTripsService: DriversTripsService,
     taskScheduler: TaskScheduler,
     private val context: Context) : ViewModel() {
     companion object {
         const val TAXI_REQUEST_PULL_TASK_ID = "TAXI_REQUEST_PULL_TASK"
+        const val TRIP_PULL_TASK_ID = "TRIP_PULL_TASK"
     }
 
     private val _taxiRequestPresentation = MutableLiveData<TaxiRequestPresentationModel>()
@@ -39,6 +46,7 @@ class ArrivingViewModel(
     private val _snackBarErrorEvent = MutableLiveData<Event<String>>()
     private val _navigateToMain = MutableLiveData<Event<Nothing>>()
     private val _navigateToMainWithErrorEvent = MutableLiveData<Event<String>>()
+    private val _navigateToTripEvent = MutableLiveData<Event<TripPresentationModel>>()
 
     val taxiRequestPresentation: LiveData<TaxiRequestPresentationModel> = _taxiRequestPresentation
     val navigateToArrivedEvent: LiveData<Event<TaxiRequestPresentationModel>> = _navigateToArrivedEvent
@@ -46,6 +54,7 @@ class ArrivingViewModel(
     val snackBarErrorEvent: LiveData<Event<String>> = _snackBarErrorEvent
     val navigateToMain: LiveData<Event<Nothing>> = _navigateToMain
     val navigateToMainWithErrorEvent: LiveData<Event<String>> = _navigateToMainWithErrorEvent
+    val navigateToTripEvent: LiveData<Event<TripPresentationModel>> = _navigateToTripEvent
 
     init {
         _taxiRequestPresentation.value = taxiRequestPresentationModel
@@ -56,6 +65,11 @@ class ArrivingViewModel(
             TAXI_REQUEST_PULL_TASK_ID,
             10.toDuration(TimeUnit.SECONDS)
         ) { navigateIfCurrentTaxiRequestStatusChanges() }
+
+        taskScheduler.schedule(
+            TRIP_PULL_TASK_ID,
+            10.toDuration(TimeUnit.SECONDS)
+        ) { navigateIfCurrentTripStatusChanges() }
     }
 
     fun announceArrival() {
@@ -122,6 +136,26 @@ class ArrivingViewModel(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaxiRequestStatusChanged(event: TaxiRequestStatusChangedEvent) {
         navigateIfCurrentTaxiRequestStatusChanges()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTripStatusChanged(event: TripStatusChangedEvent) {
+        navigateIfCurrentTripStatusChanges()
+    }
+
+    private fun navigateIfCurrentTripStatusChanges() {
+        viewModelScope.launch {
+            val tripResult = driversTripsService.getCurrentTrip()
+            val trip = tripResult.data
+
+            if (trip?.status != TripStatus.STARTED)
+                return@launch
+
+            trip.apply {
+                val tripPresentation: TripPresentationModel = TripMapper().map(trip)
+                _navigateToTripEvent.postValue(Event(tripPresentation))
+            }
+        }
     }
 
     private fun navigateIfCurrentTaxiRequestStatusChanges() {
