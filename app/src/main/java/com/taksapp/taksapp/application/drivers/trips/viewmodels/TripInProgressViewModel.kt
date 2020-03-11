@@ -25,7 +25,7 @@ import kotlin.time.toDuration
 
 @ExperimentalTime
 class TripInProgressViewModel(
-    private val tripPresentation: TripPresentationModel,
+    private val tripPresentationModel: TripPresentationModel,
     private val driversTripsService: DriversTripsService,
     private val taskScheduler: TaskScheduler,
     private val context: Context
@@ -39,12 +39,13 @@ class TripInProgressViewModel(
     private val _navigateToFinished = MutableLiveData<Event<TripPresentationModel>>()
     private val _snackBarError = MutableLiveData<Event<String>>()
 
+    val tripPresentation: LiveData<TripPresentationModel> = _tripPresentation
     val processing: LiveData<Boolean> = _processing
     val navigateToFinished: LiveData<Event<TripPresentationModel>> = _navigateToFinished
     val snackBarErrorEvent: LiveData<Event<String>> = _snackBarError
 
     init {
-        _tripPresentation.value = tripPresentation
+        _tripPresentation.value = tripPresentationModel
         EventBus.getDefault().register(this)
 
         taskScheduler.schedule(TRIP_PULL_TASK_ID, 15.toDuration(TimeUnit.SECONDS))
@@ -58,11 +59,11 @@ class TripInProgressViewModel(
             try {
                 val response = driversTripsService.finishCurrentTrip()
                 if (response.isSuccessful) {
-                    _navigateToFinished.postValue(Event(tripPresentation))
+                    _navigateToFinished.postValue(Event(tripPresentationModel))
                 } else if (response.hasFailed) {
                     when (response.error) {
                         TripFinishError.TRIP_NOT_FOUND ->
-                            _navigateToFinished.postValue(Event(tripPresentation))
+                            _navigateToFinished.postValue(Event(tripPresentationModel))
                         TripFinishError.SERVER_ERROR ->
                             _snackBarError.postValue(Event(context.getString(R.string.text_server_error)))
                         else ->
@@ -84,7 +85,7 @@ class TripInProgressViewModel(
 
     private fun navigateIfCurrentTripStatusChanges() {
         viewModelScope.launch {
-            val tripResult = driversTripsService.getTripById(tripPresentation.id)
+            val tripResult = driversTripsService.getTripById(tripPresentationModel.id)
             val trip = tripResult.data
 
             if (trip?.status != TripStatus.FINISHED)
