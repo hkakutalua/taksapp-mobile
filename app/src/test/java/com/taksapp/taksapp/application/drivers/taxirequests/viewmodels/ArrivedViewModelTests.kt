@@ -17,6 +17,7 @@ import com.taksapp.taksapp.domain.events.TripStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
 import com.taksapp.taksapp.domain.interfaces.DriversTripsService
+import com.taksapp.taksapp.domain.interfaces.DriversTripsService.TripStartError
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import com.taksapp.taksapp.utils.MainCoroutineScopeRule
 import com.taksapp.taksapp.utils.factories.TaxiRequestFactory
@@ -264,7 +265,7 @@ class ArrivedViewModelTests {
             val synchronizedStartedTrip = TripFactory.withBuilder()
                 .withId("any-id")
                 .withStatus(TripStatus.STARTED)
-                .build();
+                .build()
 
             whenever(driversTripsServiceMock.getCurrentTrip())
                 .thenReturn(Result.success(synchronizedStartedTrip))
@@ -297,6 +298,98 @@ class ArrivedViewModelTests {
 
             // Assert
             Assert.assertNull(arrivedViewModel.navigateToTripEvent.value)
+        }
+    }
+
+    @Test
+    fun startsTrip() {
+        coroutineScopeRule.launch {
+            // Arrange
+            val startedTrip = TripFactory.withBuilder()
+                .withId("any-id")
+                .withStatus(TripStatus.STARTED)
+                .build();
+
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.success(startedTrip))
+
+            coroutineScopeRule.pauseDispatcher()
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(true, arrivedViewModel.processing.getOrAwaitValue())
+            coroutineScopeRule.advanceUntilIdle()
+            Assert.assertEquals(false, arrivedViewModel.processing.getOrAwaitValue())
+
+            Assert.assertNotNull(
+                arrivedViewModel.navigateToTripEvent.value?.getContentIfNotHandled()
+            )
+
+            verify(driversTripsServiceMock, times(1)).startTrip()
+        }
+    }
+
+    @Test
+    fun navigatesToMainWhenTheresNoTaxiRequestToStartTripFrom() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.error(TripStartError.NO_TAXI_REQUEST_TO_START_TRIP_FROM))
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertNotNull(arrivedViewModel.navigateToMain.value)
+        }
+    }
+
+    @Test
+    fun failsToStartTripDueToInternetError() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip()).thenThrow(IOException())
+            whenever(contextMock.getString(R.string.text_internet_error))
+                .thenReturn("internet_error")
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(
+                "internet_error",
+                arrivedViewModel.snackBarErrorEvent.value?.getContentIfNotHandled()
+            )
+        }
+    }
+
+    @Test
+    fun failsToStartTripDueToServerError() {
+        coroutineScopeRule.launch {
+            // Arrange
+            whenever(driversTripsServiceMock.startTrip())
+                .thenReturn(Result.error(TripStartError.SERVER_ERROR))
+            whenever(contextMock.getString(R.string.text_server_error))
+                .thenReturn("server_error")
+
+            val arrivedViewModel = buildViewModel()
+
+            // Act
+            arrivedViewModel.startTrip()
+
+            // Assert
+            Assert.assertEquals(
+                "server_error",
+                arrivedViewModel.snackBarErrorEvent.value?.getContentIfNotHandled()
+            )
         }
     }
 

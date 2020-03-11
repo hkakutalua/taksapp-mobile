@@ -173,6 +173,7 @@
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:enabled="@{!viewModel.processing}"
+                    android:onClick="@{_ -> viewModel.startTrip()}"
                     android:text="@string/text_start_trip" />
                 
                 <androidx.constraintlayout.widget.Guideline

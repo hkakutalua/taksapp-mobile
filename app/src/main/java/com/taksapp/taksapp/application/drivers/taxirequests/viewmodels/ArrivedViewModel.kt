@@ -12,12 +12,14 @@ import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPres
 import com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel
 import com.taksapp.taksapp.domain.Status
 import com.taksapp.taksapp.domain.TaxiRequest
+import com.taksapp.taksapp.domain.Trip
 import com.taksapp.taksapp.domain.TripStatus
 import com.taksapp.taksapp.domain.events.TaxiRequestStatusChangedEvent
 import com.taksapp.taksapp.domain.events.TripStatusChangedEvent
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService
 import com.taksapp.taksapp.domain.interfaces.DriversTaxiRequestService.*
 import com.taksapp.taksapp.domain.interfaces.DriversTripsService
+import com.taksapp.taksapp.domain.interfaces.DriversTripsService.TripStartError
 import com.taksapp.taksapp.domain.interfaces.TaskScheduler
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -68,6 +70,36 @@ class ArrivedViewModel(
             ArrivingViewModel.TRIP_PULL_TASK_ID,
             10.toDuration(TimeUnit.SECONDS)
         ) { navigateIfCurrentTripStatusChanges() }
+    }
+
+    fun startTrip() {
+        _processing.value = true
+
+        viewModelScope.launch {
+            try {
+                val result = driversTripsService.startTrip()
+                if (result.isSuccessful) {
+                    val trip: Trip? = result.data
+                    trip?.let {
+                        val tripPresentation: TripPresentationModel = TripMapper().map(trip)
+                        _navigateToTripEvent.postValue(Event(tripPresentation))
+                    }
+                } else if (result.hasFailed) {
+                    when (result.error) {
+                        TripStartError.NO_TAXI_REQUEST_TO_START_TRIP_FROM ->
+                            _navigateToMain.postValue(Event(null))
+                        TripStartError.SERVER_ERROR ->
+                            _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_server_error)))
+                        else ->
+                            _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_server_error)))
+                    }
+                }
+            } catch (e: IOException) {
+              _snackBarErrorEvent.postValue(Event(context.getString(R.string.text_internet_error)))
+            } finally {
+                _processing.postValue(false)
+            }
+        }
     }
 
     fun cancelTaxiRequest() {
