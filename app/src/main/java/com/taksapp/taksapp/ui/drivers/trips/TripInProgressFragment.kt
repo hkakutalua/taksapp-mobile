@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 
@@ -42,7 +43,20 @@ class TripInProgressFragment : Fragment() {
     }
 
     private fun observeNavigationToFinished() {
-        tripInProgressViewModel.navigateToFinished.observe(this, Observer { })
+        tripInProgressViewModel.navigateToFinished.observe(
+            this, Observer { event ->
+                if (event.hasBeenHandled)
+                    return@Observer
+
+                val trip = event.peekContent()
+
+                trip?.let {
+                    val navigateToTripFinishedAction =
+                        TripInProgressFragmentDirections.toTripFinishedAction(trip)
+                    requireView().findNavController().navigate(navigateToTripFinishedAction)
+                }
+            }
+        )
     }
 
     private fun observeSnackbarErrorEvent() {

@@ -11,5 +11,6 @@ class TripPresentationModel(
     val driverName: String,
     val driverLocation: LocationPresentationModel?,
     val driverLocationAvailable: Boolean,
-    val riderName: String
+    val riderName: String,
+    val formattedFareAmount: String
 ): Serializable

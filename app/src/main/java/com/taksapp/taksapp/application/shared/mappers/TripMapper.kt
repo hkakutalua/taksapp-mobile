@@ -16,6 +16,7 @@ class TripMapper {
             driverName = "${trip.driver.firstName} ${trip.driver.lastName}",
             driverLocation = LocationMapper().mapNullable(trip.driver.location),
             driverLocationAvailable = trip.driver.location != null,
-            riderName = "${trip.rider.firstName} ${trip.rider.lastName}"
+            riderName = "${trip.rider.firstName} ${trip.rider.lastName}",
+            formattedFareAmount = String.format("Kz %1,.2f", trip.fareAmount)
         )
 }

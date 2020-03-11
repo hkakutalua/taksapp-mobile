@@ -58,5 +58,17 @@
         <argument
             android:name="trip"
             app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel" />
+        <action
+            android:id="@+id/to_tripFinished_action"
+            app:destination="@id/tripFinishedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripFinishedFragment"
+        android:name="com.taksapp.taksapp.ui.drivers.trips.TripFinishedFragment"
+        android:label="TripFinishedFragment"
+        tools:layout="@layout/fragment_trip_finished">
+        <argument
+            android:name="trip"
+            app:argType="com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel" />
     </fragment>
 </navigation>

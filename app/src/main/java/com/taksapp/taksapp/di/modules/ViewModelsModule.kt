@@ -8,6 +8,7 @@ import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivedVi
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.ArrivingViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.DriverMainViewModel
 import com.taksapp.taksapp.application.drivers.taxirequests.viewmodels.IncomingTaxiRequestViewModel
+import com.taksapp.taksapp.application.drivers.trips.viewmodels.TripFinishedViewModel
 import com.taksapp.taksapp.application.drivers.trips.viewmodels.TripInProgressViewModel
 import com.taksapp.taksapp.application.launch.viewmodels.LaunchViewModel
 import com.taksapp.taksapp.application.riders.taxirequests.viewmodels.AutocompletePlaceChooserViewModel
@@ -86,4 +87,6 @@ val viewModelsModule = module {
             androidContext()
         )
     }
+
+    viewModel { (trip: TripPresentationModel) -> TripFinishedViewModel(trip) }
 }

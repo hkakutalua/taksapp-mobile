@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="com.taksapp.taksapp.application.drivers.trips.viewmodels.TripFinishedViewModel" />
+    </data>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+        
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+    
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        
+                <TextView
+                    android:id="@+id/textview_trip_finished"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:text="@string/text_trip_finished"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+        
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageview_rider"
+                    android:layout_width="@dimen/list_item_icon"
+                    android:layout_height="@dimen/list_item_icon"
+                    app:layout_constraintTop_toBottomOf="@id/textview_trip_finished"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    app:srcCompat="@drawable/ic_person" />
+        
+                <TextView
+                    android:id="@+id/textview_rider_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/imageview_rider"
+                    app:layout_constraintStart_toEndOf="@id/imageview_rider"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:text="@{viewModel.tripPresentation.riderName}"
+                    tools:text="Henrick Kakutalua" />
+        
+                <TextView
+                    android:id="@+id/textview_start_place_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imageview_rider"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@android:color/black"
+                    android:text="@{viewModel.tripPresentation.originName}"
+                    tools:text="Universidade Tecnica de Angola"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+        
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageview_start_location"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    app:srcCompat="@drawable/ic_start_location"
+                    app:layout_constraintTop_toTopOf="@id/textview_start_place_label"
+                    app:layout_constraintBottom_toBottomOf="@id/textview_start_place_label"
+                    app:layout_constraintStart_toStartOf="@id/imageview_rider"
+                    app:layout_constraintEnd_toEndOf="@id/imageview_rider" />
+        
+                <TextView
+                    android:id="@+id/textview_destination_place_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textview_start_place_label"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@android:color/black"
+                    android:text="@{viewModel.tripPresentation.destinationName}"
+                    tools:text="Universidade Metodista de Angola"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+        
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    app:srcCompat="@drawable/ic_destination_location"
+                    app:layout_constraintTop_toTopOf="@id/textview_destination_place_label"
+                    app:layout_constraintBottom_toBottomOf="@id/textview_destination_place_label"
+                    app:layout_constraintStart_toStartOf="@id/imageview_rider"
+                    app:layout_constraintEnd_toEndOf="@id/imageview_rider" />
+        
+                <TextView
+                    android:id="@+id/textview_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Kz 50"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
+                    app:layout_constraintTop_toBottomOf="@id/textview_destination_place_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/button_confirm"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_normal"
+                    android:text="@{viewModel.tripPresentation.formattedFareAmount}"/>
+        
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_confirm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:text="@string/text_confirm"/>
+        
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="64dp" />
+    
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+        </androidx.cardview.widget.CardView>
+        
+    </LinearLayout>
+    
+</layout>
