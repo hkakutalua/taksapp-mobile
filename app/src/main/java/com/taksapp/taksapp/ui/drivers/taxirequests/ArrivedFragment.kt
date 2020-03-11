@@ -64,7 +64,7 @@ class ArrivedFragment : Fragment() {
                     AlertDialog.Builder(requireContext())
                         .setTitle(R.string.error_title)
                         .setMessage(errorMessage)
-                        .setNeutralButton(android.R.string.ok, navigateBack())
+                        .setNeutralButton(android.R.string.ok) { _, _->}
                         .setCancelable(false)
                         .show()
                 }
