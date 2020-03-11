@@ -4,6 +4,7 @@ import com.taksapp.taksapp.application.shared.presentationmodels.TaxiRequestPres
 import com.taksapp.taksapp.application.shared.presentationmodels.TripPresentationModel
 import com.taksapp.taksapp.domain.TaxiRequest
 import com.taksapp.taksapp.domain.Trip
+import java.text.DecimalFormat
 
 class TripMapper {
     fun map(trip: Trip) =
@@ -17,6 +18,6 @@ class TripMapper {
             driverLocation = LocationMapper().mapNullable(trip.driver.location),
             driverLocationAvailable = trip.driver.location != null,
             riderName = "${trip.rider.firstName} ${trip.rider.lastName}",
-            formattedFareAmount = String.format("Kz %1,.2f", trip.fareAmount)
+            formattedFareAmount = "Kz " + DecimalFormat("#0.00").format(trip.fareAmount)
         )
 }

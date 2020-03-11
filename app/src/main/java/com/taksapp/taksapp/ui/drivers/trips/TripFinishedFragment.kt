@@ -24,7 +24,7 @@ class TripFinishedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = DataBindingUtil.inflate<FragmentTripFinishedBinding>(
-            inflater, R.layout.fragment_arrived, container, false
+            inflater, R.layout.fragment_trip_finished, container, false
         )
 
         tripFinishedViewModel = getViewModel { parametersOf(args.trip) }

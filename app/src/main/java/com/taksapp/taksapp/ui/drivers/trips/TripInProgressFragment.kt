@@ -28,7 +28,7 @@ class TripInProgressFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = DataBindingUtil.inflate<FragmentTripInProgressBinding>(
-            inflater, R.layout.fragment_arrived, container, false
+            inflater, R.layout.fragment_trip_in_progress, container, false
         )
 
         tripInProgressViewModel = getViewModel { parametersOf(args.trip) }

@@ -254,7 +254,7 @@ class TripInProgressViewModelTests {
         tripPresentation: TripPresentationModel,
         taskScheduler: TaskScheduler? = null): TripInProgressViewModel {
         return TripInProgressViewModel(
-            tripPresentation = tripPresentation,
+            tripPresentationModel = tripPresentation,
             driversTripsService = driversTripsServiceMock,
             taskScheduler = taskScheduler ?: TimerTaskScheduler(),
             context = contextMock
